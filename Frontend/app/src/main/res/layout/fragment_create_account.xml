@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".fragments.CreateAccountFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:text="Create \nAccount"
+        android:textColor="@color/colorGreen"
+        android:layout_marginTop="78dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+        
+        <EditText
+            android:id="@+id/nameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="18dp"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:background="@drawable/text_box"
+            android:hint="Name"
+            />
+
+        <EditText
+            android:id="@+id/emailET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="18dp"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:background="@drawable/text_box"
+            android:hint="Email"
+            />
+
+        <EditText
+            android:id="@+id/passwordET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="18dp"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:background="@drawable/text_box"
+            android:hint="Password"
+            />
+
+        <EditText
+            android:id="@+id/confirmPassET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="18dp"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:background="@drawable/text_box"
+            android:hint="Confirm Password"
+            />
+    </LinearLayout>
+    
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/signUpBtn"
+        android:layout_below="@+id/ll1"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/signUpBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign up"
+        android:background="@drawable/btn_bg"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:layout_above="@id/loginTV"
+        android:layout_marginBottom="25dp"
+        />
+    
+    <TextView
+        android:id="@+id/loginTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="36dp"
+        android:text="Back to Login"
+        android:textStyle="bold"
+        android:textColor="@color/colorGreen"
+        />
+
+</RelativeLayout>
