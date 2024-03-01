@@ -1,10 +1,12 @@
-package com.example.frontend;
+package com.example.frontend.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.example.frontend.R;
 
 public class SlashActivity extends AppCompatActivity {
 

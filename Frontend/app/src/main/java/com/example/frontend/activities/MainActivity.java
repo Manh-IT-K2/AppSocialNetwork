@@ -1,4 +1,4 @@
-package com.example.frontend;
+package com.example.frontend.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.frontend.fragments.CreateAccountFragment;
+import com.example.frontend.R;
 
 public class MainActivity extends AppCompatActivity {
 

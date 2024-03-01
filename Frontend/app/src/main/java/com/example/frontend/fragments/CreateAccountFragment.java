@@ -1,6 +1,5 @@
 package com.example.frontend.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,9 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.frontend.FragmentReplacerActivity;
+import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.R;
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -1,4 +1,4 @@
-package com.example.frontend;
+package com.example.frontend.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.example.frontend.R;
 import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.LoginFragment;
 
