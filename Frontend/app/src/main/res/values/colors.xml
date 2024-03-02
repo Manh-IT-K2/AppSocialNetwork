@@ -4,4 +4,14 @@
     <color name="colorPrimaryDark">#fff</color>
     <color name="colorAccent">#00552E</color>
     <color name="colorGreen">#004827</color>
+    <color name = "blackLite">#2E2D2D</color>
+    <color name = "black">#191818</color>
+    <color name = "white">#FFFFFF</color>
+    <color name = "orange">#f78441</color>
+    <color name = "navy_blue">#352e4f</color>
+    <color name = "purple">#8c72ed</color>
+    <color name = "blue">#45beb9</color>
+    <color name = "red">#f55150</color>
+    <color name = "green">#34d287</color>
+    <color name = "grey">#e9e7f2</color>
 </resources>
