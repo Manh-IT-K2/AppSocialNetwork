@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="65dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/img_story"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        tools:srcCompat="@tools:sample/avatars"
+        app:strokeColor="#C60188"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:strokeWidth="2dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        app:shapeAppearanceOverlay="@style/circle_image"/>
+</LinearLayout>

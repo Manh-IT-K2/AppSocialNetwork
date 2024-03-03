@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_user"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="18dp"
+            android:layout_gravity="center"
+           app:shapeAppearanceOverlay="@style/circle_image"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txt_UserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginStart="5dp"
+                android:text="Q Manh" />
+
+            <TextView
+                android:id="@+id/txt_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                android:layout_marginStart="5dp"
+                android:text="VietNam" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/btn_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="18dp"
+            app:srcCompat="@drawable/icon_more" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img_post"
+        android:layout_width="match_parent"
+        android:layout_height="375dp"
+        android:scaleType="fitXY"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="14dp">
+
+        <ImageView
+            android:id="@+id/btn_like"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="7dp"
+            app:srcCompat="@drawable/icon_favorite" />
+
+        <ImageView
+            android:id="@+id/btn_comment"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="7dp"
+            app:srcCompat="@drawable/icon_comment" />
+
+        <ImageView
+            android:id="@+id/btn_sentPostMessenger"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="7dp"
+            app:srcCompat="@drawable/icon_messenger" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icon_pagination" />
+
+        <ImageView
+            android:id="@+id/btn_save"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="20dp"
+            app:srcCompat="@drawable/icon_save" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_userLiked"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="4dp"
+            app:shapeAppearanceOverlay="@style/circle_image"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            android:text="Liked by craig_love" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_contentPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:text="joshua_l The game in" />
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:shape="oval">
+
+    <stroke
+        android:width="10dp"
+        android:color="@android:color/transparent" /> <!-- Border mặc định -->
+
+    <size
+        android:width="200dp"
+        android:height="200dp" /> <!-- Kích thước hình tròn -->
+    <gradient
+        android:angle="0"
+        android:centerColor="#D91A46"
+        android:endColor="#A60F93"
+        android:startColor="#FBAA47"></gradient>
+
+</shape>

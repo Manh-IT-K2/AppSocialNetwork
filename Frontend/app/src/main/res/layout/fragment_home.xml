@@ -3,13 +3,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@color/blackLite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/img_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="18dp"
+                app:srcCompat="@drawable/icon_camera" />
+
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="200dp"
+                android:layout_gravity="center"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/logo" />
+            <ImageView
+                android:id="@+id/img_igtv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="18dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/icon_igtv" />
+
+            <ImageView
+                android:id="@+id/img_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="18dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/icon_messenger" />
+
+        </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Home" />
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_marginTop="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_story"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:orientation="horizontal"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>
