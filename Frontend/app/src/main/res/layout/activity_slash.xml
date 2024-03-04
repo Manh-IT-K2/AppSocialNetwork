@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     tools:context=".activities.SlashActivity">
 
     <ImageView
@@ -23,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="Loading"
         android:textSize="30dp"
+        android:textColor="@color/colorGreen"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

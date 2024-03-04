@@ -21,6 +21,7 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.frameLayout);
 
         setFragment(new LoginFragment());
+//        setFragment(new CreateAccountFragment());
     }
 
     public void setFragment(Fragment fragment) {
