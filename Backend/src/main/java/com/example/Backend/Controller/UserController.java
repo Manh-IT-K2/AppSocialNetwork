@@ -18,7 +18,6 @@ public class UserController {
 
     @PostMapping("/createAccount")
     public ResponseEntity<String> createAccount(@RequestBody RequestCreateAccount requestCreateAccount) throws Exception{
-        System.out.println(requestCreateAccount.getEmail());
         userService.createAccount(requestCreateAccount);
         return ResponseEntity.ok("Đăng ký thành công");
     }

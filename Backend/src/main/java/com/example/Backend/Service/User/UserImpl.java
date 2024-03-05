@@ -1,13 +1,15 @@
 package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.model.User;
-import com.example.Backend.Repository.UserRepository;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,13 @@ import java.security.SecureRandom;
 @Service
 public class UserImpl implements UserService{
     @Autowired
-    private UserRepository userRepository;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     JavaMailSender javaMailSender;
+
+    public UserImpl() {
+    }
 
 
     @Override
@@ -28,12 +33,13 @@ public class UserImpl implements UserService{
         user.setEmail(requestCreateAccount.getEmail());
         user.setUsername(requestCreateAccount.getUsername());
         user.setPassword(BCrypt.hashpw(requestCreateAccount.getPassword(), BCrypt.gensalt()));
-        userRepository.save(user);
+        mongoTemplate.insert(user,"users");
     }
 
     @Override
     public ApiResponse<User> loginAccount(RequestLogin requestCreateLogin) throws Exception {
-        User user = userRepository.findByEmail(requestCreateLogin.getEmail());
+        Query query = new Query(Criteria.where("email").gt(requestCreateLogin.getEmail()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
 
         if(requestCreateLogin.isFromGoogle()){
             if(user == null){
@@ -41,7 +47,7 @@ public class UserImpl implements UserService{
                 savedUser.setEmail(requestCreateLogin.getEmail());
                 savedUser.setUsername(requestCreateLogin.getUsername());
                 savedUser.setAvatarImg(requestCreateLogin.getAvatarImg());
-                return new ApiResponse<User>(true, "", userRepository.save(savedUser));
+                return new ApiResponse<User>(true, "", mongoTemplate.insert(savedUser, "users"));
             }else{
                 return new ApiResponse<User>(true, "", user);
             }
@@ -59,7 +65,9 @@ public class UserImpl implements UserService{
 
     @Override
     public String sendOtp(String email) {
-        if(userRepository.existsByEmail(email)){
+        Query query = new Query(Criteria.where("email").gt(email));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        if(user != null){
             return "Email đã được sử dụng";
         }
         String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
