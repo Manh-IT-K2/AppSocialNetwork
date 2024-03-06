@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,13 @@ import android.widget.Toast;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
 import com.example.frontend.R;
+import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.UserService;
+import com.example.frontend.utils.CallApi;
+import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -35,6 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginFragment extends Fragment {
 
+    private UserViewModel userViewModel;
     private EditText emailET, passwordET;
     private TextView forgotTV, signUpTV;
     private Button loginBtn, googleSignInBtn;
@@ -46,7 +56,6 @@ public class LoginFragment extends Fragment {
 
 
     public LoginFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -86,7 +95,36 @@ public class LoginFragment extends Fragment {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String email = emailET.getText().toString();
+                String password = passwordET.getText().toString();
+
+                if(!email.contains("@gmail.com")){
+                    emailET.setError("Please input valid email");
+                    return;
+                }
+
+                if(password.isEmpty()){
+                    passwordET.setError("Please input valid password");
+                    return;
+                }
+
                 progressBar.setVisibility(View.VISIBLE);
+                userViewModel.login(new RequestLogin(email, "", "", password, false)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                    @Override
+                    public void onChanged(ApiResponse<UserResponse> response) {
+                        if(response.isStatus() == false)
+                            Toast.makeText(getContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+                        else{
+                            SharedPreferenceLocal.save(getContext(), "userId", response.getData().getId());
+
+                            Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+
+                            getActivity().finish();
+                        }
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
 
@@ -131,16 +169,22 @@ public class LoginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(requireContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
 
-                            String userStr = "Tên tài khoản: "+ user.getDisplayName() + "\nEmail: "+user.getEmail();
-                            Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                            intent.putExtra("user", userStr);
-                            startActivity(intent);
+                            userViewModel.login(new RequestLogin(user.getEmail(), user.getDisplayName(), user.getPhotoUrl().toString(), "", true)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                                @Override
+                                public void onChanged(ApiResponse<UserResponse> response) {
+                                    if(response.isStatus()){
+                                        SharedPreferenceLocal.save(getContext(), "userId", response.getData().getId());
+                                        Toast.makeText(requireContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                        progressBar.setVisibility(View.GONE);
 
-                            getActivity().finish();
+                                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
 
+                                        getActivity().finish();
+                                    }else Toast.makeText(getContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } else {
                             Log.w("LoginFragment", "signInWithCredential:failure", task.getException());
                             Toast.makeText(requireContext(), "Đăng nhập Firebase thất bại", Toast.LENGTH_SHORT).show();
@@ -150,6 +194,8 @@ public class LoginFragment extends Fragment {
     }
 
     private void init(View view) {
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
         emailET = view.findViewById(R.id.emailET);
         passwordET = view.findViewById(R.id.passwordET);
         forgotTV = view.findViewById(R.id.forgotTV);

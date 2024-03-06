@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.example.frontend.R;
+import com.example.frontend.utils.SharedPreferenceLocal;
 
 public class SlashActivity extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class SlashActivity extends AppCompatActivity {
 
                 // Kiểm tra nếu pixel là màu nền (ví dụ: màu trắng)
                 if (pixel == Color.WHITE) {
-                    resultBitmap.setPixel(i, j, Color.TRANSPARENT); // Hoặc đặt thành màu khác
+                    resultBitmap.setPixel(i, j, Color.BLACK); // Hoặc đặt thành màu khác
                 } else {
                     resultBitmap.setPixel(i, j, pixel);
                 }
@@ -45,8 +46,15 @@ public class SlashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SlashActivity.this, FragmentReplacerActivity.class));
-                finish();
+                String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+
+                if(userId.equals("")){
+                    startActivity(new Intent(SlashActivity.this, FragmentReplacerActivity.class));
+                    finish();
+                }else{
+                    startActivity(new Intent(SlashActivity.this, MainActivity.class));
+                }
+
             }
         }, 2000);
     }

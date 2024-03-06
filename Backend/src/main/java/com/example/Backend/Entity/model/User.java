@@ -21,7 +21,7 @@ public class User {
 
     private String password;
 
-    private boolean isFromGoogle = false;
+    private boolean fromGoogle;
 
     private String email;
 

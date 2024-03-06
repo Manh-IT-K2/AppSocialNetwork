@@ -5,21 +5,26 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.frontend.repository.UserRepository;
 import com.example.frontend.request.User.RequestCreateAccount;
+import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 
 public class UserViewModel extends ViewModel {
     private UserRepository userRepository;
-    private MutableLiveData<ApiResponse<Object>> apiResponseLiveData;
 
     public UserViewModel() {
         userRepository = new UserRepository();
     }
 
     public void registerUser(RequestCreateAccount requestCreateAccount) {
-        apiResponseLiveData = userRepository.registerUser(requestCreateAccount);
+        userRepository.registerUser(requestCreateAccount);
     }
 
-    public String sendOTP(String email) {
+    public MutableLiveData<ApiResponse<UserResponse>> login(RequestLogin requestLogin) {
+        return userRepository.login(requestLogin);
+    }
+
+    public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
     }
 }

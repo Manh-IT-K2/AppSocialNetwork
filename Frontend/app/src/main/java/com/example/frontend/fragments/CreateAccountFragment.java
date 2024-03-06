@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.R;
 import com.example.frontend.request.User.RequestCreateAccount;
+import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -32,19 +33,17 @@ public class CreateAccountFragment extends Fragment {
     private Button signUpBtn, sendOTPBtn;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
-    private String checkOTP;
+    private String checkOTP = "";
 
     public static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
     public CreateAccountFragment() {
-        Log.d("abc1","check1");
-        // Required empty public constructor
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("check","ok");
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
         init(view);
         clickListener();
@@ -53,7 +52,7 @@ public class CreateAccountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-            userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
     }
 
 
@@ -79,10 +78,10 @@ public class CreateAccountFragment extends Fragment {
                     return;
                 }
 
-//                if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
-//                    emailET.setError("Please input valid email");
-//                    return;
-//                }
+                if(!email.contains("@gmail.com")){
+                    emailET.setError("Please input valid email");
+                    return;
+                }
 
                 if(password.isEmpty()){
                     passwordET.setError("Please input valid password");
@@ -90,7 +89,7 @@ public class CreateAccountFragment extends Fragment {
                 }
 
                 if(!password.equals(confirmPassword)){
-                    passwordET.setError("Password not match");
+                    Toast.makeText(getActivity(), "Password is not match", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -99,10 +98,10 @@ public class CreateAccountFragment extends Fragment {
                     return;
                 }
 
-//                if(!otp.equals(checkOTP) && !checkOTP.isEmpty()){
-//                    Toast.makeText(getActivity(), "OTP is invalid", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
+                if(!otp.equals(checkOTP) || checkOTP.isEmpty()){
+                    Toast.makeText(getActivity(), "OTP is invalid", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -118,15 +117,27 @@ public class CreateAccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String email = emailET.getText().toString();
-                if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
+                if(!email.contains("@gmail.com")){
                     emailET.setError("Please input valid email");
                     return;
                 }
+
+                progressBar.setVisibility(View.VISIBLE);
+                userViewModel.sendOTP(email).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
+                    @Override
+                    public void onChanged(ApiResponse<String> stringApiResponse) {
+                        checkOTP  = stringApiResponse.getData();
+                        Toast.makeText(getActivity(), stringApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
     }
 
     private void init(View view) {
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
         nameET = view.findViewById(R.id.nameET);
         emailET = view.findViewById(R.id.emailET);
         passwordET = view.findViewById(R.id.passwordET);

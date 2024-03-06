@@ -36,19 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
-
-//        Intent intent = getIntent();
-//        String str = intent.getStringExtra("user");
-//        if (str != null) {
-//            name.setText(str);
-//        }
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, FragmentReplacerActivity.class);
-//                startActivity(intent);
-//            }
-//        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener =
