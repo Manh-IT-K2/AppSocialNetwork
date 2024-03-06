@@ -37,6 +37,7 @@ public class CreateAccountFragment extends Fragment {
     public static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
     public CreateAccountFragment() {
+        Log.d("abc1","check1");
         // Required empty public constructor
     }
 
@@ -49,14 +50,12 @@ public class CreateAccountFragment extends Fragment {
         clickListener();
         return view;
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d("abc1","check1");
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        Log.d("abc2","check2");
+            userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
+
 
     private void clickListener() {
         loginTV.setOnClickListener(new View.OnClickListener() {
@@ -80,10 +79,10 @@ public class CreateAccountFragment extends Fragment {
                     return;
                 }
 
-                if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
-                    emailET.setError("Please input valid email");
-                    return;
-                }
+//                if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
+//                    emailET.setError("Please input valid email");
+//                    return;
+//                }
 
                 if(password.isEmpty()){
                     passwordET.setError("Please input valid password");

@@ -11,10 +11,10 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface  UserService {
-    @POST("/user/createAccount")
+    @POST("user/createAccount")
     Call<ApiResponse<Object>> registerUser(@Body RequestCreateAccount request);
-    @POST("/user/login")
+    @POST("user/login")
     Call<ApiResponse<Object>> login(@Body RequestCreateAccount request);
-    @GET("/user/sendOTP")
+    @GET("user/sendOTP")
     Call<ApiResponse<Object>> sendOTP(@Query("email") String email);
 }
