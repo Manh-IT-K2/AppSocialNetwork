@@ -64,11 +64,11 @@ public class UserImpl implements UserService{
     }
 
     @Override
-    public String sendOtp(String email) {
+    public ApiResponse<String> sendOtp(String email) {
         Query query = new Query(Criteria.where("email").gt(email));
         User user = mongoTemplate.findOne(query, User.class, "users");
         if(user != null){
-            return "Email đã được sử dụng";
+            return new ApiResponse<String>(false, "Email đã được sử dụng", "");
         }
         String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int OTP_LENGTH = 6;
@@ -85,6 +85,6 @@ public class UserImpl implements UserService{
         message.setSubject("OTP Verification");
         message.setText("Your OTP is: " + otp);
         javaMailSender.send(message);
-        return otp.toString();
+        return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
     }
 }

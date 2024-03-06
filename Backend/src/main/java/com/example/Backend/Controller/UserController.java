@@ -17,9 +17,10 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/createAccount")
-    public ResponseEntity<String> createAccount(@RequestBody RequestCreateAccount requestCreateAccount) throws Exception{
+    public ResponseEntity<ApiResponse<String>> createAccount(@RequestBody RequestCreateAccount requestCreateAccount) throws Exception{
         userService.createAccount(requestCreateAccount);
-        return ResponseEntity.ok("Đăng ký thành công");
+        ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Tạo tài khoản thành công","");
+        return new ResponseEntity<ApiResponse<String>>(apiResponse,HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -29,9 +30,8 @@ public class UserController {
     }
 
     @GetMapping("/sendOTP")
-    public ResponseEntity<String> sendOTP( @RequestParam String email) throws Exception {
-        String rs = userService.sendOtp(email);
-        if(rs.equals("Email đã được sử dụng")) return new ResponseEntity<String>(rs, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<String>(rs, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<String>> sendOTP( @RequestParam String email) throws Exception {
+        ApiResponse<String> apiResponse = userService.sendOtp(email);
+        return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
 }

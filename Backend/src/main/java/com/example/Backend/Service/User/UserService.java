@@ -10,5 +10,5 @@ import org.springframework.stereotype.Service;
 public interface UserService {
     void createAccount (RequestCreateAccount requestCreateAccount) throws Exception;
     ApiResponse<User> loginAccount (RequestLogin requestCreateLogin) throws Exception;
-    String sendOtp(String email);
+    ApiResponse<String> sendOtp(String email);
 }

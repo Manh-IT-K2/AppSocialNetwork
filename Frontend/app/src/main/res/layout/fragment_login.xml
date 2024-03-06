@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
     tools:context=".fragments.LoginFragment">
 
     <TextView
@@ -13,7 +12,7 @@
         android:textStyle="bold"
         android:textSize="35sp"
         android:text="Login"
-        android:textColor="@color/colorGreen"
+        android:textColor="@color/blue1"
         android:layout_marginTop="78dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
@@ -33,6 +32,8 @@
             android:padding="18dp"
             android:layout_margin="10dp"
             android:background="@drawable/text_box"
+            android:textColor="@color/white"
+            android:textColorHint="#77FFFF99"
             android:hint="Email"
             android:textSize="20dp"
             />
@@ -46,6 +47,8 @@
             android:background="@drawable/text_box"
             android:hint="Password"
             android:textSize="20dp"
+            android:textColor="@color/white"
+            android:textColorHint="#77FFFF99"
             android:inputType="textPassword"
             />
 
@@ -60,7 +63,7 @@
             android:layout_marginRight="16dp"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:textColor="@color/colorGreen"
+            android:textColor="@color/blue1"
             />
 
     </LinearLayout>
@@ -79,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:background="@drawable/btn_bg"
+        android:backgroundTint="@color/blue1"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:textColor="#fff"
@@ -93,7 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sign in with Google"
-        android:background="@drawable/btn_bg"
+        android:backgroundTint="@color/blue1"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:textColor="#fff"
@@ -110,8 +113,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="36dp"
         android:text="Create Account, Sign Up"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/colorGreen"
+        android:textColor="@color/blue1"
         />
 
 </RelativeLayout>

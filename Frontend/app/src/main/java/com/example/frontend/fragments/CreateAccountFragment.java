@@ -24,7 +24,7 @@ import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class CreateAccountFragment extends Fragment {
-    //private UserViewModel userViewModel;
+    private UserViewModel userViewModel;
 
     private EditText nameET, emailET, passwordET, confirmPassET, otpET;
     private TextView loginTV;
@@ -42,15 +42,16 @@ public class CreateAccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_account, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_account, container, false);
+        init(view);
+        clickListener();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
-        clickListener();
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     private void clickListener() {
@@ -102,9 +103,11 @@ public class CreateAccountFragment extends Fragment {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-//                userViewModel.registerUser(new RequestCreateAccount(name, email,password));
-//                Toast.makeText(getActivity(), "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-//                progressBar.setVisibility(View.GONE);
+                userViewModel.registerUser(new RequestCreateAccount(name, email,password));
+                Toast.makeText(getActivity(), "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+
+                ((FragmentReplacerActivity) getActivity()).setFragment(new LoginFragment());
             }
         });
 
@@ -121,7 +124,6 @@ public class CreateAccountFragment extends Fragment {
     }
 
     private void init(View view) {
-        //userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         nameET = view.findViewById(R.id.nameET);
         emailET = view.findViewById(R.id.emailET);
         passwordET = view.findViewById(R.id.passwordET);
