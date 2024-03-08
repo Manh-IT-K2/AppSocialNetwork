@@ -19,12 +19,12 @@
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/blackLite"
             app:queryHint="@string/searchbar_hint"/>
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSearch"
+        android:id="@+id/recyclerViewUser"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
