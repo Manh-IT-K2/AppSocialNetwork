@@ -3,6 +3,7 @@ package com.example.Backend.Service.Post;
 import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestPost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
+import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class PostIml implements PostService{
 
     // select post by userId
     @Override
-    public List<RequestPostByUserId> getListPostsByUserId(String userId) {
+    public ApiResponse<List<RequestPostByUserId>> getListPostsByUserId(String userId) {
         LookupOperation lookupOperation = LookupOperation.newLookup()
                 .from("post")
                 .localField("idUser")
@@ -57,6 +58,7 @@ public class PostIml implements PostService{
 
         Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation);
 
-        return mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
+        List<RequestPostByUserId> list = mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
+        return new ApiResponse<List<RequestPostByUserId>>(true, "", list);
     }
 }

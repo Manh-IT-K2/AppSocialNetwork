@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,16 +29,11 @@ public class PostController {
 
     // select post
     @GetMapping("/getListPostByUserId")
-    public ResponseEntity<?> getListPostByUserId(@RequestParam String userId) {
-        try {
-            if (userId.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(false,"userId is required!",""));
-            }
-            List<RequestPostByUserId> result = postService.getListPostsByUserId(userId);
-            return result == null ? ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<String>(true,"No data!","")) : ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<String>(false,"Error occurred!",""));
-        }
+    public ResponseEntity<ApiResponse<List<RequestPostByUserId>>> getListPostByUserId(@RequestParam String userId) {
+        if (userId.isEmpty()) userId = "";
+        System.out.println(userId);
+        ApiResponse<List<RequestPostByUserId>> result = postService.getListPostsByUserId(userId);
+        return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(result, HttpStatus.OK);
     }
 
 }

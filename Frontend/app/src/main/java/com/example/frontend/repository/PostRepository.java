@@ -12,6 +12,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.PostService;
 import com.example.frontend.utils.CallApi;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -56,8 +57,9 @@ public class PostRepository {
             public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
                 if (response.isSuccessful()) {
                     ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
-
-                    Log.d("errrr", apiResponse.getData().toString());
+                    Gson gson = new Gson();
+                    String json = gson.toJson(apiResponse);
+                    Log.d("errrr", json);
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công

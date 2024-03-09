@@ -14,10 +14,10 @@ import retrofit2.http.Query;
 public interface PostService {
 
     // create Post
-    @POST("/post/createPost")
+    @POST("post/createPost")
     Call<ApiResponse<String>> createPost(@Body RequestCreatePost requestCreatePost, @Query("userId") String userId);
 
     // get list post by userId
-    @GET("/post/getListPostByUserId")
+    @GET("post/getListPostByUserId")
     Call<ApiResponse<List<RequestPostByUserId>>> getListPostByUserId(@Query("userId") String userId);
 }
