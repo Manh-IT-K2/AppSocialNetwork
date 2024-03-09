@@ -25,11 +25,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUser"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/cardSearch"
 
-        />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
 
 </RelativeLayout>

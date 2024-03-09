@@ -1,17 +1,22 @@
-package com.example.frontend.response.Post;
+package com.example.frontend.request.Post;
 
-public class PostResponse {
-    private String idPost;
-    private String userId;
-    private String imagePost;
-    private String description;
+public class RequestPostByUserId {
 
-    public PostResponse() {
+    String idPost;
+    String userId;
+    String userName;
+    String avtImage;
+    String imagePost;
+    String description;
+
+    public RequestPostByUserId() {
     }
 
-    public PostResponse(String idPost, String userId, String imagePost, String description) {
+    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, String imagePost, String description) {
         this.idPost = idPost;
         this.userId = userId;
+        this.userName = userName;
+        this.avtImage = avtImage;
         this.imagePost = imagePost;
         this.description = description;
     }
@@ -30,6 +35,22 @@ public class PostResponse {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getAvtImage() {
+        return avtImage;
+    }
+
+    public void setAvtImage(String avtImage) {
+        this.avtImage = avtImage;
     }
 
     public String getImagePost() {

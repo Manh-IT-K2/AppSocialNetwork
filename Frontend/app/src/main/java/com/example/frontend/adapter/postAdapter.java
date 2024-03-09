@@ -10,7 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.Post.PostResponse;
 
 import java.util.List;
@@ -18,9 +20,9 @@ import java.util.List;
 public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
 
     public Context mContext;
-    public List<PostResponse> listPost;
+    public List<RequestPostByUserId> listPost;
 
-    public postAdapter(Context mContext, List<PostResponse> listPost) {
+    public postAdapter(Context mContext, List<RequestPostByUserId> listPost) {
         this.mContext = mContext;
         this.listPost = listPost;
     }
@@ -34,12 +36,29 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        RequestPostByUserId post = listPost.get(position);
 
+        // Set thông tin bài đăng vào các view
+        holder.txt_userName.setText(post.getUserName());
+        holder.txt_address.setText("japan");
+        holder.txt_contentPost.setText(post.getDescription());
+
+        // Load hình ảnh từ URL bằng Glide
+        Glide.with(mContext)
+                .load(post.getAvtImage())
+                .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
+                .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
+                .into(holder.img_user);
+
+        Glide.with(mContext)
+                .load(post.getImagePost())
+                .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
+                .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
+                .into(holder.img_post);
     }
 
     @Override
     public int getItemCount() {
-
         return listPost.size();
     }
 
@@ -61,5 +80,5 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
         }
     }
 
-//    private void publisherInfor()
+
 }
