@@ -77,6 +77,10 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
             btn_comment = itemView.findViewById(R.id.btn_comment);
             btn_save = itemView.findViewById(R.id.btn_save);
             btn_sentPostMessenger = itemView.findViewById(R.id.btn_sentPostMessenger);
+
+            txt_userName = itemView.findViewById(R.id.txt_UserName);
+            txt_contentPost = itemView.findViewById(R.id.txt_contentPost);
+            txt_address = itemView.findViewById(R.id.txt_address);
         }
     }
 

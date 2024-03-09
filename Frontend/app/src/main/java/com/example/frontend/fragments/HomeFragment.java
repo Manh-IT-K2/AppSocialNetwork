@@ -44,19 +44,19 @@ public class HomeFragment extends Fragment {
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
         String userId = SharedPreferenceLocal.read(getContext(),"userId");
 
-        postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+        postViewModel.getListPostByUserId("65e8a525714ccc3a3caa7f77").observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 Log.d("check", json);
-//                if (response.getData().size() > 0) {
-//                    postList = response.getData();
-//                    adapter = new postAdapter(getContext(), postList);
-//                    recyclerView.setAdapter(adapter);
-//                } else {
-//                    // Xử lý khi không có dữ liệu hoặc có lỗi
-//                }
+                if (response.getData().size() > 0) {
+                    postList = response.getData();
+                    adapter = new postAdapter(getContext(), postList);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    // Xử lý khi không có dữ liệu hoặc có lỗi
+                }
             }
         });
 
