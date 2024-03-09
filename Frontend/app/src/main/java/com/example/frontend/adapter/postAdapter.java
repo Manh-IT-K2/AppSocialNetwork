@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,13 +11,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
+import com.example.frontend.response.Post.PostResponse;
+
+import java.util.List;
 
 public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
+
     public Context mContext;
+    public List<PostResponse> listPost;
+
+    public postAdapter(Context mContext, List<PostResponse> listPost) {
+        this.mContext = mContext;
+        this.listPost = listPost;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
+        return new postAdapter.ViewHolder(view);
     }
 
     @Override
@@ -26,7 +39,8 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 0;
+
+        return listPost.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -46,4 +60,6 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
             btn_sentPostMessenger = itemView.findViewById(R.id.btn_sentPostMessenger);
         }
     }
+
+//    private void publisherInfor()
 }
