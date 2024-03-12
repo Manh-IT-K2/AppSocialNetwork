@@ -51,7 +51,8 @@
             android:backgroundTint="@color/white"
             android:src="@drawable/icon_add"
             app:maxImageSize="40dp"
-            app:shapeAppearanceOverlay="@style/circle_image" />
+            app:shapeAppearanceOverlay="@style/circle_image"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
