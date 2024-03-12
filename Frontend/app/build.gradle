@@ -70,7 +70,11 @@ dependencies {
 
     // glide load image
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+//<<<<<<< HEAD
 
    //circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+//=======
+    implementation 'com.squareup.picasso:picasso:2.71828'
+//>>>>>>> df3db4be770d97c2ce67bde2827bba5385cc11b4
 }
