@@ -217,12 +217,12 @@
 
             android:id="@+id/followLayout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/countLayout"
             >
 
             <androidx.appcompat.widget.AppCompatButton
-
+                android:padding="5dp"
                 android:id="@+id/edit_profileBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -234,6 +234,35 @@
                 android:textColor="#008EFF"
                 android:translationY="5dp"
                 tools:ignore="TouchTargetSizeCheck" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:padding="5dp"
+                android:id="@+id/qrcodeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_profileBtn"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:minWidth="300dp"
+                android:minHeight="4dp"
+                android:text="QR code"
+                android:textColor="#008EFF"
+                android:translationY="5dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:padding="5dp"
+                android:id="@+id/logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/qrcodeBtn"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:minWidth="300dp"
+                android:minHeight="4dp"
+                android:text="Log out"
+                android:textColor="#008EFF"
+                android:translationY="5dp" />
+
         </RelativeLayout>
     </RelativeLayout>
 
@@ -254,4 +283,4 @@
 
     </androidx.recyclerview.widget.RecyclerView>
    </RelativeLayout>
-</FrameLayout>
+</RelativeLayout>

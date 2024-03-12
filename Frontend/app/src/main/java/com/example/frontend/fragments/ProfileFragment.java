@@ -13,19 +13,14 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.frontend.R;
 import com.example.frontend.activities.FragmentReplacerActivity;
-import com.example.frontend.activities.MainActivity;
 import com.example.frontend.utils.SharedPreferenceLocal;
 
 public class ProfileFragment extends Fragment {
-    AppCompatButton editprofileBtn;
+    AppCompatButton editprofileBtn, logoutBtn, qrcodeBtn;
 
-    Button logoutBtn, qrcodeBtn;
     // Button logoutBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,6 +32,13 @@ public class ProfileFragment extends Fragment {
         qrcodeBtn = view.findViewById(R.id.qrcodeBtn);
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferenceLocal.save(getContext(),"userId", "");
+                Intent intent = new Intent(getActivity (), FragmentReplacerActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         editprofileBtn = view.findViewById(R.id.edit_profileBtn);
@@ -68,18 +70,3 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 }
-
-
-
-      //  logoutBtn = view.findViewById(R.id.logout);
-//        logoutBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SharedPreferenceLocal.save(getContext(),"userId", "");
-//                Intent intent = new Intent(getActivity (), FragmentReplacerActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-//        return view;
-//  }
-//}
