@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.frontend.R;
-//import com.example.frontend.fragments.HomeFragment;
+import com.example.frontend.fragments.HomeFragment;
 import com.example.frontend.fragments.NotificationFragment;
 import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.SearchFragment;
@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
 
         // innit variable
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        selectedFragment = findViewById(R.id.fragment_layout_main);
+        //selectedFragment = findViewById(R.id.fragment_layout_main);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
-      //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener =
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     if (item.getItemId() == R.id.menu_home) {
-                      //  selectedFragment = new HomeFragment();
+                        selectedFragment = new HomeFragment();
                     } else if (item.getItemId() == R.id.menu_search) {
                         selectedFragment = new SearchFragment();
                     }else if (item.getItemId() == R.id.menu_post) {

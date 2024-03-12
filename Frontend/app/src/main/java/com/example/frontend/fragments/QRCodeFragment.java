@@ -6,8 +6,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,11 +46,13 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class QRCodeFragment extends Fragment {
 
-    MaterialButton cameraBtn, galleryBtn, scanBtn, refreshBtn, downloadBtn;
+    MaterialButton cameraBtn, galleryBtn, scanBtn, refreshBtn, downloadBtn, shareBtn;
     ImageView imageIv;
 
     static final int CAMERA_REQUEST_CODE = 100, STORAGE_REQUEST_CODE = 101;
@@ -130,6 +136,44 @@ public class QRCodeFragment extends Fragment {
                     Toast.makeText(getContext(), "Download is success", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getContext(), "Cannot download this QR Code", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = QRCode.readQRCodeFromImageView(imageIv);
+                if(userId != null){
+                    // Lấy drawable từ ImageView
+                    Drawable drawable = imageIv.getDrawable();
+                    Bitmap bitmap = null;
+
+                    if (drawable instanceof BitmapDrawable) {
+                        bitmap = ((BitmapDrawable) drawable).getBitmap();
+                    } else {
+                        // Chuyển đổi drawable thành bitmap nếu drawable không phải là BitmapDrawable
+                        bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                        drawable.draw(canvas);
+                    }
+
+                    // Lưu bitmap vào bộ nhớ tạm
+                    String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Image Description", null);
+
+                    // Tạo Uri từ đường dẫn lưu
+                    Uri imageUri = Uri.parse(path);
+
+                    // Tạo Intent để chia sẻ qua Zalo
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("image/*");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+//                    shareIntent.setPackage("com.zing.zalo"); // Gói ứng dụng Zalo
+
+                    startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua:"));
+                }else{
+                    Toast.makeText(getContext(), "Cannot share this QR Code", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -251,6 +295,7 @@ public class QRCodeFragment extends Fragment {
         scanBtn = view.findViewById(R.id.scanBtn);
         refreshBtn = view.findViewById(R.id.refreshBtn);
         downloadBtn = view.findViewById(R.id.downloadBtn);
+        shareBtn = view.findViewById(R.id.shareBtn);
 
         imageIv = view.findViewById(R.id.imageIv);
     }
