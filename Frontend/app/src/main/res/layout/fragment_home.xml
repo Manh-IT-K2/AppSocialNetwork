@@ -64,6 +64,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginStart="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -71,16 +72,16 @@
                     android:id="@+id/img_story"
                     android:layout_width="62dp"
                     android:layout_height="62dp"
-                    android:layout_gravity="center"
+                    android:elevation="2dp"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     app:shapeAppearanceOverlay="@style/circle_image"
                     app:strokeColor="#C60188"
                     app:strokeWidth="2dp"
-                    android:elevation="2dp"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageButton
@@ -101,8 +102,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Name User"
-                    android:textSize="13dp"
+                    android:text="Tin của bạn..."
+                    android:textSize="12dp"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="@+id/img_story"
                     app:layout_constraintStart_toStartOf="@+id/img_story"
                     app:layout_constraintTop_toBottomOf="@+id/img_story"></TextView>
@@ -117,6 +120,7 @@
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_post"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
