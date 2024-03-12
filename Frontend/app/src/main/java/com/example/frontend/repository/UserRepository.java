@@ -11,10 +11,11 @@ import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class UserRepository {
     UserService userService;
@@ -82,6 +83,30 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
+        MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
+
+        userService.getAllUsers().enqueue(new Callback<ApiResponse<List<UserResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<UserResponse>>> call, Response<ApiResponse<List<UserResponse>>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<List<UserResponse>> listApiResponse = response.body();
+                    mutableLiveData.setValue(listApiResponse);
+                    Log.d("allUsers", mutableLiveData.getValue().getData().toString());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
             }
         });

@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,12 @@ import java.util.ArrayList;
 public class searchUserAdapter extends RecyclerView.Adapter<searchUserAdapter.MyHolder> {
 
     Context context;
-    ArrayList<UserResponse> arrayList;
+    ArrayList<UserResponse> user_searchList;
     LayoutInflater layoutInflater;
 
-    public searchUserAdapter(Context context, ArrayList<UserResponse> arrayList) {
+    public searchUserAdapter(Context context, ArrayList<UserResponse> user_searchList) {
         this.context = context;
-        this.arrayList = arrayList;
+        this.user_searchList = user_searchList;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -36,12 +37,13 @@ public class searchUserAdapter extends RecyclerView.Adapter<searchUserAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull searchUserAdapter.MyHolder holder, int position) {
-
+        holder.userName.setText(user_searchList.get(position).getUsername());
+        holder.avatar.setImageURI(Uri.parse(user_searchList.get(position).getAvatarImg()));
     }
 
     @Override
     public int getItemCount() {
-        return arrayList.size();
+        return user_searchList.size();
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {

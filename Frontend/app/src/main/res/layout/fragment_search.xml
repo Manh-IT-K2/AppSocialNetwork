@@ -23,6 +23,18 @@
             app:queryHint="@string/searchbar_hint"/>
     </androidx.cardview.widget.CardView>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/cardSearch"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUser"
         android:layout_width="match_parent"

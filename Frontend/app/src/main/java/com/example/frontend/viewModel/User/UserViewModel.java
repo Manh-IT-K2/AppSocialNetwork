@@ -9,6 +9,8 @@ import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 
+import java.util.List;
+
 public class UserViewModel extends ViewModel {
     private UserRepository userRepository;
 
@@ -26,5 +28,9 @@ public class UserViewModel extends ViewModel {
 
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
+    }
+
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
+        return userRepository.getAllUsers();
     }
 }
