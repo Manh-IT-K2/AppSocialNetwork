@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="15dp"
+    tools:context=".fragments.QRCodeFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:layout_marginTop="25dp"
+            android:text="QR Code" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cameraBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Camera"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"
+                android:textSize="20sp"
+                app:backgroundTint="@color/blue1"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/galleryBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gallery"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:textSize="20sp"
+                app:backgroundTint="@color/blue1"
+                />
+            
+        </LinearLayout>
+        
+        <ImageView
+            android:padding="10dp"
+            android:id="@+id/imageIv"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:src="@drawable/icon_splash"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scanBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan"
+            android:textSize="20sp"
+            app:backgroundTint="@color/blue1"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/refreshBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            app:backgroundTint="@color/blue1"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/downloadBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download QR Code"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            app:backgroundTint="@color/blue1"
+            />
+
+    </LinearLayout>
+
+</ScrollView>

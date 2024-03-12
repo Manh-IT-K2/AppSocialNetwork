@@ -70,4 +70,8 @@ dependencies {
     // glide load image
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //QR Code
+    implementation 'com.google.mlkit:barcode-scanning:17.2.0'
+    implementation 'com.google.zxing:core:3.4.1'
 }
