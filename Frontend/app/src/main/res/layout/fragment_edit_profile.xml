@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragments.EditProfileFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/blackLite"
+    android:layout_height="match_parent">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/blackLite"
+        android:elevation="6dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetEnd="0dp"
+        android:id="@+id/toolbar" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/toolbarNameTV"
+                android:layout_centerVertical="true"
+                android:text="Edit profile"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/Done_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                android:layout_margin="16dp"
+                android:text="Done"
+                android:background="@null"
+                android:textSize="18sp"
+                android:textColor="@color/blue1"
+
+
+
+                >
+            </androidx.appcompat.widget.AppCompatButton>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/Cancel_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Cancel"
+                android:background="@null"
+                android:textColor="@color/colorPrimary"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
+
+
+
+            </androidx.appcompat.widget.AppCompatButton>
+
+
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/blackLite"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/edit_profilePhoto_Layout">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/profileImage"
+            android:src="@drawable/ic_launcher_background"
+            android:layout_margin="14dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/edit_profile_photo_Btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@null"
+            android:minWidth="300dp"
+            android:minHeight="4dp"
+            android:text="Change Profile Photo"
+            android:textColor="@color/blue1"
+            android:textStyle="bold"
+            android:translationY="150dp"
+            tools:ignore="TouchTargetSizeCheck">
+
+        </androidx.appcompat.widget.AppCompatButton>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#C8C8C8"
+        android:layout_below="@+id/edit_profilePhoto_Layout"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/view3" />
+    <RelativeLayout
+        android:id="@+id/combineLayout"
+        android:background="@color/blackLite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_profilePhoto_Layout"
+        android:translationY="20dp">
+
+        <!-- Các thông tin của người dùng -->
+        <LinearLayout
+            android:id="@+id/infoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Mỗi dòng thông tin -->
+            <!-- Dòng 1: Username -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/usernameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username:"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:translationX="10dp" />
+
+                <EditText
+                    android:id="@+id/usernameEditText"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter username"
+                    android:inputType="text"
+                    android:textColor="@color/white"
+                    android:translationX="20dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </LinearLayout>
+
+            <!-- Dòng 2: Website -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/websiteLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Website:"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:translationX="10dp" />
+
+                <EditText
+                    android:id="@+id/websiteEditText"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter website"
+                    android:textColor="@color/white"
+                    android:inputType="textUri"
+                    android:translationX="40dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </LinearLayout>
+
+            <!-- Dòng 3: Bio -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bioLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bio:"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:translationX="10dp" />
+
+                <EditText
+                    android:id="@+id/bioEditText"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter bio"
+                    android:textColor="@color/white"
+                    android:inputType="textMultiLine"
+                    android:translationX="80dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </LinearLayout>
+
+            <!-- Dòng 4: Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/nameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name:"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:translationX="10dp" />
+
+                <EditText
+                    android:id="@+id/nameEditText"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter name"
+                    android:textColor="@color/white"
+                    android:inputType="textMultiLine"
+                    android:translationX="60dp"
+                    tools:ignore="DuplicateIds,TouchTargetSizeCheck" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@+id/infoLayout"
+            android:layout_marginTop="14dp"
+            android:background="#E3E3E3" />
+
+
+        <!-- Button dưới thông tin -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/infoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:background="@null"
+            android:text="Switch to Professional Account"
+            android:textColor="@color/blue1" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#C8C8C8"
+            android:layout_below="@+id/infoButton"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/view" />
+
+        <LinearLayout
+            android:id="@+id/privateInfoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoButton"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:translationY="20dp">
+
+            <!-- Email -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email:"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary" />
+
+                <EditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:hint="Enter email"
+                    android:inputType="textEmailAddress"
+                    android:translationX="50dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
+
+            <!-- Phone -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone:"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary" />
+
+                <EditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:hint="Enter phone"
+                    android:inputType="phone"
+                    android:translationX="45dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
+
+            <!-- Gender -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender:"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary" />
+
+                <EditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:hint="Enter Gender"
+                    android:inputType="phone"
+                    android:translationX="40dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</RelativeLayout>
