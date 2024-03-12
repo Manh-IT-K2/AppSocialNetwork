@@ -59,12 +59,62 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_story"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:orientation="horizontal"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/img_story"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/circle_image"
+                    app:strokeColor="#C60188"
+                    app:strokeWidth="2dp"
+                    android:elevation="2dp"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <ImageButton
+                    android:id="@+id/img_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:background="@drawable/circle_add_story"
+                    android:elevation="4dp"
+                    android:src="@drawable/icon_add_night"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_story"
+                    app:layout_constraintEnd_toEndOf="@+id/img_story"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@+id/img_story" />
+
+                <TextView
+                    android:id="@+id/txt_nameUserStory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Name User"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="@+id/img_story"
+                    app:layout_constraintStart_toStartOf="@+id/img_story"
+                    app:layout_constraintTop_toBottomOf="@+id/img_story"></TextView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_story"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"/>
+
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_post"
             android:layout_width="match_parent"
