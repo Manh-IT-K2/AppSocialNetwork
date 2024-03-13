@@ -13,7 +13,11 @@ public class CallApi {
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
+<<<<<<< Updated upstream
                     .baseUrl(URL_Long)
+=======
+                    .baseUrl(URL_Manh)
+>>>>>>> Stashed changes
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

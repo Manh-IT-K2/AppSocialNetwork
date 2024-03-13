@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,12 @@ import com.example.frontend.request.Story.RequestStoryByUserId;
 
 import java.util.List;
 
-public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
-    public Context mContext;
-    public List<RequestStoryByUserId> listStory;
+public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_HEADER = 0;
+    private static final int VIEW_TYPE_ITEM = 1;
+
+    private Context mContext;
+    private List<RequestStoryByUserId> listStory;
 
     public StoryAdapter(Context mContext, List<RequestStoryByUserId> listStory) {
         this.mContext = mContext;
@@ -27,43 +31,64 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.story_item,parent,false);
-        return new StoryAdapter.ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_HEADER) {
+            View headerView = LayoutInflater.from(mContext).inflate(R.layout.item_header_story, parent, false);
+            return new HeaderViewHolder(headerView);
+        } else {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.story_item, parent, false);
+            return new ViewHolder(itemView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RequestStoryByUserId story = listStory.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == VIEW_TYPE_HEADER) {
+            // Handle header binding here if needed
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+            // Bind header data or perform any necessary operations
+        } else {
+            // Handle regular item binding
+            RequestStoryByUserId story = listStory.get(position - 1); // Adjust position for header
+            ViewHolder viewHolder = (ViewHolder) holder;
+            viewHolder.txt_nameUserStory.setText(story.getUserName());
+            Glide.with(mContext)
+                    .load(story.getAvtUser())
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .into(viewHolder.img_avtUser);
+        }
+    }
 
-        // set text for userName
-        holder.txt_nameUserStory.setText(story.getUserName());
-
-        // set image for avtUser
-        Glide.with(mContext)
-                .load(story.getAvtUser())
-                .placeholder(R.drawable.logo)
-                .error(R.drawable.logo)
-                .into(holder.img_avtUser);
-
+    @Override
+    public int getItemViewType(int position) {
+        return (position == 0) ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM;
     }
 
     @Override
     public int getItemCount() {
-        return listStory.size();
+        // Add 1 to the item count to account for the header
+        return listStory.size() + 1;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    // Create a separate ViewHolder for the header if needed
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // Add any additional views or functionality for the header here
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            // Initialize header views here if needed
+        }
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView img_avtUser;
         private TextView txt_nameUserStory;
 
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             img_avtUser = itemView.findViewById(R.id.img_avtUser);
             txt_nameUserStory = itemView.findViewById(R.id.txt_nameUserStory);
-
         }
     }
 }
