@@ -4,7 +4,6 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +14,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.List;
+
 @Service
 public class UserImpl implements UserService{
     @Autowired
@@ -90,5 +91,11 @@ public class UserImpl implements UserService{
         message.setText("Your OTP is: " + otp);
         javaMailSender.send(message);
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
+    }
+
+    @Override
+    public ApiResponse<List<User>> getAllUsers() {
+        List<User> userList = mongoTemplate.findAll(User.class, "users");
+        return new ApiResponse<List<User>>(true, "Lấy tất cả dữ liệu user thành công!", userList);
     }
 }

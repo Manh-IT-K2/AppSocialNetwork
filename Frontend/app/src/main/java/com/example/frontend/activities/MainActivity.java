@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.frontend.R;
-//import com.example.frontend.fragments.HomeFragment;
+import com.example.frontend.fragments.HomeFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.EditProfileFragment;
 import com.example.frontend.fragments.HomeFragment;
