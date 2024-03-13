@@ -83,16 +83,16 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Tạo instance của fragment mới
-//                Fragment QRCodeFragment = new QRCodeFragment();
-//
-//                // Lấy instance của FragmentManager
-//                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//
-//                // Bắt đầu transaction để thay thế fragment hiện tại bằng fragment mới
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.fragment_layout_main, QRCodeFragment);
-//                fragmentTransaction.addToBackStack(null); // Thêm transaction này vào stack back để quay trở lại fragment trước đó (nếu cần)
-//                fragmentTransaction.commit();
+                Fragment QRCodeFragment = new QRCodeFragment();
+
+                // Lấy instance của FragmentManager
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+
+                // Bắt đầu transaction để thay thế fragment hiện tại bằng fragment mới
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_layout_main, QRCodeFragment);
+                fragmentTransaction.addToBackStack(null); // Thêm transaction này vào stack back để quay trở lại fragment trước đó (nếu cần)
+                fragmentTransaction.commit();
             }
         });
         return view;
