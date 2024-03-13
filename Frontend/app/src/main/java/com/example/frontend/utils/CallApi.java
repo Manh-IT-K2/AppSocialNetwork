@@ -8,11 +8,12 @@ public class CallApi {
     public static String URL_Loi = "https://jskw989d-8080.asse.devtunnels.ms/api/";
     public static String URL_Manh = "https://3rg07cfh-8080.asse.devtunnels.ms/api/";
     public static String URL_Hoan = "https://vnlbd1g2-8080.asse.devtunnels.ms/api/";
+    public static String URL_Long = "https://nbbwn98c-8080.asse.devtunnels.ms/api/";
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(URL_Hoan)
+                    .baseUrl(URL_Long)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
