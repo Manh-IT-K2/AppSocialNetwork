@@ -4,13 +4,10 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.frontend.request.Post.RequestCreatePost;
-import com.example.frontend.request.Post.RequestPostByUserId;
-import com.example.frontend.request.User.RequestCreateAccount;
-import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.Story.RequestCreateStory;
+import com.example.frontend.request.Story.RequestStoryByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.User.UserResponse;
-import com.example.frontend.service.PostService;
+import com.example.frontend.service.StoryService;
 import com.example.frontend.utils.CallApi;
 import com.google.gson.Gson;
 
@@ -20,18 +17,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PostRepository {
-    PostService postService;
+public class StoryRepository {
+    StoryService storyService;
 
-    public PostRepository() {
-        postService = CallApi.getRetrofitInstance().create(PostService.class);
+    public StoryRepository() {
+        storyService = CallApi.getRetrofitInstance().create(StoryService.class);
     }
 
     // create post
-    public void createPost(RequestCreatePost request, String userId) {
+    public void createStory(RequestCreateStory request, String userId) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
 
-        postService.createPost(request,userId).enqueue(new Callback<ApiResponse<String>>() {
+        storyService.createStory(request,userId).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {
@@ -50,30 +47,29 @@ public class PostRepository {
     }
 
     // get list post
-    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostByUserId(String userId) {
-        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
-        postService.getListPostByUserId(userId).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+    public MutableLiveData<ApiResponse<List<RequestStoryByUserId>>> getListStoryByUserId(String userId) {
+        MutableLiveData<ApiResponse<List<RequestStoryByUserId>>> mutableLiveData = new MutableLiveData<>();
+        storyService.getListStoryByUserId(userId).enqueue(new Callback<ApiResponse<List<RequestStoryByUserId>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+            public void onResponse(Call<ApiResponse<List<RequestStoryByUserId>>> call, Response<ApiResponse<List<RequestStoryByUserId>>> response) {
                 if (response.isSuccessful()) {
-                    ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
+                    ApiResponse<List<RequestStoryByUserId>> apiResponse = response.body();
                     Gson gson = new Gson();
                     String json = gson.toJson(apiResponse);
                     Log.d("err", json);
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công
-                    mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Failed to get data from server", null));
+                    mutableLiveData.setValue(new ApiResponse<List<RequestStoryByUserId>>(false, "Failed to get data from server", null));
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<RequestStoryByUserId>>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
-                mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error: " + t.getMessage(), null));
+                mutableLiveData.setValue(new ApiResponse<List<RequestStoryByUserId>>(false, "Error: " + t.getMessage(), null));
             }
         });
         return mutableLiveData;
     }
-
 }

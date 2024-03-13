@@ -16,13 +16,17 @@ import com.example.frontend.response.User.UserResponse;
 
 import java.util.ArrayList;
 
-public class searchUserAdapter extends RecyclerView.Adapter<searchUserAdapter.MyHolder> {
+public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.MyHolder> {
 
     Context context;
     ArrayList<UserResponse> user_searchList;
     LayoutInflater layoutInflater;
 
+<<<<<<< Updated upstream
     public searchUserAdapter(Context context, ArrayList<UserResponse> user_searchList) {
+=======
+    public SearchUserAdapter(Context context, ArrayList<UserResponse> arrayList) {
+>>>>>>> Stashed changes
         this.context = context;
         this.user_searchList = user_searchList;
         layoutInflater = LayoutInflater.from(context);
@@ -36,9 +40,14 @@ public class searchUserAdapter extends RecyclerView.Adapter<searchUserAdapter.My
     }
 
     @Override
+<<<<<<< Updated upstream
     public void onBindViewHolder(@NonNull searchUserAdapter.MyHolder holder, int position) {
         holder.userName.setText(user_searchList.get(position).getUsername());
         holder.avatar.setImageURI(Uri.parse(user_searchList.get(position).getAvatarImg()));
+=======
+    public void onBindViewHolder(@NonNull SearchUserAdapter.MyHolder holder, int position) {
+
+>>>>>>> Stashed changes
     }
 
     @Override
