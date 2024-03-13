@@ -14,9 +14,13 @@ import android.widget.TextView;
 
 import com.example.frontend.R;
 //import com.example.frontend.fragments.HomeFragment;
+import com.example.frontend.fragments.CreateAccountFragment;
+import com.example.frontend.fragments.EditProfileFragment;
+import com.example.frontend.fragments.HomeFragment;
 import com.example.frontend.fragments.NotificationFragment;
 import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.SearchFragment;
+import com.example.frontend.fragments.SettingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,30 +36,32 @@ public class MainActivity extends AppCompatActivity {
 
         // innit variable
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        selectedFragment = findViewById(R.id.fragment_layout_main);
+     //   selectedFragment = findViewById(R.id.fragment_layout_main);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
-      //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
+         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
+        handleIntentData();
     }
-
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
 
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     if (item.getItemId() == R.id.menu_home) {
-                      //  selectedFragment = new HomeFragment();
+                       selectedFragment = new HomeFragment();
                     } else if (item.getItemId() == R.id.menu_search) {
                         selectedFragment = new SearchFragment();
                     }else if (item.getItemId() == R.id.menu_post) {
                         selectedFragment = null;
-
                     } else if (item.getItemId() == R.id.menu_notification) {
                         selectedFragment = new NotificationFragment();
                     } else if (item.getItemId() == R.id.menu_profile) {
+                        if ("setting_btn".equals(getIntent().getStringExtra("fragment_to_load"))) {
+                            selectedFragment = new SettingFragment();
+                            return true; // Return true without changing the fragment
+                        }
                         selectedFragment = new ProfileFragment();
                     }
-
                     if(selectedFragment != null){
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,selectedFragment).commit();
                     }
@@ -63,4 +69,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+    private void handleIntentData() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            String fragmentToLoad = intent.getStringExtra("fragment_to_load");
+            if (fragmentToLoad != null) {
+                switch (fragmentToLoad) {
+                    case "edit_profile_done":
+                    case "edit_profile_cancel":
+                        selectedFragment = new ProfileFragment();
+                        break;
+                    case "back_setting":
+                        selectedFragment = new ProfileFragment();
+                        break;
+                    case "setting_btn":
+                        selectedFragment = new SettingFragment();
+                        break;
+                }
+                // Replace the fragment with the selected one
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main, selectedFragment).commit();
+                    bottomNavigationView.setSelectedItemId(R.id.menu_profile);
+
+                }
+            }
+        }
+    }
 }

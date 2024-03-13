@@ -20,7 +20,8 @@ import com.example.frontend.activities.MainActivity;
 import com.example.frontend.utils.SharedPreferenceLocal;
 
 public class ProfileFragment extends Fragment {
-    AppCompatButton editprofileBtn;
+    Button editprofileBtn;
+           ImageButton editprofileImageBtn,menuSetting;
 
     // Button logoutBtn;
     @Override
@@ -31,12 +32,31 @@ public class ProfileFragment extends Fragment {
 
 
         editprofileBtn = view.findViewById(R.id.edit_profileBtn);
+        editprofileImageBtn = view.findViewById(R.id.edit_profileImage);
+        menuSetting = view.findViewById(R.id.menu_btn);
         editprofileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity (), FragmentReplacerActivity.class);
+                Intent intent = new Intent(getActivity(), FragmentReplacerActivity.class);
+                // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
+                intent.putExtra("fragment_to_load", "edit_profile");
+                // Bắt đầu activity với Intent đã tạo
                 startActivity(intent);
 
+            }
+        });
+        editprofileImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),"Clicked",Toast.LENGTH_LONG).show();
+            }
+        });
+        menuSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity (), MainActivity.class);
+                intent.putExtra("fragment_to_load", "setting_btn");
+                startActivity(intent);
             }
         });
         return view;

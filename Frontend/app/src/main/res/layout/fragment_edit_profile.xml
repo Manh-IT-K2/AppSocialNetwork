@@ -30,40 +30,42 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/Done_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
-                android:layout_margin="16dp"
+
                 android:text="Done"
                 android:background="@null"
+                android:backgroundTint="#2E2D2D"
                 android:textSize="18sp"
                 android:textColor="@color/blue1"
 
 
 
                 >
-            </androidx.appcompat.widget.AppCompatButton>
+            </Button>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/Cancel_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="16dp"
-                android:layout_marginBottom="16dp"
+
                 android:text="Cancel"
                 android:background="@null"
+                android:backgroundTint="#2E2D2D"
+                android:textSize="18sp"
                 android:textColor="@color/colorPrimary"
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
 
 
 
-            </androidx.appcompat.widget.AppCompatButton>
+            </Button>
 
 
 
@@ -84,7 +86,7 @@
             android:src="@drawable/ic_launcher_background"
             android:layout_margin="14dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/edit_profile_photo_Btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,13 +94,14 @@
             android:background="@null"
             android:minWidth="300dp"
             android:minHeight="4dp"
+            android:backgroundTint="#2E2D2D"
             android:text="Change Profile Photo"
             android:textColor="@color/blue1"
             android:textStyle="bold"
             android:translationY="150dp"
             tools:ignore="TouchTargetSizeCheck">
 
-        </androidx.appcompat.widget.AppCompatButton>
+        </Button>
 
     </RelativeLayout>
     <View
@@ -249,12 +252,13 @@
 
 
         <!-- Button dưới thông tin -->
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/infoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/infoLayout"
             android:layout_centerHorizontal="true"
+            android:backgroundTint="#2E2D2D"
             android:layout_marginTop="20dp"
             android:textStyle="bold"
             android:background="@null"
