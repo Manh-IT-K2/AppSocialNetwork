@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
-import com.example.frontend.adapter.searchUserAdapter;
+import com.example.frontend.adapter.SearchUserAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -108,7 +108,7 @@ public class SearchFragment extends Fragment {
             recyclerView_User.setLayoutManager(layoutManager);
 
             // Khoi tao Adapter
-            searchUserAdapter searchUserAdapter = new searchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
+            SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
             System.out.println(searchUserAdapter.getItemCount());
             recyclerView_User.setAdapter(searchUserAdapter);
         } else {
