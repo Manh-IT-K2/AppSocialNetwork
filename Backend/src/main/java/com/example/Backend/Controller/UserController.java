@@ -33,6 +33,7 @@ public class UserController {
 
     @GetMapping("/sendOTP")
     public ResponseEntity<ApiResponse<String>> sendOTP( @RequestParam String email) throws Exception {
+        System.out.println(email);
         ApiResponse<String> apiResponse = userService.sendOtp(email);
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
