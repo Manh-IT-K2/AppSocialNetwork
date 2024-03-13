@@ -14,7 +14,7 @@ public class RequestPostByUserId {
     private String userId;
     private String userName;
     private String avtImage;
-    private  String imagePost;
+    private String imagePost;
     private String description;
 
 

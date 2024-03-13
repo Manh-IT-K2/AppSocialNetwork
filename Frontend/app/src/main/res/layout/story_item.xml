@@ -7,19 +7,19 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/img_story"
+        android:id="@+id/img_avtUser"
         android:layout_width="62dp"
         android:layout_height="62dp"
         tools:srcCompat="@tools:sample/avatars"
         app:strokeColor="#C60188"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"
         app:strokeWidth="2dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         app:shapeAppearanceOverlay="@style/circle_image"/>
     <TextView
-        android:id="@+id/txt_nameUserStory"
+            android:id="@+id/txt_nameUserStory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

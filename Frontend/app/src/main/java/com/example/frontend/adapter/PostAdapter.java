@@ -13,16 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Post.RequestPostByUserId;
-import com.example.frontend.response.Post.PostResponse;
 
 import java.util.List;
 
-public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
     public Context mContext;
     public List<RequestPostByUserId> listPost;
 
-    public postAdapter(Context mContext, List<RequestPostByUserId> listPost) {
+    public PostAdapter(Context mContext, List<RequestPostByUserId> listPost) {
         this.mContext = mContext;
         this.listPost = listPost;
     }
@@ -31,7 +30,7 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.ViewHolder>{
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
-        return new postAdapter.ViewHolder(view);
+        return new PostAdapter.ViewHolder(view);
     }
 
     @Override

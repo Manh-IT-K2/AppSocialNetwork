@@ -34,7 +34,7 @@
                 android:textStyle="bold" />
 
             <ImageButton
-                android:id="@+id/Send_btn"
+                android:id="@+id/menu_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -228,6 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:background="@null"
+                android:backgroundTint="#141218"
                 android:minWidth="300dp"
                 android:minHeight="4dp"
                 android:text="Edit Profile"
