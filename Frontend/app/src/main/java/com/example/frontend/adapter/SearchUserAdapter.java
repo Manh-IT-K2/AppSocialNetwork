@@ -23,7 +23,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
     LayoutInflater layoutInflater;
 
 
-    public SearchUserAdapter(Context context, ArrayList<UserResponse> arrayList) {
+    public SearchUserAdapter(Context context, ArrayList<UserResponse> user_searchList) {
 
         this.context = context;
         this.user_searchList = user_searchList;
