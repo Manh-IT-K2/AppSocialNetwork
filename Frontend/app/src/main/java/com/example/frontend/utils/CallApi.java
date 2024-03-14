@@ -13,7 +13,7 @@ public class CallApi {
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(URL_Long)
+                    .baseUrl(URL_Hoan)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    tools:context=".fragments.VerificationCodeFragment">
+
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:id="@+id/view1"
+    android:layout_height="match_parent">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/icon_verify"
+        android:src="@drawable/ic_verifycode"
+        android:layout_margin="50dp" />
+    <TextView
+        android:id="@+id/titleVerify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:text="Verification Code"
+        android:textColor="@color/blue1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_below="@+id/icon_verify"
+        android:layout_marginTop="-30dp"
+        android:layout_centerHorizontal="true"
+       />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title1"
+        android:text="Please enter the code to"
+        android:textSize="20sp"
+        android:textColor="#F8F8F8"
+        android:layout_below="@+id/titleVerify"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameTitle"
+        android:text="Myylyy12@gmail.com"
+        android:textSize="20sp"
+        android:textColor="#F8F8F8"
+        android:layout_below="@+id/titleVerify"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        />
+
+    <EditText
+        android:id="@+id/otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameTitle"
+        android:layout_margin="50dp"
+        android:background="@drawable/text_box"
+        android:padding="18dp"
+        android:textColor="@color/white"
+        android:textColorHint="#77FFFF99"
+        android:textSize="20dp"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/verifyBtn"
+        android:text="Verify"
+        android:textSize="25sp"
+        android:textColor="@color/white"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/otp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/blue1">
+
+    </Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/resendOTP"
+        android:text="Resend Code"
+        android:textSize="22sp"
+        android:textColor="@color/blue1"
+       android:layout_marginTop="2dp"
+        android:layout_below="@+id/verifyBtn"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="#141218">
+
+    </Button>
+</RelativeLayout>
+
+
+</FrameLayout>
