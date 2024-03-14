@@ -158,8 +158,23 @@ public class LoginFragment extends Fragment {
         forgotTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Chuyển sang fragment quên mật khẩu
-                ((FragmentReplacerActivity) requireActivity()).setFragment(new VerificationCodeFragment());
+                String email = emailET.getText().toString().trim();
+
+                if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    emailET.setError("Please enter a valid email address");
+                    return;
+                }
+
+                // Tạo một Bundle để đóng gói dữ liệu email
+                Bundle bundle = new Bundle();
+                bundle.putString("email", email);
+
+                // Tạo Fragment mới và gắn Bundle vào đó
+                VerificationCodeFragment verificationCodeFragment = new VerificationCodeFragment();
+                verificationCodeFragment.setArguments(bundle);
+
+                // Chuyển sang fragment xác minh mã và truyền địa chỉ email
+                ((FragmentReplacerActivity) requireActivity()).setFragment(verificationCodeFragment);
             }
         });
 
