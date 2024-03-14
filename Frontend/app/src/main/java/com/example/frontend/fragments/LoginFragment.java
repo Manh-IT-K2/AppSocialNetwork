@@ -158,8 +158,11 @@ public class LoginFragment extends Fragment {
         forgotTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Chuyển sang fragment quên mật khẩu
+                ((FragmentReplacerActivity) requireActivity()).setFragment(new VerificationCodeFragment());
             }
         });
+
 
         chooseFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
