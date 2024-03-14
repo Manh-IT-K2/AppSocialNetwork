@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/btn_closeStory"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             app:srcCompat="@drawable/icon_close" />
 
         <TextView
@@ -64,7 +64,7 @@
             android:layout_height="40dp"
             android:gravity="center"
             android:textColor="@color/white"
-            android:background="@drawable/background_btn_chose_story"
+            android:background="@drawable/background_btn_radius"
             android:textSize="15sp"
             android:text="Chọn" />
     </LinearLayout>

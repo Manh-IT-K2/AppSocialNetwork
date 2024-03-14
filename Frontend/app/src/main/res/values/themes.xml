@@ -5,7 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
     <style name="Theme.Frontend" parent="Base.Theme.Frontend" />
-    <style name="circle_image">
+    <style name="circleImageview">
+        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 </resources>
