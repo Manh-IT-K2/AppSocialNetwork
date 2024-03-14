@@ -158,6 +158,12 @@ public class LoginFragment extends Fragment {
         forgotTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                forgotTV = v.findViewById(R.id.forgotTV);
+                Intent intent = new Intent(getActivity(), FragmentReplacerActivity.class);
+                // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
+                intent.putExtra("fragment_to_load", "verify_code");
+                // Bắt đầu activity với Intent đã tạo
+                startActivity(intent);
             }
         });
 
