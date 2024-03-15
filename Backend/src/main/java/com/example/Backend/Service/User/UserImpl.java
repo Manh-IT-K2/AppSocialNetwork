@@ -92,6 +92,28 @@ public class UserImpl implements UserService{
         javaMailSender.send(message);
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
     }
+    @Override
+    public ApiResponse<String> sendOtp_forgotpassword(String email) {
+        Query query = new Query(Criteria.where("email").is(email));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int OTP_LENGTH = 6;
+        StringBuilder otp = new StringBuilder();
+
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            otp.append(CHARACTERS.charAt(index));
+        }
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("OTP Verification");
+        message.setText("Your OTP is: " + otp);
+        javaMailSender.send(message);
+        return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
+    }
 
     @Override
     public ApiResponse<List<User>> getAllUsers() {

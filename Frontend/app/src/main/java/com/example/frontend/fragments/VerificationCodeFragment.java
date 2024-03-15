@@ -76,7 +76,7 @@ public class VerificationCodeFragment extends Fragment {
                     Email.setError("Please input valid email");
                     return;
                 }
-                userViewModel.sendOTP(email).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
+                userViewModel.sendOtp_forgotpassword(email).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
                     @Override
                     public void onChanged(ApiResponse<String> stringApiResponse) {
                         checkOTP  = stringApiResponse.getData();
