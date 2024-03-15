@@ -55,20 +55,36 @@ public class SearchFragment extends Fragment {
         searchView.setIconified(false);
         searchView.clearFocus();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                user_searchList = new ArrayList<>();
-                search_User(query);
-                return false;
-            }
+//        recyclerView_User.setLayoutManager(new LinearLayoutManager(getContext()));
+//        SearchUserAdapter adapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
+//        recyclerView_User.setAdapter(adapter);
 
+        userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
             @Override
-            public boolean onQueryTextChange(String newText) {
-                search_User(newText);
-                return false;
+            public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
+                // Cập nhật dữ liệu cho adapter và thông báo thay đổi dữ liệu
+                userList = userResponses.getData();
+                // Ẩn ProgressBar khi dữ liệu đã được cập nhật
+                progressBar.setVisibility(View.GONE);
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        user_searchList = new ArrayList<>();
+                        search_User(query);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        search_User(newText);
+                        return true;
+                    }
+                });
             }
         });
+
+
+
     }
 
     public void search_User(String query) {
@@ -76,20 +92,20 @@ public class SearchFragment extends Fragment {
         if (query.length() > 0) { // Co nhap noi dung tim kiem
             // Neu userList rong
             // Lay tat ca du lieu user va dua vao userList
-            if(userList.isEmpty()) {
-                progressBar.setVisibility(View.VISIBLE);
-                userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
-                    @Override
-                    public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
-                        if (listApiResponse.isStatus() == false)
-                            Toast.makeText(getContext(), listApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        else {
-                            userList = listApiResponse.getData();
-                        }
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
+//            if(userList.isEmpty()) {
+//                progressBar.setVisibility(View.VISIBLE);
+//                userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+//                    @Override
+//                    public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
+//                        if (listApiResponse.isStatus() == false)
+//                            Toast.makeText(getContext(), listApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+//                        else {
+//                            userList = listApiResponse.getData();
+//                        }
+//                        progressBar.setVisibility(View.GONE);
+//                    }
+//                });
+//            }
 
             // Hien thi recyclerview
             recyclerView_User.setVisibility(View.VISIBLE);
