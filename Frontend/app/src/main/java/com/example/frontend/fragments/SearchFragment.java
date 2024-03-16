@@ -33,7 +33,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView_User;
     private ProgressBar progressBar;
     private List<UserResponse> userList = new ArrayList<>();
-    private ArrayList<UserResponse> user_searchList;
+    private List<UserResponse> user_searchList;
 
 
     @Override
@@ -50,82 +50,67 @@ public class SearchFragment extends Fragment {
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         searchView = view.findViewById(R.id.searchView);
         progressBar = view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
         recyclerView_User = view.findViewById(R.id.recyclerViewUser);
+        //recyclerView_User.setVisibility(View.GONE);
         searchView.setIconified(false);
         searchView.clearFocus();
 
-//        recyclerView_User.setLayoutManager(new LinearLayoutManager(getContext()));
-//        SearchUserAdapter adapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-//        recyclerView_User.setAdapter(adapter);
+        if (userList.isEmpty()) {
+            userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+                @Override
+                public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
+                    // Cập nhật dữ liệu cho adapter và thông báo thay đổi dữ liệu
+                    userList = userResponses.getData();
+                    // Ẩn ProgressBar khi dữ liệu đã được cập nhật
+                    progressBar.setVisibility(View.GONE);
+//                    recyclerView_User.setLayoutManager(new LinearLayoutManager(getContext()));
+//                    SearchUserAdapter adapter = new SearchUserAdapter(getContext(), userList);
+//                    recyclerView_User.setAdapter(adapter);
+                }
+            });
+        }
 
-        userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
-                // Cập nhật dữ liệu cho adapter và thông báo thay đổi dữ liệu
-                userList = userResponses.getData();
-                // Ẩn ProgressBar khi dữ liệu đã được cập nhật
-                progressBar.setVisibility(View.GONE);
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        user_searchList = new ArrayList<>();
-                        search_User(query);
-                        return true;
-                    }
+            public boolean onQueryTextSubmit(String query) {
+                search_User(query);
+                return false;
+            }
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        search_User(newText);
-                        return true;
-                    }
-                });
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                search_User(newText);
+                return false;
             }
         });
-
-
-
     }
 
     public void search_User(String query) {
+        user_searchList = new ArrayList<>();
 
         if (query.length() > 0) { // Co nhap noi dung tim kiem
-            // Neu userList rong
-            // Lay tat ca du lieu user va dua vao userList
-//            if(userList.isEmpty()) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
-//                    @Override
-//                    public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
-//                        if (listApiResponse.isStatus() == false)
-//                            Toast.makeText(getContext(), listApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
-//                        else {
-//                            userList = listApiResponse.getData();
-//                        }
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                });
-//            }
 
             // Hien thi recyclerview
             recyclerView_User.setVisibility(View.VISIBLE);
 
             int i = 0, count_account = 0;
 
+            System.out.println(userList.size());
             // Chi tim toi da 6 tai khoan
             while (count_account < 6 && i < userList.size()) {
                 if (userList.get(i).getUsername().toUpperCase().contains(query.toUpperCase())) {
                     user_searchList.add(userList.get(i));
                     count_account++;
                 }
+                i++;
             }
 
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             recyclerView_User.setLayoutManager(layoutManager);
 
             // Khoi tao Adapter
-            SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-            System.out.println(searchUserAdapter.getItemCount());
+            SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
             recyclerView_User.setAdapter(searchUserAdapter);
         } else {
             // Khong nhap noi dung tim kiem
