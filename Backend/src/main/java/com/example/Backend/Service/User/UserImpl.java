@@ -1,6 +1,7 @@
 package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.model.User;
+import com.example.Backend.Request.User.RequestChangePasword;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -17,7 +18,7 @@ import java.security.SecureRandom;
 import java.util.List;
 
 @Service
-public class UserImpl implements UserService{
+public class UserImpl implements UserService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -35,7 +36,7 @@ public class UserImpl implements UserService{
         user.setUsername(requestCreateAccount.getUsername());
         user.setPassword(BCrypt.hashpw(requestCreateAccount.getPassword(), BCrypt.gensalt()));
         user.setFromGoogle(false);
-        mongoTemplate.insert(user,"users");
+        mongoTemplate.insert(user, "users");
     }
 
     @Override
@@ -43,23 +44,24 @@ public class UserImpl implements UserService{
         Query query = new Query(Criteria.where("email").is(requestLogin.getEmail()));
         User user = mongoTemplate.findOne(query, User.class, "users");
         //System.out.println(new Gson().toJson(requestCreateLogin));
-        if(requestLogin.isFromGoogle()){
-            if(user == null){
+        if (requestLogin.isFromGoogle()) {
+            if (user == null) {
                 User savedUser = new User();
                 savedUser.setEmail(requestLogin.getEmail());
                 savedUser.setUsername(requestLogin.getUsername());
                 savedUser.setAvatarImg(requestLogin.getAvatarImg());
                 savedUser.setFromGoogle(true);
                 return new ApiResponse<User>(true, "", mongoTemplate.insert(savedUser, "users"));
-            }else{
-                if(user.isFromGoogle()) return new ApiResponse<User>(true, "", user);
-                else return new ApiResponse<User>(false, "Email này đã được đăng ký, vui lòng đăng nhập bằng phương thức khác", null);
+            } else {
+                if (user.isFromGoogle()) return new ApiResponse<User>(true, "", user);
+                else
+                    return new ApiResponse<User>(false, "Email này đã được đăng ký, vui lòng đăng nhập bằng phương thức khác", null);
             }
-        }else{
-            if(user == null) return new ApiResponse<User>(false, "Không tìm thấy email này", null);
+        } else {
+            if (user == null) return new ApiResponse<User>(false, "Không tìm thấy email này", null);
 
-            boolean matches = BCrypt.checkpw(requestLogin.getPassword(),user.getPassword());
-            if(matches) {
+            boolean matches = BCrypt.checkpw(requestLogin.getPassword(), user.getPassword());
+            if (matches) {
                 return new ApiResponse<User>(true, "", user);
             }
             //System.out.println(new Gson().toJson(user));
@@ -72,7 +74,7 @@ public class UserImpl implements UserService{
         Query query = new Query(Criteria.where("email").is(email));
         User user = mongoTemplate.findOne(query, User.class, "users");
 
-        if(user != null){
+        if (user != null) {
             return new ApiResponse<String>(false, "Email đã được sử dụng", "");
         }
         String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -89,8 +91,8 @@ public class UserImpl implements UserService{
         message.setTo(email);
         message.setSubject("OTP Verification");
         message.setText("Your OTP is: " + otp);
-        javaMailSender.send(message);
-        return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
+       javaMailSender.send(message);
+        return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn", otp.toString());
     }
 
     @Override
@@ -98,4 +100,32 @@ public class UserImpl implements UserService{
         List<User> userList = mongoTemplate.findAll(User.class, "users");
         return new ApiResponse<List<User>>(true, "Lấy tất cả dữ liệu user thành công!", userList);
     }
-}
+
+    @Override
+    public ApiResponse<User> changePassword(RequestChangePasword requestChangePass) throws Exception {
+        // Tạo query để tìm người dùng dựa trên email
+        Query query = new Query(Criteria.where("email").is(requestChangePass.getEmail()));
+        // Tìm người dùng trong cơ sở dữ liệu
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        String t = user.getPassword();
+        String n = requestChangePass.getCurrentpass();
+        // Nếu không tìm thấy người dùng, trả về thông báo lỗi
+        if (user == null) {
+            return new ApiResponse<>(false, "Không tìm thấy người dùng với email này", null);
+        }
+//        } else if (!user.getPassword().equals(requestChangePass.getCurrentpass())) {
+//            return new ApiResponse<>(false, "Mật khẩu hiện tại không đúng", null);
+//        } else {
+            // Thực hiện cập nhật mật khẩu mới cho người dùng
+            user.setPassword(BCrypt.hashpw(requestChangePass.getNewpass(), BCrypt.gensalt()));
+            // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
+            mongoTemplate.save(user, "users");
+
+            // Trả về thông báo thành cônlg
+            return new ApiResponse<>(true, "Đổi mật khẩu thành công", user);
+            //  }
+        }
+    }
+
+
+
