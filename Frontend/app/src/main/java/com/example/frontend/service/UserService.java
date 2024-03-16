@@ -20,6 +20,8 @@ public interface  UserService {
     Call<ApiResponse<UserResponse>> login(@Body RequestLogin request);
     @GET("user/sendOTP")
     Call<ApiResponse<String>> sendOTP(@Query("email") String email);
+    @GET("user/sendOTP_forgotpassword")
+    Call<ApiResponse<String>> sendOtp_forgotpassword(@Query("email") String email);
 
     @GET("user/allUsers")
     Call<ApiResponse<List<UserResponse>>> getAllUsers();

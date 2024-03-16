@@ -29,6 +29,9 @@ public class UserViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
     }
+    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
+        return userRepository.sendOtp_forgotpassword(email);
+    }
 
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userRepository.getAllUsers();

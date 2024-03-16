@@ -92,6 +92,29 @@ public class UserRepository {
 
         return mutableLiveData;
     }
+    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        userService.sendOtp_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Log.d("sendOTP1", mutableLiveData.getValue().getData());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
 
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
