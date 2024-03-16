@@ -14,6 +14,7 @@ public interface UserService {
     void createAccount (RequestCreateAccount requestCreateAccount) throws Exception;
     ApiResponse<User> loginAccount (RequestLogin requestCreateLogin) throws Exception;
     ApiResponse<String> sendOtp(String email);
+    ApiResponse<String> sendOtp_forgotpassword(String email);
     ApiResponse<List<User>> getAllUsers();
     ApiResponse<User> changePassword(RequestChangePasword requestChangePasword) throws  Exception;
 }

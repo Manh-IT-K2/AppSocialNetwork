@@ -38,6 +38,12 @@ public class UserController {
         ApiResponse<String> apiResponse = userService.sendOtp(email);
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
+    @GetMapping("/sendOTP_forgotpassword")
+    public ResponseEntity<ApiResponse<String>> sendOtp_forgotpassword( @RequestParam String email) throws Exception {
+        System.out.println(email);
+        ApiResponse<String> apiResponse = userService.sendOtp_forgotpassword(email);
+        return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
+    }
 
     @GetMapping("/allUsers")
     public ResponseEntity<ApiResponse<List<User>>> getAllUsers() throws Exception {
