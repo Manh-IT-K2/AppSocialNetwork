@@ -14,5 +14,5 @@
     <string name="default_web_client_id">829190945029-862b9ptmapsnj3r2iqp55nb1bnpbq03d.apps.googleusercontent.com</string>
 
     <!-- Strings related to search -->
-    <string name="searchbar_hint">Tìm kiếm</string>
+    <string name="searchbar_hint">Search</string>
 </resources>

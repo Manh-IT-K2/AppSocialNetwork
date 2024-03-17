@@ -1,44 +1,42 @@
 package com.example.frontend.fragments;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
-import com.example.frontend.adapter.SearchUserAdapter;
-import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.User.UserResponse;
-import com.example.frontend.viewModel.User.UserViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 
 
 public class SearchFragment extends Fragment {
 
-    private UserViewModel userViewModel;
+    Fragment_searchUser fragmentSearchView;
+    private SearchQuery_ViewModel searchQueryViewModel;
     private SearchView searchView;
-    private RecyclerView recyclerView_User;
-    private ProgressBar progressBar;
-    private List<UserResponse> userList = new ArrayList<>();
-    private ArrayList<UserResponse> user_searchList;
+    Toolbar toolbar;
+    private MenuItem menuItem;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Khởi tạo search Query ViewModel
+        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -47,90 +45,90 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        fragmentSearchView = new Fragment_searchUser();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_Search_Container, fragmentSearchView)
+                .commit();
+
+
         searchView = view.findViewById(R.id.searchView);
-        progressBar = view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        recyclerView_User = view.findViewById(R.id.recyclerViewUser);
-        searchView.setIconified(false);
-        searchView.clearFocus();
+        /*toolbar = view.findViewById(R.id.search_toolbar);
+        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+        appCompatActivity.setSupportActionBar(toolbar);
+        appCompatActivity.getSupportActionBar().setTitle("");*/
 
-//        recyclerView_User.setLayoutManager(new LinearLayoutManager(getContext()));
-//        SearchUserAdapter adapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-//        recyclerView_User.setAdapter(adapter);
 
-        userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+        // Nhập nội dung tìm kiếm và bắt đầu tìm kiếm theo tên user
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
-                // Cập nhật dữ liệu cho adapter và thông báo thay đổi dữ liệu
-                userList = userResponses.getData();
-                // Ẩn ProgressBar khi dữ liệu đã được cập nhật
-                progressBar.setVisibility(View.GONE);
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        user_searchList = new ArrayList<>();
-                        search_User(query);
-                        return true;
-                    }
+            public boolean onQueryTextSubmit(String query) {
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        search_User(newText);
-                        return true;
-                    }
-                });
+                searchQueryViewModel.setSearchQuery(query);
+                Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_Search_Container, fragment_performSearch)
+                        .addToBackStack(null) // Optional: Add to back stack for navigation
+                        .commit();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                searchQueryViewModel.setSearchQuery(newText);
+
+                // Trong fragment searchView bắt đầu lấy toàn bộ dữ liệu user
+                // Sau đó tìm kiếm và hiển thị kết quả lên recyclerView trong fragment searchView
+                fragmentSearchView.resultList();
+                //search_User(newText);
+                return false;
             }
         });
 
 
-
     }
 
-    public void search_User(String query) {
+    /*@Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
 
-        if (query.length() > 0) { // Co nhap noi dung tim kiem
-            // Neu userList rong
-            // Lay tat ca du lieu user va dua vao userList
-//            if(userList.isEmpty()) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
-//                    @Override
-//                    public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
-//                        if (listApiResponse.isStatus() == false)
-//                            Toast.makeText(getContext(), listApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
-//                        else {
-//                            userList = listApiResponse.getData();
-//                        }
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                });
-//            }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
 
-            // Hien thi recyclerview
-            recyclerView_User.setVisibility(View.VISIBLE);
+        //inflater.inflate(R.menu.search_menu, menu);
+        menuItem = menu.findItem(R.id.menu_search);
+        //searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        //searchView.setIconified(true);
 
-            int i = 0, count_account = 0;
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
-            // Chi tim toi da 6 tai khoan
-            while (count_account < 6 && i < userList.size()) {
-                if (userList.get(i).getUsername().toUpperCase().contains(query.toUpperCase())) {
-                    user_searchList.add(userList.get(i));
-                    count_account++;
-                }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchQueryViewModel.setSearchQuery(query);
+                Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_Search_Container, fragment_performSearch)
+                        .addToBackStack(null) // Optional: Add to back stack for navigation
+                        .commit();
+                return true;
             }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchQueryViewModel.setSearchQuery(newText);
 
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-            recyclerView_User.setLayoutManager(layoutManager);
+                // Trong fragment searchView bắt đầu lấy toàn bộ dữ liệu user
+                // Sau đó tìm kiếm và hiển thị kết quả lên recyclerView trong fragment searchView
+                fragmentSearchView.resultList();
+                //search_User(newText);
+                return true;
+            }
+        });
 
-            // Khoi tao Adapter
-            SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-            System.out.println(searchUserAdapter.getItemCount());
-            recyclerView_User.setAdapter(searchUserAdapter);
-        } else {
-            // Khong nhap noi dung tim kiem
-            // Khong hien thi recyclerview
-            recyclerView_User.setVisibility(View.GONE);
-        }
-    }
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }*/
 }
