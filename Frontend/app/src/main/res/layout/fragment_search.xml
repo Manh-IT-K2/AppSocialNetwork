@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.SearchFragment">
+
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/search_toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:id="@+id/searchView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/blackLite"-->
+<!--            app:iconifiedByDefault="false"-->
+<!--            app:queryHint="@string/searchbar_hint" />-->
+<!--    </androidx.appcompat.widget.Toolbar>-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardSearch"
@@ -20,30 +34,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/blackLite"
-            app:queryHint="@string/searchbar_hint"/>
+            app:iconifiedByDefault="false"
+            app:queryHint="@string/searchbar_hint" />
+
     </androidx.cardview.widget.CardView>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/cardSearch"
-
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUser"
+    <FrameLayout
+        android:id="@+id/fragment_Search_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/cardSearch"
+        android:layout_below="@+id/cardSearch" />
 
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp" />
 
 </RelativeLayout>

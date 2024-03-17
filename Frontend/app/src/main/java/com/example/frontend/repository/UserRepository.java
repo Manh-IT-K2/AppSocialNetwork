@@ -1,5 +1,7 @@
 package com.example.frontend.repository;
 
+import static android.content.ContentValues.TAG;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +13,7 @@ import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -19,6 +22,7 @@ import retrofit2.Response;
 
 public class UserRepository {
     UserService userService;
+
     public UserRepository() {
         userService = CallApi.getRetrofitInstance().create(UserService.class);
     }
@@ -46,7 +50,7 @@ public class UserRepository {
 
     public MutableLiveData<ApiResponse<UserResponse>> login(RequestLogin request) {
         MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
-        Log.d("log1", request.isFromGoogle()+"");
+        Log.d("log1", request.isFromGoogle() + "");
         userService.login(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
@@ -96,18 +100,20 @@ public class UserRepository {
         userService.getAllUsers().enqueue(new Callback<ApiResponse<List<UserResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<UserResponse>>> call, Response<ApiResponse<List<UserResponse>>> response) {
-                if(response.isSuccessful()) {
-                    ApiResponse<List<UserResponse>> listApiResponse = response.body();
-                    mutableLiveData.setValue(listApiResponse);
-                    Log.d("allUsers", mutableLiveData.getValue().getData().toString());
-                } else {
-                    // Xử lý khi phản hồi không thành công
+                if (response.isSuccessful()) {
+                    try {
+                        ApiResponse<List<UserResponse>> listApiResponse = response.body();
+                        mutableLiveData.setValue(listApiResponse);
+                        Log.d("allUsers", mutableLiveData.getValue().getData().toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
+                Log.i(TAG, "Unable to get data");
             }
         });
 
