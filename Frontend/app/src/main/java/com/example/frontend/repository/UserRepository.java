@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
@@ -113,4 +114,43 @@ public class UserRepository {
 
         return mutableLiveData;
     }
+    public MutableLiveData<ApiResponse<UserResponse>> changePass(RequestChangePass request) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        if (request == null) {
+            // Xử lý khi request là null
+            Log.e("changePass", "Request is null");
+            return mutableLiveData;
+        }
+
+        Log.d("log1", request.getEmail());
+
+        userService.changePass(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("tttt");
+                    ApiResponse<UserResponse> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                    Log.d("changePass", "Request failed: " + response.code());
+                    // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
+                    mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+                Log.e("changePass", "Request failed", t);
+                // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
+                mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.frontend.service;
 
+import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
@@ -23,4 +24,6 @@ public interface  UserService {
 
     @GET("user/allUsers")
     Call<ApiResponse<List<UserResponse>>> getAllUsers();
+    @POST("user/changePass")
+    Call<ApiResponse<UserResponse>> changePass(@Body RequestChangePass request);
 }

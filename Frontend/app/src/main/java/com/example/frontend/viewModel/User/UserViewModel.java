@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.frontend.repository.UserRepository;
+import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
@@ -32,5 +33,8 @@ public class UserViewModel extends ViewModel {
 
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userRepository.getAllUsers();
+    }
+    public MutableLiveData<ApiResponse<UserResponse>> changePass(RequestChangePass request) {
+        return userRepository.changePass(request);
     }
 }
