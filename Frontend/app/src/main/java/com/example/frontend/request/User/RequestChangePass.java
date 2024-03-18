@@ -1,16 +1,16 @@
 package com.example.frontend.request.User;
 
 public class RequestChangePass {
-    String email;
+    String username;
     String currentpass;
     String newpass;
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getCurrentpass() {
@@ -29,8 +29,8 @@ public class RequestChangePass {
         this.newpass = newpass;
     }
 
-    public RequestChangePass(String email, String currentpass, String newpass) {
-        this.email = email;
+    public RequestChangePass(String username, String currentpass, String newpass) {
+        this.username = username;
         this.currentpass = currentpass;
         this.newpass = newpass;
     }

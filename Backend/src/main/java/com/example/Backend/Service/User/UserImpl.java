@@ -126,23 +126,16 @@ public class UserImpl implements UserService {
     @Override
     public ApiResponse<User> changePassword(RequestChangePasword requestChangePass) throws Exception {
         // Tạo query để tìm người dùng dựa trên email
-        Query query = new Query(Criteria.where("email").is(requestChangePass.getEmail()));
+        Query query = new Query(Criteria.where("username").is(requestChangePass.getUsername()));
         // Tìm người dùng trong cơ sở dữ liệu
         User user = mongoTemplate.findOne(query, User.class, "users");
-        String t = user.getPassword();
-        String n = requestChangePass.getCurrentpass();
         // Nếu không tìm thấy người dùng, trả về thông báo lỗi
         if (user == null) {
-            return new ApiResponse<>(false, "Không tìm thấy người dùng với email này", null);
+            return new ApiResponse<>(false, "Không tìm thấy người dùng với username này", null);
         }
-//        } else if (!user.getPassword().equals(requestChangePass.getCurrentpass())) {
-//            return new ApiResponse<>(false, "Mật khẩu hiện tại không đúng", null);
-//        } else {
-            // Thực hiện cập nhật mật khẩu mới cho người dùng
             user.setPassword(BCrypt.hashpw(requestChangePass.getNewpass(), BCrypt.gensalt()));
             // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
             mongoTemplate.save(user, "users");
-
             // Trả về thông báo thành cônlg
             return new ApiResponse<>(true, "Đổi mật khẩu thành công", user);
             //  }

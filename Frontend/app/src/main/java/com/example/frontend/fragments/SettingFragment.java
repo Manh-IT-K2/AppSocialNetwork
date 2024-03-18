@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +40,16 @@ public class SettingFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity (),  MainActivity.class);
-                intent.putExtra("fragment_to_load", "back_setting");
-                startActivity(intent);
+                Fragment Profile = new ProfileFragment();
+
+                // Lấy instance của FragmentManager
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+
+                // Bắt đầu transaction để thay thế fragment hiện tại bằng fragment mới
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_layout_main, Profile);
+                fragmentTransaction.addToBackStack(null); // Thêm transaction này vào stack back để quay trở lại fragment trước đó (nếu cần)
+                fragmentTransaction.commit();
             }
         });
         craeteaccountBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,9 +71,15 @@ public class SettingFragment extends Fragment {
         function_change_pass_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity (),  FragmentReplacerActivity.class);
-                intent.putExtra("fragment_to_load", "function_change_pass");
-                startActivity(intent);
+                String usernameValue = getArguments().getString("username");
+                Bundle bundle = new Bundle();
+                bundle.putString("username", usernameValue);
+                Function_change_password functionChangePasswordFragment = new Function_change_password();
+                functionChangePasswordFragment.setArguments(bundle);
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_layout_main, functionChangePasswordFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
         return (view);

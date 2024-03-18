@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +37,13 @@ public class EditProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity (), MainActivity.class);
                 intent.putExtra("fragment_to_load", "edit_profile_done");
                 startActivity(intent);
+
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity (),  MainActivity.class);
+                Intent intent = new Intent(getActivity (), MainActivity.class);
                 intent.putExtra("fragment_to_load", "edit_profile_cancel");
                 startActivity(intent);
             }

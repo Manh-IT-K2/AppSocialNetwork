@@ -129,13 +129,12 @@ public class UserRepository {
             return mutableLiveData;
         }
 
-        Log.d("log1", request.getEmail());
+        Log.d("log1", request.getUsername());
 
         userService.changePass(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful()) {
-                    System.out.println("tttt");
                     ApiResponse<UserResponse> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
                 } else {
@@ -145,7 +144,6 @@ public class UserRepository {
                     mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
                 }
             }
-
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
@@ -154,7 +152,6 @@ public class UserRepository {
                 mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
             }
         });
-
         return mutableLiveData;
     }
 
