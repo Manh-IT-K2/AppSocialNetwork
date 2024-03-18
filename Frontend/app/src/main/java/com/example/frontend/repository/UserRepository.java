@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
@@ -94,6 +95,29 @@ public class UserRepository {
 
         return mutableLiveData;
     }
+    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        userService.sendOtp_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Log.d("sendOTP", mutableLiveData.getValue().getData());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
 
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
@@ -152,6 +176,42 @@ public class UserRepository {
                 mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
             }
         });
+        return mutableLiveData;
+    }
+    public MutableLiveData<ApiResponse<UserResponse>> changePW(RequestChangePW request) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        if (request == null) {
+            // Xử lý khi request là null
+            Log.e("changePW", "Request is null");
+            return mutableLiveData;
+        }
+
+        Log.d("log1", request.getEmail());
+
+        userService.changePW(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<UserResponse> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                    Log.d("changePW", "Request failed: " + response.code());
+                    // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
+                    mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+                Log.e("changePW", "Request failed", t);
+                // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
+                mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+            }
+        });
+
         return mutableLiveData;
     }
 
