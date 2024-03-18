@@ -11,6 +11,16 @@
     android:layout_width="match_parent"
     android:id="@+id/view1"
     android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        android:background="@null"
+        android:layout_margin="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="110dp"
         android:layout_height="110dp"

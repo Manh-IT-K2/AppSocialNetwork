@@ -2,6 +2,7 @@ package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.mindrot.jbcrypt.BCrypt;
@@ -114,7 +115,19 @@ public class UserImpl implements UserService{
         javaMailSender.send(message);
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
     }
+    @Override
+    public ApiResponse<User> changePW(RequestForgetPass requestForgetPass) {
+        Query query = new Query(Criteria.where("email").is(requestForgetPass.getEmail()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        if (user == null) {
+            return new ApiResponse<User>(false, "Không tìm thấy ngườ dùng với Email này!",null);
+        }
+        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPass(),BCrypt.gensalt()));
+        mongoTemplate.save(user,"users");
+        return new ApiResponse<>(true, "Đổi mật khẩu thành công!",null);
 
+
+    }
     @Override
     public ApiResponse<List<User>> getAllUsers() {
         List<User> userList = mongoTemplate.findAll(User.class, "users");

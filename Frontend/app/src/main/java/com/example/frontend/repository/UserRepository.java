@@ -98,7 +98,7 @@ public class UserRepository {
                 if (response.isSuccessful()) {
                     ApiResponse<String> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
-                    Log.d("sendOTP1", mutableLiveData.getValue().getData());
+                    Log.d("sendOTP", mutableLiveData.getValue().getData());
                 } else {
                     // Xử lý khi phản hồi không thành công
                 }

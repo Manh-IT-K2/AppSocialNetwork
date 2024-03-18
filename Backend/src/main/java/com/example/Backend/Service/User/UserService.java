@@ -2,6 +2,7 @@ package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.springframework.stereotype.Service;
@@ -15,4 +16,5 @@ public interface UserService {
     ApiResponse<String> sendOtp(String email);
     ApiResponse<String> sendOtp_forgotpassword(String email);
     ApiResponse<List<User>> getAllUsers();
+    ApiResponse<User> changePW(RequestForgetPass requestForgetPass) throws Exception;
 }
