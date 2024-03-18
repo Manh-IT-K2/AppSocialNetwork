@@ -20,7 +20,7 @@ import com.example.frontend.utils.SharedPreferenceLocal;
 
 public class SettingFragment extends Fragment {
     ImageButton backBtn;
-    Button logoutBtn,craeteaccountBtn;
+    Button logoutBtn,craeteaccountBtn,function_change_pass_Btn;
     public SettingFragment() {
 
     }
@@ -34,6 +34,7 @@ public class SettingFragment extends Fragment {
         backBtn = view.findViewById(R.id.back_btn);
         logoutBtn = view.findViewById(R.id.logout_setting_Btn);
         craeteaccountBtn = view.findViewById(R.id.createaccount_setting_Btn);
+        function_change_pass_Btn = view.findViewById(R.id.function_change_pass);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +56,14 @@ public class SettingFragment extends Fragment {
             public void onClick(View v) {
                 SharedPreferenceLocal.save(getContext(),"userId", "");
                 Intent intent = new Intent(getActivity (), FragmentReplacerActivity.class);
+                startActivity(intent);
+            }
+        });
+        function_change_pass_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity (),  FragmentReplacerActivity.class);
+                intent.putExtra("fragment_to_load", "function_change_pass");
                 startActivity(intent);
             }
         });

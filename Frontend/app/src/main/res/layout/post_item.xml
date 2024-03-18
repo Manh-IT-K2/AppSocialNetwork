@@ -19,7 +19,7 @@
             android:layout_height="36dp"
             android:layout_marginStart="18dp"
             android:layout_gravity="center"
-           app:shapeAppearanceOverlay="@style/circleImageview"
+           app:shapeAppearanceOverlay="@style/circle_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -122,7 +122,7 @@
             android:layout_height="26dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="4dp"
-            app:shapeAppearanceOverlay="@style/circleImageview"
+            app:shapeAppearanceOverlay="@style/circle_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

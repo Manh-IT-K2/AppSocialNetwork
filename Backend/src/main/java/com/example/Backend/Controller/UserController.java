@@ -1,6 +1,7 @@
 package com.example.Backend.Controller;
 
 import com.example.Backend.Entity.model.User;
+import com.example.Backend.Request.User.RequestChangePasword;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
@@ -55,4 +56,9 @@ public class UserController {
         ApiResponse<User> user = userService.changePW(requestForgetPass);
         return new ResponseEntity<ApiResponse<User>>(user, HttpStatus.OK);
     }
+    @PostMapping("/changePass")
+        public ResponseEntity<ApiResponse<User>> changePass(@RequestBody RequestChangePasword requestChangePasword) throws Exception {
+            ApiResponse<User> apiResponse = userService.changePassword(requestChangePasword);
+            return new ResponseEntity<ApiResponse<User>>(apiResponse, HttpStatus.OK);
+        }
 }

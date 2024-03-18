@@ -11,19 +11,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.response.User.UserResponse;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.MyHolder> {
 
     Context context;
-    ArrayList<UserResponse> user_searchList;
+    List<UserResponse> user_searchList;
     LayoutInflater layoutInflater;
 
 
-    public SearchUserAdapter(Context context, ArrayList<UserResponse> user_searchList) {
+    public SearchUserAdapter(Context context, List<UserResponse> user_searchList) {
 
         this.context = context;
         this.user_searchList = user_searchList;
@@ -41,7 +45,10 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
 
     public void onBindViewHolder(@NonNull SearchUserAdapter.MyHolder holder, int position) {
         holder.userName.setText(user_searchList.get(position).getUsername());
-        holder.avatar.setImageURI(Uri.parse(user_searchList.get(position).getAvatarImg()));
+        if(user_searchList.get(position).getAvatarImg() != null)
+            Glide.with(context)
+                    .load(Uri.parse(user_searchList.get(position).getAvatarImg()))
+                    .into(holder.avatar);
 
     }
 
@@ -52,7 +59,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
     public class MyHolder extends RecyclerView.ViewHolder {
 
         TextView userName;
-        ImageView avatar;
+        CircleImageView avatar;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);

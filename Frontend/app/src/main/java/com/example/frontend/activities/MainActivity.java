@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -23,37 +22,25 @@ import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.SearchFragment;
 import com.example.frontend.fragments.SettingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    // innit variable
-    private BottomNavigationView bottomNavigationView;
-    private Fragment selectedFragment = null;
-    private FloatingActionButton btn_createPost;
-    private Context context;
+    BottomNavigationView bottomNavigationView;
+    Fragment selectedFragment = null;
+    private Button btn;
+    TextView name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // innit view
+        // innit variable
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        btn_createPost = findViewById(R.id.btn_createPost);
+     //   selectedFragment = findViewById(R.id.fragment_layout_main);
 
-        // action bottom bar
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
         handleIntentData();
-
-        // action click create post
-        btn_createPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,PostActivity.class);
-                startActivity(intent);
-            }
-        });
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

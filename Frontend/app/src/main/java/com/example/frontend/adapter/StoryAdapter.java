@@ -1,7 +1,6 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
-import com.example.frontend.activities.StoryActivity;
 import com.example.frontend.request.Story.RequestStoryByUserId;
 
 import java.util.List;
@@ -36,7 +34,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
             View headerView = LayoutInflater.from(mContext).inflate(R.layout.item_header_story, parent, false);
-            return new HeaderViewHolder(headerView, mContext); // Pass mContext here
+            return new HeaderViewHolder(headerView);
         } else {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.story_item, parent, false);
             return new ViewHolder(itemView);
@@ -75,23 +73,11 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Create a separate ViewHolder for the header if needed
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private ImageButton btn_createStory;
-        private Context mContext; // Add mContext variable to hold the context
+        // Add any additional views or functionality for the header here
 
-        public HeaderViewHolder(@NonNull View itemView, Context context) {
+        public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.mContext = context; // Initialize mContext
-            btn_createStory = itemView.findViewById(R.id.btn_createStory);
-
-            // Set OnClickListener to the button
-            btn_createStory.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Launch StoryActivity when the button is clicked
-                    Intent intent = new Intent(mContext, StoryActivity.class);
-                    mContext.startActivity(intent);
-                }
-            });
+            // Initialize header views here if needed
         }
     }
 

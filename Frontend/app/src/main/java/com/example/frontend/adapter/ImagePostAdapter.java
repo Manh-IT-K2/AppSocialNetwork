@@ -46,7 +46,6 @@ public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView img_loadPostStore;
 
         public ViewHolder(@NonNull View itemView) {
