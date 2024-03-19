@@ -15,4 +15,5 @@
 
     <!-- Strings related to search -->
     <string name="searchbar_hint">Search</string>
+    <string name="noResults_wereFound">No results were found</string>
 </resources>
