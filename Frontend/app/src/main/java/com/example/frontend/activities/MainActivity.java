@@ -22,6 +22,7 @@ import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.SearchFragment;
 import com.example.frontend.fragments.SettingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment selectedFragment = null;
     private Button btn;
     TextView name;
+    private FloatingActionButton btn_createPost;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +38,21 @@ public class MainActivity extends AppCompatActivity {
 
         // innit variable
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-     //   selectedFragment = findViewById(R.id.fragment_layout_main);
+        btn_createPost = findViewById(R.id.btn_createPost);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,new HomeFragment()).commit();
         handleIntentData();
+
+        // set action click add post
+        btn_createPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,PostActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -56,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
                     } else if (item.getItemId() == R.id.menu_notification) {
                         selectedFragment = new NotificationFragment();
                     } else if (item.getItemId() == R.id.menu_profile) {
-//                        if ("setting_btn".equals(getIntent().getStringExtra("fragment_to_load"))) {
-//                            selectedFragment = new SettingFragment();
-//                            return true; // Return true without changing the fragment
-//                        }
+                        if ("setting_btn".equals(getIntent().getStringExtra("fragment_to_load"))) {
+                            selectedFragment = new SettingFragment();
+                            return true; // Return true without changing the fragment
+                        }
                         selectedFragment = new ProfileFragment();
                     }
                     if(selectedFragment != null){
