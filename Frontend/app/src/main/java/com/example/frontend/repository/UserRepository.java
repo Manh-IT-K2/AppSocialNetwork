@@ -163,7 +163,7 @@ public class UserRepository {
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công
-                    Log.d("changePass", "Request failed: " + response.code());
+                //    Log.d("changePass", "Request failed: " + response.code());
                     // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
                     mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
                 }
@@ -171,7 +171,7 @@ public class UserRepository {
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
-                Log.e("changePass", "Request failed", t);
+             //   Log.e("changePass", "Request failed", t);
                 // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
                 mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
             }
