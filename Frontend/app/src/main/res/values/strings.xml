@@ -15,4 +15,5 @@
 
     <!-- Strings related to search -->
     <string name="searchbar_hint">Tìm kiếm</string>
+    <string name="icon_back">icon back</string>
 </resources>

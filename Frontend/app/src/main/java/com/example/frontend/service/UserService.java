@@ -23,4 +23,6 @@ public interface  UserService {
 
     @GET("user/allUsers")
     Call<ApiResponse<List<UserResponse>>> getAllUsers();
+    @GET("user/requestTracking")
+    Call<ApiResponse<List<UserResponse>>> getRequestTrackingUser();
 }
