@@ -11,12 +11,11 @@ public class CallApi {
     public static String URL_Long = "https://nbbwn98c-8080.asse.devtunnels.ms/api/";
     public static String URL_Ly = "https://d39jc0wx-8080.asse.devtunnels.ms/api/";
 
-
+    public static String URL_MrLinh = "https://6z9v602p-8080.asse.devtunnels.ms/api/";
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
-
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(URL_Long)
+            retrofit    = new Retrofit.Builder()
+                    .baseUrl(URL_MrLinh)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

@@ -5,6 +5,7 @@ import com.example.Backend.Request.User.RequestChangePasword;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
+import com.example.Backend.Request.User.RequestTracking;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +157,12 @@ public class UserImpl implements UserService {
             return new ApiResponse<>(true, "Đổi mật khẩu thành công", user);
              }
         }
+
+    @Override
+    public ApiResponse<User> requestTrackingUser(RequestTracking requestTracking) {
+        return null;
     }
+}
 
 
 

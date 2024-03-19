@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Hình tròn -->
+    <item android:drawable="@drawable/circle"/>
+    <!-- Hình ảnh -->
+    <item android:drawable="@drawable/img_user" />
+</layer-list>
