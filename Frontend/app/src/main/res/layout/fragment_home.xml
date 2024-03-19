@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="18dp"
-            app:srcCompat="@drawable/icon_igtv" />
+            app:srcCompat="@drawable/ic_heart" />
 
         <ImageView
             android:id="@+id/img_message"
