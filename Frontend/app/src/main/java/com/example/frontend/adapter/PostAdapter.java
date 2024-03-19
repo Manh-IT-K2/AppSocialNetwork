@@ -1,6 +1,8 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.fragments.CommentFragment;
 import com.example.frontend.request.Post.RequestPostByUserId;
-
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
@@ -80,6 +82,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             txt_userName = itemView.findViewById(R.id.txt_UserName);
             txt_contentPost = itemView.findViewById(R.id.txt_contentPost);
             txt_address = itemView.findViewById(R.id.txt_address);
+
+            //
+            btn_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Hiển thị màn hình comment bằng cách sử dụng một Dialog
+                    CommentFragment dialog = new CommentFragment(mContext);
+                    dialog.show();
+                }
+            });
+
         }
     }
 

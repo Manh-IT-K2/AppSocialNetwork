@@ -25,6 +25,7 @@ import android.os.Bundle;
 import com.example.frontend.R;
 import com.example.frontend.adapter.ImagePostAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,12 +71,24 @@ public class PostActivity extends AppCompatActivity {
 
         //
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+
                 != PackageManager.PERMISSION_GRANTED) {
+            //Log.d("errorLoad","e.toString()");
             // Quyền chưa được cấp, yêu cầu quyền từ người dùng
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            try {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                //Log.d("errorLoad","e.toString()");
+            }catch (Exception e){
+                Gson gson = new Gson();
+                loadImages();
+                e.printStackTrace();
+                String json = gson.toJson(e);
+                Log.d("errorLoad",json);
+            }
         } else {
+            //Log.d("errorLoad","e.toString()");
             // Quyền đã được cấp, tiến hành load ảnh
             loadImages();
         }
@@ -124,21 +137,26 @@ public class PostActivity extends AppCompatActivity {
 
     private void loadImages() {
         List<Uri> imageList = new ArrayList<>();
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Images.Media._ID};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                int columnIndex = cursor.getColumnIndex(projection[0]);
-                long imageId = cursor.getLong(columnIndex);
-                Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId);
-                imageList.add(imageUri);
+        try {
+            Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            String[] projection = {MediaStore.Images.Media._ID};
+            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int columnIndex = cursor.getColumnIndex(projection[0]);
+                    long imageId = cursor.getLong(columnIndex);
+                    Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId);
+                    imageList.add(imageUri);
+                }
+                cursor.close();
             }
-            cursor.close();
+            Log.d("ImageCount", "Number of images: " + imageList.size());
+            adapter = new ImagePostAdapter(this, imageList);
+            list_mainPost.setAdapter(adapter);
+            list_mainPost.setLayoutManager(new GridLayoutManager(this, 3));
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("errorLoad",e.toString());
         }
-        Log.d("ImageCount", "Number of images: " + imageList.size());
-        adapter = new ImagePostAdapter(this, imageList);
-        list_mainPost.setAdapter(adapter);
-        list_mainPost.setLayoutManager(new GridLayoutManager(this, 3));
     }
 }

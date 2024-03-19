@@ -38,6 +38,13 @@ public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.View
         Glide.with(mContext)
                 .load(imageUri)
                 .into(holder.img_loadPostStore);
+
+        // Load the first image into the designated ImageView
+        if (position == 0) {
+            Glide.with(mContext)
+                    .load(imageUri)
+                    .into(holder.img_mainPost);
+        }
     }
 
     @Override
@@ -46,11 +53,13 @@ public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView img_loadPostStore;
+        ImageView img_loadPostStore, img_mainPost;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             img_loadPostStore = itemView.findViewById(R.id.img_loadPostStore);
+            img_mainPost = itemView.findViewById(R.id.img_mainPost);
         }
     }
 }
