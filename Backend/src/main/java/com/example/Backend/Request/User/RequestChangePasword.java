@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestChangePasword {
-    private String email;
+    private String username;
     private  String currentpass;
     private String newpass;
 }

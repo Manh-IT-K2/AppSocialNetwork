@@ -3,6 +3,7 @@ package com.example.Backend.Service.User;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.RequestChangePasword;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
 import com.example.Backend.Request.User.RequestTracking;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -117,7 +118,19 @@ public class UserImpl implements UserService {
         javaMailSender.send(message);
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn" , otp.toString());
     }
+    @Override
+    public ApiResponse<User> changePW(RequestForgetPass requestForgetPass) {
+        Query query = new Query(Criteria.where("email").is(requestForgetPass.getEmail()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        if (user == null) {
+            return new ApiResponse<User>(false, "Không tìm thấy ngườ dùng với Email này!",null);
+        }
+        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPass(),BCrypt.gensalt()));
+        mongoTemplate.save(user,"users");
+        return new ApiResponse<>(true, "Đổi mật khẩu thành công!",null);
 
+
+    }
     @Override
     public ApiResponse<List<User>> getAllUsers() {
         List<User> userList = mongoTemplate.findAll(User.class, "users");
@@ -127,26 +140,22 @@ public class UserImpl implements UserService {
     @Override
     public ApiResponse<User> changePassword(RequestChangePasword requestChangePass) throws Exception {
         // Tạo query để tìm người dùng dựa trên email
-        Query query = new Query(Criteria.where("email").is(requestChangePass.getEmail()));
+        Query query = new Query(Criteria.where("username").is(requestChangePass.getUsername()));
         // Tìm người dùng trong cơ sở dữ liệu
         User user = mongoTemplate.findOne(query, User.class, "users");
-        String t = user.getPassword();
-        String n = requestChangePass.getCurrentpass();
+        boolean matches = BCrypt.checkpw(requestChangePass.getCurrentpass(), user.getPassword());
         // Nếu không tìm thấy người dùng, trả về thông báo lỗi
         if (user == null) {
-            return new ApiResponse<>(false, "Không tìm thấy người dùng với email này", null);
-        }
-//        } else if (!user.getPassword().equals(requestChangePass.getCurrentpass())) {
-//            return new ApiResponse<>(false, "Mật khẩu hiện tại không đúng", null);
-//        } else {
-            // Thực hiện cập nhật mật khẩu mới cho người dùng
+            return new ApiResponse<>(false, "Không tìm thấy người dùng với username này", null);
+        }else if(!matches) {
+            return new ApiResponse<>(false, "Current password incorrect. Please check and try again.", null);
+        }else{
             user.setPassword(BCrypt.hashpw(requestChangePass.getNewpass(), BCrypt.gensalt()));
             // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
             mongoTemplate.save(user, "users");
-
             // Trả về thông báo thành cônlg
             return new ApiResponse<>(true, "Đổi mật khẩu thành công", user);
-            //  }
+             }
         }
 
     @Override

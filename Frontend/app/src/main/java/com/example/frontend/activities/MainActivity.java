@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity {
                     } else if (item.getItemId() == R.id.menu_notification) {
                         selectedFragment = new NotificationFragment();
                     } else if (item.getItemId() == R.id.menu_profile) {
-                        if ("setting_btn".equals(getIntent().getStringExtra("fragment_to_load"))) {
-                            selectedFragment = new SettingFragment();
-                            return true; // Return true without changing the fragment
-                        }
+//                        if ("setting_btn".equals(getIntent().getStringExtra("fragment_to_load"))) {
+//                            selectedFragment = new SettingFragment();
+//                            return true; // Return true without changing the fragment
+//                        }
                         selectedFragment = new ProfileFragment();
                     }
                     if(selectedFragment != null){
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
 
     private void handleIntentData() {
         Intent intent = getIntent();
@@ -82,9 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     case "back_setting":
                         selectedFragment = new ProfileFragment();
                         break;
-                    case "setting_btn":
-                        selectedFragment = new SettingFragment();
-                        break;
+
                 }
                 // Replace the fragment with the selected one
                 if (selectedFragment != null) {

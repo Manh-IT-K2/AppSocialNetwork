@@ -2,43 +2,34 @@ package com.example.frontend.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
-import com.example.frontend.adapter.SearchUserAdapter;
-import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.User.UserResponse;
-import com.example.frontend.viewModel.User.UserViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 
 
 public class SearchFragment extends Fragment {
 
-    private UserViewModel userViewModel;
+    Fragment_searchUser fragment_searchUser;
+    Fragment_performSearch fragment_performSearch;
+    Fragment_searchHistory fragment_searchHistory;
+    private SearchQuery_ViewModel searchQueryViewModel;
     private SearchView searchView;
-    private RecyclerView recyclerView_User;
-    private ProgressBar progressBar;
-    private List<UserResponse> userList = new ArrayList<>();
-    private ArrayList<UserResponse> user_searchList;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Khởi tạo search Query ViewModel
+        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -47,90 +38,58 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        fragment_searchHistory = new Fragment_searchHistory();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_Search_Container, fragment_searchHistory)
+                .commit();
+
+
         searchView = view.findViewById(R.id.searchView);
-        progressBar = view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        recyclerView_User = view.findViewById(R.id.recyclerViewUser);
-        searchView.setIconified(false);
-        searchView.clearFocus();
 
-//        recyclerView_User.setLayoutManager(new LinearLayoutManager(getContext()));
-//        SearchUserAdapter adapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-//        recyclerView_User.setAdapter(adapter);
-
-        userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+        // Nhập nội dung tìm kiếm và bắt đầu tìm kiếm theo tên user
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
-                // Cập nhật dữ liệu cho adapter và thông báo thay đổi dữ liệu
-                userList = userResponses.getData();
-                // Ẩn ProgressBar khi dữ liệu đã được cập nhật
-                progressBar.setVisibility(View.GONE);
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        user_searchList = new ArrayList<>();
-                        search_User(query);
-                        return true;
-                    }
+            public boolean onQueryTextSubmit(String query) {
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        search_User(newText);
-                        return true;
-                    }
-                });
+                // Không hiện con trỏ nhấp nháy trong searchview
+                searchView.clearFocus();
+
+                // Set query vào ViewModel để Fragment_searchUser có thể lấy được query
+                searchQueryViewModel.setSearchQuery(query);
+
+                // Chuyển sang fragment_performSearch
+                fragment_performSearch = new Fragment_performSearch();
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_Search_Container, fragment_performSearch)
+                        .addToBackStack(null) // Optional: Add to back stack for navigation
+                        .commit();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                // Set newText vào ViewModel để Fragment_searchUser có thể lấy được newText
+                searchQueryViewModel.setSearchQuery(newText);
+
+                Fragment currentFragment = getChildFragmentManager().findFragmentById(R.id.fragment_Search_Container);
+
+                if (currentFragment instanceof Fragment_performSearch || currentFragment instanceof Fragment_searchHistory) {
+                    fragment_searchUser = new Fragment_searchUser();
+                    getChildFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_Search_Container, fragment_searchUser)
+                            .addToBackStack(null) // Optional: Add to back stack for navigation
+                            .commit();
+                }
+                else fragment_searchUser.resultList();
+
+
+                return false;
             }
         });
 
 
-
     }
 
-    public void search_User(String query) {
-
-        if (query.length() > 0) { // Co nhap noi dung tim kiem
-            // Neu userList rong
-            // Lay tat ca du lieu user va dua vao userList
-//            if(userList.isEmpty()) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
-//                    @Override
-//                    public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
-//                        if (listApiResponse.isStatus() == false)
-//                            Toast.makeText(getContext(), listApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
-//                        else {
-//                            userList = listApiResponse.getData();
-//                        }
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                });
-//            }
-
-            // Hien thi recyclerview
-            recyclerView_User.setVisibility(View.VISIBLE);
-
-            int i = 0, count_account = 0;
-
-            // Chi tim toi da 6 tai khoan
-            while (count_account < 6 && i < userList.size()) {
-                if (userList.get(i).getUsername().toUpperCase().contains(query.toUpperCase())) {
-                    user_searchList.add(userList.get(i));
-                    count_account++;
-                }
-            }
-
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-            recyclerView_User.setLayoutManager(layoutManager);
-
-            // Khoi tao Adapter
-            SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), (ArrayList<UserResponse>) userList);
-            System.out.println(searchUserAdapter.getItemCount());
-            recyclerView_User.setAdapter(searchUserAdapter);
-        } else {
-            // Khong nhap noi dung tim kiem
-            // Khong hien thi recyclerview
-            recyclerView_User.setVisibility(View.GONE);
-        }
-    }
 }

@@ -28,7 +28,7 @@
                 android:layout_centerHorizontal="true"
                 android:id="@+id/toolbarNameTV"
                 android:layout_centerVertical="true"
-                android:text="username"
+                android:text="myylyyy"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />

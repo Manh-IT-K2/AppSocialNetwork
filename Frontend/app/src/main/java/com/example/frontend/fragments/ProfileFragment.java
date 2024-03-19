@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
@@ -27,16 +28,16 @@ public class ProfileFragment extends Fragment {
 //    Button editprofileBtn;
     ImageButton editprofileImageBtn,menuSetting;
     AppCompatButton editprofileBtn, logoutBtn, qrcodeBtn;
+    TextView username;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         logoutBtn = view.findViewById(R.id.logout);
         qrcodeBtn = view.findViewById(R.id.qrcodeBtn);
-
+        username = view.findViewById(R.id.toolbarNameTV);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,8 +46,6 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
         editprofileBtn = view.findViewById(R.id.edit_profileBtn);
         editprofileImageBtn = view.findViewById(R.id.edit_profileImage);
         menuSetting = view.findViewById(R.id.menu_btn);
@@ -71,9 +70,18 @@ public class ProfileFragment extends Fragment {
         menuSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("fragment_to_load", "setting_btn");
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), MainActivity.class);
+//                intent.putExtra("fragment_to_load", "setting_btn");
+//                startActivity(intent);
+                String usernameValue = username.getText().toString();
+                Bundle bundle = new Bundle();
+                bundle.putString("username", usernameValue);
+                SettingFragment settingFragment = new SettingFragment();
+                settingFragment.setArguments(bundle); // Thiết lập arguments cho SettingFragment
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_layout_main, settingFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
                 

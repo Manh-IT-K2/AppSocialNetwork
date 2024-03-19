@@ -11,6 +11,7 @@ import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.EditProfileFragment;
+import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
 import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.SettingFragment;
@@ -36,6 +37,8 @@ public class FragmentReplacerActivity extends AppCompatActivity {
                 setFragment(new ChangePasswordFragment());
             }else if(fragmentToLoad.equals("create_new_pass")){
                 setFragment(new LoginFragment());
+            }else if(fragmentToLoad.equals("function_change_pass")){
+                setFragment(new Function_change_password());
             }
         } else {
             setFragment(new LoginFragment());
