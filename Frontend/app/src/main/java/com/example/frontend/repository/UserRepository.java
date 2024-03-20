@@ -163,7 +163,7 @@ public class UserRepository {
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công
-                    Log.d("changePass", "Request failed: " + response.code());
+                //    Log.d("changePass", "Request failed: " + response.code());
                     // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
                     mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
                 }
@@ -171,7 +171,7 @@ public class UserRepository {
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
-                Log.e("changePass", "Request failed", t);
+             //   Log.e("changePass", "Request failed", t);
                 // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
                 mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
             }
@@ -215,5 +215,27 @@ public class UserRepository {
         return mutableLiveData;
     }
 
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
+        MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
 
+        userService.getRequestTrackingUser().enqueue(new Callback<ApiResponse<List<UserResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<UserResponse>>> call, Response<ApiResponse<List<UserResponse>>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<List<UserResponse>> listApiResponse = response.body();
+                    mutableLiveData.setValue(listApiResponse);
+                    Log.d("allUsers", mutableLiveData.getValue().getData().toString());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
 }

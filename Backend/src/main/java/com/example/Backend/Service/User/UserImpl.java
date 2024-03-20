@@ -5,6 +5,7 @@ import com.example.Backend.Request.User.RequestChangePasword;
 import com.example.Backend.Request.User.RequestCreateAccount;
 import com.example.Backend.Request.User.RequestForgetPass;
 import com.example.Backend.Request.User.RequestLogin;
+import com.example.Backend.Request.User.RequestTracking;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,18 +143,26 @@ public class UserImpl implements UserService {
         Query query = new Query(Criteria.where("username").is(requestChangePass.getUsername()));
         // Tìm người dùng trong cơ sở dữ liệu
         User user = mongoTemplate.findOne(query, User.class, "users");
+        boolean matches = BCrypt.checkpw(requestChangePass.getCurrentpass(), user.getPassword());
         // Nếu không tìm thấy người dùng, trả về thông báo lỗi
         if (user == null) {
             return new ApiResponse<>(false, "Không tìm thấy người dùng với username này", null);
-        }
+        }else if(!matches) {
+            return new ApiResponse<>(false, "Current password incorrect. Please check and try again.", null);
+        }else{
             user.setPassword(BCrypt.hashpw(requestChangePass.getNewpass(), BCrypt.gensalt()));
             // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
             mongoTemplate.save(user, "users");
             // Trả về thông báo thành cônlg
             return new ApiResponse<>(true, "Đổi mật khẩu thành công", user);
-            //  }
+             }
         }
+
+    @Override
+    public ApiResponse<User> requestTrackingUser(RequestTracking requestTracking) {
+        return null;
     }
+}
 
 
 

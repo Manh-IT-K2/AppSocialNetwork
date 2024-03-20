@@ -1,271 +1,286 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     tools:context=".fragments.ProfileFragment">
-
-   <RelativeLayout
+   <LinearLayout
+       android:orientation="vertical"
        android:layout_width="match_parent"
        android:layout_height="wrap_content" >
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:elevation="2dp"
-        app:contentInsetStart="0dp"
-        app:contentInsetEnd="0dp"
-        android:id="@+id/toolbar" >
-        <RelativeLayout
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            android:elevation="2dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetEnd="0dp"
+            android:id="@+id/toolbar" >
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/toolbarNameTV"
-                android:layout_centerVertical="true"
-                android:text="myylyyy"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/menu_btn"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/toolbarNameTV"
+                    android:text="myylyyy"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginLeft="5dp">
+                    <ImageButton
+                        android:id="@+id/menu_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                        android:background="@drawable/ic_down_arrow"
+                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
-                android:layout_margin="16dp"
-                android:background="@drawable/ic_menu"
-                >
+                android:layout_weight="1"
+                android:gravity="end"
+               >
+                <ImageButton
+                    android:id="@+id/menu_btn_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                    android:background="@drawable/ic_more"
+                    android:layout_marginRight="10dp"
+                    />
+                <ImageButton
+                    android:id="@+id/menu_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                    android:background="@drawable/img_menu"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
 
-
-            </ImageButton>
-
-
-
-        </RelativeLayout>
-    </androidx.appcompat.widget.Toolbar>
-
-    <LinearLayout
-       android:id="@+id/linear_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:orientation="horizontal"
-       >
-
-        <RelativeLayout
+        <LinearLayout
+           android:id="@+id/linear_1"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:id="@+id/profileImage"
-                app:civ_border_color="#76D1FA"
-                app:civ_border_width="1dp"
-                android:src="@drawable/ic_launcher_background"
-                android:layout_margin="14dp" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical"
+           >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_weight="1">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginEnd="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:src="@drawable/ic_launcher_background"
+                        app:civ_border_color="#76D1FA"
+                        app:civ_border_width="1dp" />
+
+                    <ImageButton
+                        android:id="@+id/edit_profileImage"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignEnd="@id/profileImage"
+                        android:layout_alignBottom="@id/profileImage"
+                        android:background="@drawable/ic_circle"
+                        android:elevation="3dp"
+                        android:src="@drawable/ic_add"
+                        android:translationX="-15dp"
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/countLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="10"
+                    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/followingCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="250"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="following"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/followerCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="25k"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="follower"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/postCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="250"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="post"
+                            android:textAlignment="center"
+                            android:gravity="center_horizontal"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary" />
+                    </LinearLayout>
 
 
-            <ImageButton
-                android:id="@+id/edit_profileImage"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignEnd="@id/profileImage"
-                android:layout_alignBottom="@id/profileImage"
-                android:background="@drawable/ic_circle"
-                android:elevation="3dp"
-                android:src="@drawable/ic_add"
-                android:translationX="-15dp"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-            <TextView
-                android:id="@+id/nameTV"
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:maxLines="1"
-                android:padding="4dp"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp">
 
-                android:text="Username"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:translationX="150dp"
-                android:translationY="40dp" />
+                <TextView
+                    android:id="@+id/nameTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="Mỹ Ly"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/statusTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:text="love_to_travel_around_the_world"
-                android:textColor="@color/colorPrimary"
-
-                android:translationX="150dp"
-                android:translationY="70dp" />
-        </RelativeLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:layout_toRightOf="@id/profileImage"
-            android:layout_toEndOf="@id/profileImage"
-            android:orientation="vertical">
-
-
+                <TextView
+                    android:id="@+id/statusTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:textSize="12sp"
+                    android:text="love_to_travel_around_the_world"
+                    android:textColor="@color/colorPrimary"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+       <LinearLayout
+           android:id="@+id/followLayout"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_marginTop="10dp"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           >
+                <Button
+                    android:id="@+id/edit_profileBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_button_profile"
+                    app:backgroundTint="@null"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10sp"
+                    android:layout_weight="1"
+                    android:text="Edit Profile"/>
 
+                <Button
+                    android:id="@+id/qrcodeBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_button_profile"
+                    app:backgroundTint="@null"
+                    android:textColor="#FFFFFF"
+                    android:text="QR code"
+                    android:textSize="10sp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"/>
 
-    <RelativeLayout
-        android:id="@+id/combineLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/linear_1">
-        <LinearLayout
-            android:id="@+id/countLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1" >
-                <TextView
-                    android:id="@+id/followingCount"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="250"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-                <TextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="following"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1" >
-                <TextView
-                    android:id="@+id/followerCount"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="25k"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-                <TextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="follower"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1" >
-                <TextView
-                    android:id="@+id/postCount"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="250"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-                <TextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="post"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-
-        <RelativeLayout
-
-            android:id="@+id/followLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/countLayout"
-            >
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:padding="5dp"
-                android:id="@+id/edit_profileBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:background="@null"
-                android:backgroundTint="#141218"
-                android:minWidth="300dp"
-                android:minHeight="4dp"
-                android:text="Edit Profile"
-                android:textColor="#008EFF"
-                android:translationY="5dp"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:padding="5dp"
-                android:id="@+id/qrcodeBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/edit_profileBtn"
-                android:layout_centerHorizontal="true"
-                android:background="@null"
-                android:minWidth="300dp"
-                android:minHeight="4dp"
-                android:text="QR code"
-                android:textColor="#008EFF"
-                android:translationY="5dp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:padding="5dp"
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/qrcodeBtn"
-                android:layout_centerHorizontal="true"
-                android:background="@null"
-                android:minWidth="300dp"
-                android:minHeight="4dp"
-                android:text="Log out"
-                android:textColor="#008EFF"
-                android:translationY="5dp" />
-
-        </RelativeLayout>
-    </RelativeLayout>
+                <Button
+                    android:id="@+id/logout"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_button_profile"
+                    app:backgroundTint="@null"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:textSize="10sp"
+                    android:text="Log out"/>
+       </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -283,5 +298,5 @@
         android:layout_below="@+id/view" >
 
     </androidx.recyclerview.widget.RecyclerView>
-   </RelativeLayout>
-</RelativeLayout>
+   </LinearLayout>
+</LinearLayout>

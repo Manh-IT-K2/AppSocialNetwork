@@ -37,7 +37,6 @@ public class EditProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity (), MainActivity.class);
                 intent.putExtra("fragment_to_load", "edit_profile_done");
                 startActivity(intent);
-
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
