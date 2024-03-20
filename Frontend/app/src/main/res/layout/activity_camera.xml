@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".utils.CameraX">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/cameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </androidx.camera.view.PreviewView>
+
+    <ImageButton
+        android:id="@+id/btn_backCamera"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_marginStart="10sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginBottom="10sp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_back"
+        app:tint="#fff" />
+
+    <ImageButton
+        android:id="@+id/capture"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40sp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_camera"
+        app:tint="#fff" />
+
+    <ImageButton
+        android:id="@+id/toggleFlash"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10sp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_flash"
+        app:tint="#fff" />
+
+    <ImageButton
+        android:id="@+id/flipCamera"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_below="@id/toggleFlash"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10sp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_flip_camera"
+        app:tint="#fff" />
+
+</RelativeLayout>

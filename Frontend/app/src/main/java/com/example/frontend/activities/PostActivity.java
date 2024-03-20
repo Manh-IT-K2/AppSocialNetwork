@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,10 +19,16 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
+import android.os.Environment;
+import android.widget.Toast;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.ImagePostAdapter;
+import com.example.frontend.utils.CameraX;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
@@ -37,8 +42,9 @@ public class PostActivity extends AppCompatActivity {
     private ImagePostAdapter adapter;
 
     private FloatingActionButton btn_createPost;
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private String imageFilePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +68,12 @@ public class PostActivity extends AppCompatActivity {
         btn_cameraPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("conc","not open camera");
-                // Gọi hàm để mở camera ở đây
-                openCamera();
-                Log.d("conc","opened camera");
+//                Log.d("test","not open camera");
+//                // Gọi hàm để mở camera ở đây
+//                dispatchTakePictureIntent();
+//                Log.d("test","opened camera");
+                Intent intent = new Intent(PostActivity.this, CameraX.class);
+                startActivity(intent);
             }
         });
 
@@ -96,43 +104,58 @@ public class PostActivity extends AppCompatActivity {
     }
 
 
-    //
-    private void openCamera() {
+    private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (photoFile != null) {
+                Uri photoURI = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
-    //
+    private File createImageFile() throws Exception {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        imageFilePath = image.getAbsolutePath();
+        return image;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Xử lý hình ảnh đã chụp ở đây (nếu cần thiết)
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Ví dụ: Hiển thị hình ảnh đã chụp
-            //imageView.setImageBitmap(imageBitmap);
+            // Ảnh đã được chụp và lưu tại đường dẫn `imageFilePath`
+            Toast.makeText(this, "Ảnh đã được chụp và lưu", Toast.LENGTH_SHORT).show();
+        } else {
+            // Nếu người dùng không chụp ảnh
+            Toast.makeText(this, "Chụp ảnh không thành công", Toast.LENGTH_SHORT).show();
         }
     }
-
     //
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Quyền đã được cấp, tiến hành load ảnh
-                loadImages();
+                // Quyền đã được cấp, tiến hành mở camera
+                dispatchTakePictureIntent();
             } else {
-                //loadImages();
                 // Quyền bị từ chối, thông báo cho người dùng hoặc xử lý một cách phù hợp
-                Log.d("PermissionDenied", "Quyền truy cập bộ nhớ bị từ chối");
+                Toast.makeText(this, "Quyền truy cập camera bị từ chối", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
 
     private void loadImages() {
