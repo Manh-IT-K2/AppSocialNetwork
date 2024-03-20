@@ -16,7 +16,7 @@ public class CallApi {
         if (retrofit == null) {
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl(URL_Long)
+                    .baseUrl(URL_Manh)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
