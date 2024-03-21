@@ -2,6 +2,8 @@ package com.example.frontend.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,10 +30,13 @@ import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.FirebaseStorageUploader;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,16 +50,26 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.gson.Gson;
+import com.pusher.client.Pusher;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import io.socket.client.Socket;
+import okhttp3.OkHttpClient;
+import okhttp3.WebSocket;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LoginFragment extends Fragment {
-
+    private static final String SERVER_URL = "wss://jskw989d-8080.asse.devtunnels.ms/ws";
+    private OkHttpClient client;
+    private WebSocket webSocket;
+    private Socket mSocket;
     private UserViewModel userViewModel;
     private EditText emailET, passwordET;
     private TextView forgotTV, signUpTV;
@@ -68,6 +83,8 @@ public class LoginFragment extends Fragment {
     private List<String> urlFromFirebase;
 
     LinearLayout linear_layout_image_container;
+    private Pusher pusher;
+
 
 
     public LoginFragment() {
@@ -100,13 +117,46 @@ public class LoginFragment extends Fragment {
 
         init(view);
         clickListener();
+
+        pusher = PusherClient.init();
+        pusher.connect();
+        pusher.subscribe("privateChat")
+                .bind("getMessage", (channelName, eventName, data) -> {
+                    // Xử lý dữ liệu nhận được từ sự kiện
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Log.d("pushertest1", new Gson().toJson(data));
+                    try {
+                        PrivateChatResponse privateChatResponse = new Gson().fromJson(data, PrivateChatResponse.class);
+                        // Sử dụng Handler để hiển thị Toast trên luồng giao diện chính
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), privateChatResponse.getRecipient().getEmail(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Log.d("pushertest2", new Gson().toJson(privateChatResponse));
+                    } catch (Exception e) {
+                        Log.d("trycatch", new Gson().toJson(e));
+                    }
+                });
     }
 
     private void clickListener() {
         signUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+                //((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+                try {
+                    // Gửi tin nhắn đến máy chủ với sự kiện "sendMessage"
+                    JSONObject message = new JSONObject();
+                    message.put("message", "hallo");
+                    mSocket.emit("sendMessage", message);
+                    Log.d("errors1", "Tin nhắn đã được gửi: ");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("errors1", new Gson().toJson(e));
+                }
             }
         });
 
@@ -328,5 +378,14 @@ public class LoginFragment extends Fragment {
         chooseFileButton = view.findViewById(R.id.chooseFileButton);
         linear_layout_image_container = view.findViewById(R.id.linear_layout_image_container);
         uploadToFirebase = view.findViewById(R.id.uploadToFirebase);
+    }
+
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Ngắt kết nối khi Fragment bị hủy
+        pusher.disconnect();
     }
 }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,6 @@ public class RequestPost {
     private String imagePost;
     private String userId;
     private String description;
+    private String location;
+    private Date createAt;
 }
