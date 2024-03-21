@@ -5,10 +5,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="18dp"
-    android:layout_marginEnd="15dp">
+    android:layout_marginEnd="10dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/img_storyMainUser"
+        android:id="@+id/btn_createStory"
         android:layout_width="62dp"
         android:layout_height="62dp"
         android:elevation="2dp"
@@ -21,6 +21,7 @@
         app:shapeAppearanceOverlay="@style/circle_image"
         app:strokeColor="#C60188"
         app:strokeWidth="2dp"
+        android:padding="3dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageButton
@@ -31,10 +32,10 @@
         android:background="@drawable/circle_add_story"
         android:elevation="4dp"
         android:src="@drawable/icon_add_night"
-        app:layout_constraintBottom_toBottomOf="@+id/img_storyMainUser"
-        app:layout_constraintEnd_toEndOf="@+id/img_storyMainUser"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_createStory"
+        app:layout_constraintEnd_toEndOf="@+id/btn_createStory"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/img_storyMainUser" />
+        app:layout_constraintStart_toStartOf="@+id/btn_createStory" />
 
     <TextView
         android:id="@+id/txt_nameUserStory"
@@ -46,7 +47,7 @@
         android:textSize="12dp"
         android:textStyle="italic"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/img_storyMainUser"
-        app:layout_constraintStart_toStartOf="@+id/img_storyMainUser"
-        app:layout_constraintTop_toBottomOf="@+id/img_storyMainUser"></TextView>
+        app:layout_constraintEnd_toEndOf="@+id/btn_createStory"
+        app:layout_constraintStart_toStartOf="@+id/btn_createStory"
+        app:layout_constraintTop_toBottomOf="@+id/btn_createStory"></TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>
