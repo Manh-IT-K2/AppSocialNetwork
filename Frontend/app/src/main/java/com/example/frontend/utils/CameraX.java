@@ -139,7 +139,7 @@ public class CameraX extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(CameraX.this, "Image saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CameraX.this, "Image saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
                         // Sau khi ảnh được lưu, chuyển sang CreatePostFragment
                         Intent intent = new Intent(CameraX.this, CreatePostActivity.class);
                         intent.putExtra("imagePath", file.getPath());
