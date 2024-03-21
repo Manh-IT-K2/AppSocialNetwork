@@ -3,6 +3,7 @@ package com.example.Backend.Controller;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnEvent;
+import com.example.Backend.Config.PusherConfig;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
@@ -11,6 +12,7 @@ import com.example.Backend.Service.PrivateChat.PrivateChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,24 +20,16 @@ import org.springframework.web.bind.annotation.*;
 public class PrivateChatController {
     @Autowired
     PrivateChatService privateChatService;
+    PusherConfig pusherConfig;
     @Autowired
-    private final SocketIOServer socketIOServer;
-    @Autowired
-    public PrivateChatController(SocketIOServer socketIOServer) {
-        this.socketIOServer = socketIOServer;
+    public PrivateChatController(PusherConfig pusherService) {
+        this.pusherConfig = pusherService;
     }
 
     @PostMapping()
     public ApiResponse<PrivateChatResponse> createPrivateChat(@RequestBody RequestCreatePrivateChat requestCreatePrivateChat) throws Exception{
-        socketIOServer.getBroadcastOperations().sendEvent("createPrivateChat", requestCreatePrivateChat);
+        pusherConfig.triggerEvent("privateChat", "getMessage", privateChatService.createPrivateChat(requestCreatePrivateChat));
         return new ApiResponse<>(true, "OK", privateChatService.createPrivateChat(requestCreatePrivateChat));
-    }
-
-    @OnEvent(value = "sendMessage")
-    public void onMessage(SocketIOClient client, String message) {
-        System.out.println("Received message from client: " + message);
-
-        // Xử lý tin nhắn từ client ở đây
     }
 
     @GetMapping()

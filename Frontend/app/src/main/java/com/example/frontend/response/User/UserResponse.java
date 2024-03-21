@@ -10,8 +10,17 @@ public class UserResponse {
     private String avatarImg;
     private int followers;
     private int following;
+    private boolean status;
 
-    public UserResponse(String id, String username, String password, boolean isFromGoogle, String email, String phoneNumber, String avatarImg, int followers, int following) {
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public UserResponse(String id, String username, String password, boolean isFromGoogle, String email, String phoneNumber, String avatarImg, int followers, int following, boolean status) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -21,6 +30,7 @@ public class UserResponse {
         this.avatarImg = avatarImg;
         this.followers = followers;
         this.following = following;
+        this.status = status;
     }
 
     public String getId() {

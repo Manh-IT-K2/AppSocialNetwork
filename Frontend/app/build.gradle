@@ -93,5 +93,7 @@ dependencies {
     implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
+    implementation 'com.pusher:pusher-java-client:1.8.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
 }
