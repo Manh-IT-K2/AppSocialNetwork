@@ -70,5 +70,7 @@ public class Fragment_performSearch extends Fragment {
                 searchTabLayout.getTabAt(position).select();
             }
         });
+
+
     }
 }

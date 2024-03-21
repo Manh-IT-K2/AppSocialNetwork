@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ import com.example.frontend.R;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
 import com.example.frontend.request.User.RequestChangePass;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.viewModel.User.UserViewModel;
 
 
@@ -53,16 +56,12 @@ public class Function_change_password extends Fragment {
         back_settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment Setting = new ProfileFragment();
-
-                // Lấy instance của FragmentManager
+                Fragment profile = new ProfileFragment();
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                // Bắt đầu transaction để thay thế fragment hiện tại bằng fragment mới
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_layout_main, Setting);
+                fragmentTransaction.replace(R.id.fragment_layout_main, profile);
                 fragmentTransaction.addToBackStack(null); // Thêm transaction này vào stack back để quay trở lại fragment trước đó (nếu cần)
                 fragmentTransaction.commit();
-                Toast.makeText(getContext()," Clicke", Toast.LENGTH_LONG).show();
             }
         });
         change_passBtn.setOnClickListener(new View.OnClickListener() {
@@ -78,21 +77,32 @@ public class Function_change_password extends Fragment {
                 String confirm = confirmpass.getText().toString();
                // Toast.makeText(getContext(), usernameValue, Toast.LENGTH_LONG).show();
                 if (current.isEmpty() || new_p.isEmpty() || confirm.isEmpty()) {
-                    err_data_null.setText("Invalid Passwords!!!!");
+                    err_data_null.setText("Please fill in all required fields.");
                     changed_mess.setText("");
                     err_confirm_pass.setText("");
                 }else if(!new_p.equals(confirm)){
-                    err_confirm_pass.setText("Mismatched password");
+                    err_confirm_pass.setText("Passwords do not match. Please try again.");
                     err_data_null.setText("");
                     changed_mess.setText("");
                 }
                  else {
-                    userViewModel.changePass(new RequestChangePass( usernameValue, current, new_p));
-                    changed_mess.setText("Password changed");
-                    err_confirm_pass.setText("");
-                    err_data_null.setText("");
+                    userViewModel.changePass(new RequestChangePass( usernameValue, current, new_p)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                        @Override
+                        public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
+                            if (userResponseApiResponse.isStatus() == false) {
+                                err_confirm_pass.setText(userResponseApiResponse.getMessage());
+                                changed_mess.setText("");
+                                err_data_null.setText("");
+                               // Toast.makeText(getContext(), userResponseApiResponse.getMessage(), Toast.LENGTH_LONG).show();
+                            } else {
+                                changed_mess.setText("Password changed");
+                                err_confirm_pass.setText("");
+                                err_data_null.setText("");
+                            }
+                        }
+                    });
+                    }
 
-                }
             }
         });
 

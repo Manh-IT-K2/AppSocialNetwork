@@ -1,7 +1,12 @@
 package com.example.frontend.adapter;
 
+import android.util.SparseArray;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.frontend.fragments.Fragment_performSearch;
@@ -10,6 +15,7 @@ import com.example.frontend.fragments.Fragment_searchUser;
 import com.example.frontend.fragments.SearchFragment;
 
 public class SearchViewPagerAdapter extends FragmentStateAdapter {
+
     public SearchViewPagerAdapter(@NonNull Fragment_performSearch fragmentActivity) {
         super(fragmentActivity);
     }
@@ -25,6 +31,7 @@ public class SearchViewPagerAdapter extends FragmentStateAdapter {
             default:
                 return new SearchFragment();
         }
+
     }
 
     @Override
@@ -32,3 +39,5 @@ public class SearchViewPagerAdapter extends FragmentStateAdapter {
         return 2;
     }
 }
+
+

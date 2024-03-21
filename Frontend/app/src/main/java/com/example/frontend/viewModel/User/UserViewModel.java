@@ -37,6 +37,9 @@ public class UserViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userRepository.getAllUsers();
     }
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
+        return userRepository.getRequestTrackingUser();
+    }
     public MutableLiveData<ApiResponse<UserResponse>> changePW(RequestChangePW request) {
         return userRepository.changePW(request);
     }
