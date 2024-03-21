@@ -16,7 +16,14 @@ import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.fragments.CommentFragment;
 import com.example.frontend.request.Post.RequestPostByUserId;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
@@ -41,8 +48,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         // Set thông tin bài đăng vào các view
         holder.txt_userName.setText(post.getUserName());
-        holder.txt_address.setText("japan");
         holder.txt_contentPost.setText(post.getDescription());
+        if(post.getLocation().isEmpty()){
+            holder.txt_address.setText("Unknown Location");
+        }else {
+            holder.txt_address.setText(post.getLocation());
+        }
+        // Tính thời gian đã trôi qua từ thời điểm đăng bài đến thời điểm hiện tại
+        String timeAgo = getTimeAgo(post.getCreateAt());
+        holder.txt_timeCreatePost.setText(timeAgo);
 
         // Load hình ảnh từ URL bằng Glide
         Glide.with(mContext)
@@ -65,7 +79,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView img_user, img_userLiked, img_post, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
-        private TextView txt_userName, txt_address, txt_contentPost;
+        private TextView txt_userName, txt_address, txt_contentPost, txt_timeCreatePost;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -82,6 +96,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             txt_userName = itemView.findViewById(R.id.txt_UserName);
             txt_contentPost = itemView.findViewById(R.id.txt_contentPost);
             txt_address = itemView.findViewById(R.id.txt_address);
+            txt_timeCreatePost = itemView.findViewById(R.id.txt_timeCreatePost);
 
             //
             btn_comment.setOnClickListener(new View.OnClickListener() {
@@ -96,5 +111,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         }
     }
 
+    // Hàm tính thời gian đã trôi qua từ một thời điểm cho đến hiện tại
+    private String getTimeAgo(String createdAt) {
+        try {
+            // Parse chuỗi thời gian thành đối tượng Date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date createdDate = sdf.parse(createdAt);
+
+            // Lấy thời gian hiện tại
+            Date currentDate = new Date();
+
+            // Tính thời gian đã trôi qua
+            long timeDifference = currentDate.getTime() - createdDate.getTime();
+            long seconds = TimeUnit.MILLISECONDS.toSeconds(timeDifference);
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(timeDifference);
+            long hours = TimeUnit.MILLISECONDS.toHours(timeDifference);
+            long days = TimeUnit.MILLISECONDS.toDays(timeDifference);
+
+            // Trả về chuỗi biểu thị thời gian đã trôi qua
+            if (days > 0) {
+                return days + " days ago";
+            } else if (hours > 0) {
+                return hours + " hours ago";
+            } else if (minutes > 0) {
+                return minutes + " minutes ago";
+            } else {
+                return seconds + " seconds ago";
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "N/A";
+        }
+    }
 
 }
