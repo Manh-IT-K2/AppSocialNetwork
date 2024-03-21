@@ -61,9 +61,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.7.2')
+    implementation platform('com.google.firebase:firebase-bom:32.7.4')
     implementation 'com.google.firebase:firebase-analytics'
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation 'com.google.firebase:firebase-database:20.0.1'
+
 
     //Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -80,7 +82,20 @@ dependencies {
     implementation 'com.google.mlkit:barcode-scanning:16.2.0'
     implementation 'com.google.zxing:core:3.4.1'
 
+    //
+    implementation 'androidx.camera:camera-core:1.2.2'
+    implementation 'androidx.camera:camera-camera2:1.2.2'
+    implementation 'androidx.camera:camera-lifecycle:1.2.2'
+    implementation 'androidx.camera:camera-view:1.2.2'
+
     // Material
     implementation 'com.google.android.material:material:1.2.0'
+
+    //WebSocket
+    implementation ('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+    implementation 'com.pusher:pusher-java-client:1.8.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
 }

@@ -19,4 +19,5 @@ public interface UserService {
     ApiResponse<User> requestTrackingUser(RequestTracking requestTracking);
     ApiResponse<User> getDetailUserById(User user);
     ApiResponse<User> updateUser(RequestUpdateUser user);
+    User findUserById(String id);
 }

@@ -50,9 +50,14 @@ public class UserImpl implements UserService {
                 savedUser.setUsername(requestLogin.getUsername());
                 savedUser.setAvatarImg(requestLogin.getAvatarImg());
                 savedUser.setFromGoogle(true);
+                savedUser.setStatus(true);
                 return new ApiResponse<User>(true, "", mongoTemplate.insert(savedUser, "users"));
             } else {
-                if (user.isFromGoogle()) return new ApiResponse<User>(true, "", user);
+                if (user.isFromGoogle()){
+                    user.setStatus(true);
+                    mongoTemplate.save(user);
+                    return new ApiResponse<User>(true, "", user);
+                }
                 else
                     return new ApiResponse<User>(false, "Email này đã được đăng ký, vui lòng đăng nhập bằng phương thức khác", null);
             }
@@ -61,6 +66,8 @@ public class UserImpl implements UserService {
 
             boolean matches = BCrypt.checkpw(requestLogin.getPassword(), user.getPassword());
             if (matches) {
+                user.setStatus(true);
+                mongoTemplate.save(user);
                 return new ApiResponse<User>(true, "", user);
             }
             //System.out.println(new Gson().toJson(user));
@@ -187,7 +194,8 @@ public class UserImpl implements UserService {
         mongoTemplate.save(resultUser,"users");
         return new ApiResponse<>(true, "Update Success!",resultUser);
     }
+    public User findUserById(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        return mongoTemplate.findOne(query, User.class, "users");
+    }
 }
-
-
-
