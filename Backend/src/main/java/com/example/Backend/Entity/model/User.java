@@ -29,6 +29,8 @@ public class User {
 
     private String avatarImg;
 
+    private boolean status;
+
     @Min(0)
     private int followers;
 

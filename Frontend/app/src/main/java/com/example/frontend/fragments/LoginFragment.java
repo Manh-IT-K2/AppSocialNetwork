@@ -47,14 +47,21 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class LoginFragment extends Fragment {
-
+    private Socket mSocket;
     private UserViewModel userViewModel;
     private EditText emailET, passwordET;
     private TextView forgotTV, signUpTV;
@@ -100,13 +107,24 @@ public class LoginFragment extends Fragment {
 
         init(view);
         clickListener();
+        createWebSocketClient();
     }
 
     private void clickListener() {
         signUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+                //((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+                try {
+                    // Gửi tin nhắn đến máy chủ với sự kiện "sendMessage"
+                    JSONObject message = new JSONObject();
+                    message.put("content", "hallo");
+                    mSocket.emit("sendMessage", message);
+                    Log.d("errors1", "Tin nhắn đã được gửi: ");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("errors1", new Gson().toJson(e));
+                }
             }
         });
 
@@ -328,5 +346,48 @@ public class LoginFragment extends Fragment {
         chooseFileButton = view.findViewById(R.id.chooseFileButton);
         linear_layout_image_container = view.findViewById(R.id.linear_layout_image_container);
         uploadToFirebase = view.findViewById(R.id.uploadToFirebase);
+    }
+
+    private void createWebSocketClient() {
+        try {
+            // Kết nối đến máy chủ Socket.io
+            mSocket = IO.socket("https://jskw989d-8080.asse.devtunnels.ms");
+
+            // Đăng ký lắng nghe sự kiện "createPrivateChat" từ máy chủ
+            mSocket.on("createPrivateChat", onNewMessage);
+
+            // Kết nối đến máy chủ
+            mSocket.connect();
+            Log.d("errors", "ok");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("errors", e.getMessage());
+            Log.d("errors", new Gson().toJson(e));
+        }
+    }
+
+    // Hàm lắng nghe sự kiện "chat message"
+    private Emitter.Listener onNewMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            // Xử lý dữ liệu nhận được từ máy chủ
+            final String message = (String) args[0];
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Hiển thị tin nhắn trong giao diện người dùng
+                    Log.d("Socket.IO", new Gson().toJson(message));
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Ngắt kết nối khi Fragment bị hủy
+        mSocket.disconnect();
+        mSocket.off("createPrivateChat", onNewMessage);
     }
 }
