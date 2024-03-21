@@ -10,6 +10,10 @@ public class UserResponse {
     private String avatarImg;
     private int followers;
     private int following;
+    private String website;
+    private String bio;
+    private String gender;
+    private String name;
     private boolean status;
 
     public boolean isStatus() {
@@ -31,6 +35,22 @@ public class UserResponse {
         this.followers = followers;
         this.following = following;
         this.status = status;
+    }
+
+    public UserResponse(String id, String username, String password, boolean isFromGoogle, String email, String phoneNumber, String avatarImg, int followers, int following, String website, String bio, String gender,String name) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.isFromGoogle = isFromGoogle;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.avatarImg = avatarImg;
+        this.followers = followers;
+        this.following = following;
+        this.website = website;
+        this.bio = bio;
+        this.gender = gender;
+        this.name = name;
     }
 
     public String getId() {
@@ -103,5 +123,37 @@ public class UserResponse {
 
     public void setFollowing(int following) {
         this.following = following;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

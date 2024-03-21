@@ -16,18 +16,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-            <TextView
-                android:gravity=""
-                android:layout_gravity="center"
+            <Button
                 android:layout_weight="1"
+                android:id="@+id/editBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/toolbarNameTV"
                 android:text="Edit profile"
-                android:textColor="@color/colorPrimary"
+                android:layout_gravity="end"
+                android:gravity="start|center"
+                android:background="@null"
+                android:backgroundTint="#2E2D2D"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginLeft="15dp"/>
+                android:textColor="@color/colorPrimary"
+                android:layout_marginLeft="15dp"
+                android:padding="0dp"/>
+
             <Button
                 android:layout_weight="1"
                 android:id="@+id/Done_btn"
@@ -66,7 +69,7 @@
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:id="@+id/profileImage"
-            android:src="@drawable/img_user"
+            android:src="@null"
             android:layout_margin="14dp" />
         <Button
             android:id="@+id/edit_profile_photo_Btn"
@@ -252,6 +255,7 @@
                     android:layout_marginLeft="15dp"
                     android:textColor="@color/colorPrimary" />
                 <EditText
+                    android:id="@+id/editTextEmail"
                     android:layout_weight="3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -277,6 +281,7 @@
                     android:textSize="18sp"
                     android:textColor="@color/colorPrimary" />
                 <EditText
+                    android:id="@+id/editTextPhone"
                     android:layout_weight="3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -304,6 +309,7 @@
                     android:textColor="@color/colorPrimary" />
 
                 <EditText
+                    android:id="@+id/editTextGender"
                     android:layout_weight="3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -1,11 +1,7 @@
 package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.model.User;
-import com.example.Backend.Request.User.RequestChangePasword;
-import com.example.Backend.Request.User.RequestCreateAccount;
-import com.example.Backend.Request.User.RequestForgetPass;
-import com.example.Backend.Request.User.RequestLogin;
-import com.example.Backend.Request.User.RequestTracking;
+import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserImpl implements UserService {
@@ -135,8 +132,6 @@ public class UserImpl implements UserService {
         user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPass(),BCrypt.gensalt()));
         mongoTemplate.save(user,"users");
         return new ApiResponse<>(true, "Đổi mật khẩu thành công!",null);
-
-
     }
     @Override
     public ApiResponse<List<User>> getAllUsers() {
@@ -171,6 +166,34 @@ public class UserImpl implements UserService {
     }
 
     @Override
+    public ApiResponse<User> getDetailUserById(User req) {
+        if (!req.getId().isEmpty()) {
+            User resultUser = mongoTemplate.findOne(Query.query(Criteria.where("id").is(req.getId())), User.class, "users");
+            return Optional.ofNullable(resultUser)
+                    .map(user -> new ApiResponse<User>(true, "Success", user))
+                    .orElse(new ApiResponse<>(false, "No data", null));
+        }
+        return new ApiResponse<>(false, "No data", null);
+    }
+
+    @Override
+    public ApiResponse<User> updateUser(RequestUpdateUser user) {
+        Query query = new Query(Criteria.where("id").is(user.getId()));
+        User resultUser = mongoTemplate.findOne(query, User.class, "users");
+        if (resultUser == null) {
+            return new ApiResponse<>(false, "User not found", null);
+        }
+        if(!user.getEmail().isEmpty()) resultUser.setEmail(user.getEmail());
+        if(!user.getBio().isEmpty()) resultUser.setBio(user.getBio());
+        if(!user.getUsername().isEmpty()) resultUser.setUsername(user.getUsername());
+        if(!user.getGender().isEmpty()) resultUser.setGender(user.getGender());
+        if(!user.getPhoneNumber().isEmpty()) resultUser.setPhoneNumber(user.getPhoneNumber());
+        if(!user.getWebsite().isEmpty()) resultUser.setWebsite(user.getWebsite());
+        if(!user.getName().isEmpty()) resultUser.setName(user.getName());
+        if(!user.getAvatarImg().isEmpty()) resultUser.setAvatarImg(user.getAvatarImg());
+        mongoTemplate.save(resultUser,"users");
+        return new ApiResponse<>(true, "Update Success!",resultUser);
+    }
     public User findUserById(String id) {
         Query query = new Query(Criteria.where("_id").is(id));
         return mongoTemplate.findOne(query, User.class, "users");

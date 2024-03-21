@@ -70,7 +70,6 @@ public class PostRepository {
                     ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
                     Gson gson = new Gson();
                     String json = gson.toJson(apiResponse);
-                    Log.d("err", json);
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công

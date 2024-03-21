@@ -19,6 +19,9 @@ public class ApiResponse<T> {
         this.status = status;
     }
 
+    public boolean getStatus() {
+        return status;
+    }
     public String getMessage() {
         return message;
     }
