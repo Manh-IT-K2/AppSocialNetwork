@@ -29,6 +29,14 @@ public class User {
 
     private String avatarImg;
 
+    private String bio;
+
+    private String website;
+
+    private String gender;
+
+    private String name;
+
     @Min(0)
     private int followers;
 
