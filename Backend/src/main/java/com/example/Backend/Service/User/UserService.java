@@ -21,4 +21,6 @@ public interface UserService {
     ApiResponse<User> changePW(RequestForgetPass requestForgetPass) throws Exception;
     ApiResponse<User> changePassword(RequestChangePasword requestChangePasword) throws  Exception;
     ApiResponse<User> requestTrackingUser(RequestTracking requestTracking);
+
+    User findUserById(String id);
 }

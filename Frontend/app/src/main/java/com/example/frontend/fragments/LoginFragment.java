@@ -114,17 +114,17 @@ public class LoginFragment extends Fragment {
         signUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
-                try {
-                    // Gửi tin nhắn đến máy chủ với sự kiện "sendMessage"
-                    JSONObject message = new JSONObject();
-                    message.put("content", "hallo");
-                    mSocket.emit("sendMessage", message);
-                    Log.d("errors1", "Tin nhắn đã được gửi: ");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("errors1", new Gson().toJson(e));
-                }
+                ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+//                try {
+//                    // Gửi tin nhắn đến máy chủ với sự kiện "sendMessage"
+//                    JSONObject message = new JSONObject();
+//                    message.put("content", "hallo");
+//                    mSocket.emit("sendMessage", message);
+//                    Log.d("errors1", "Tin nhắn đã được gửi: ");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.d("errors1", new Gson().toJson(e));
+//                }
             }
         });
 
@@ -351,7 +351,7 @@ public class LoginFragment extends Fragment {
     private void createWebSocketClient() {
         try {
             // Kết nối đến máy chủ Socket.io
-            mSocket = IO.socket("https://jskw989d-8080.asse.devtunnels.ms");
+            mSocket = IO.socket("https://jskw989d-8080.asse.devtunnels.ms/");
 
             // Đăng ký lắng nghe sự kiện "createPrivateChat" từ máy chủ
             mSocket.on("createPrivateChat", onNewMessage);

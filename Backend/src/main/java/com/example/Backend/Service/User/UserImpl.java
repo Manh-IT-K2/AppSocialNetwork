@@ -169,6 +169,12 @@ public class UserImpl implements UserService {
     public ApiResponse<User> requestTrackingUser(RequestTracking requestTracking) {
         return null;
     }
+
+    @Override
+    public User findUserById(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        return mongoTemplate.findOne(query, User.class, "users");
+    }
 }
 
 
