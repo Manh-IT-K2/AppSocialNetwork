@@ -14,10 +14,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class RequestCreateFollows {
     private ObjectId idFollower;
-
     private ObjectId idFollowing;
-
     private Date created_at;
-
-    private int status;
 }

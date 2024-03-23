@@ -4,8 +4,12 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Follows.FollowsResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.FollowsService;
 import com.example.frontend.utils.CallApi;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,7 +22,7 @@ public class FollowsRepository {
         followsService = CallApi.getRetrofitInstance().create(FollowsService.class);
     }
 
-    public void registerUser(RequestCreateFollows requestCreateFollows) {
+    public MutableLiveData<ApiResponse<String>> createFollows(RequestCreateFollows requestCreateFollows) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
 
         followsService.createFollows(requestCreateFollows).enqueue(new Callback<ApiResponse<String>>() {
@@ -37,5 +41,6 @@ public class FollowsRepository {
                 // Xử lý khi gọi API thất bại
             }
         });
+        return mutableLiveData;
     }
 }
