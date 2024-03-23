@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class ProfileFragment extends Fragment {
 
 //    Button editprofileBtn;
     ImageButton editprofileImageBtn,menuSetting;
-    AppCompatButton editprofileBtn, logoutBtn, qrcodeBtn;
+    Button editprofileBtn, logoutBtn, qrcodeBtn;
     TextView username;
 
     @Override

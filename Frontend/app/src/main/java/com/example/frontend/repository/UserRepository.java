@@ -10,10 +10,12 @@ import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.List;
@@ -95,24 +97,30 @@ public class UserRepository {
 
         return mutableLiveData;
     }
-    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
+    public MutableLiveData<ApiResponse<String>> sendOTP_forgotpassword(String email) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+        Log.d("email:",email);
+        userService.sendOTP_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
 
-        userService.sendOtp_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {
+                    Log.d("email:",email);
                     ApiResponse<String> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
-                    Log.d("sendOTP", mutableLiveData.getValue().getData());
+                    Log.d("sendOTP1", mutableLiveData.getValue().getData());
                 } else {
                     // Xử lý khi phản hồi không thành công
+                    Log.d("Lỗi","");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
+                Gson gson = new Gson();
+                String json = gson.toJson(t);
+                Log.d("Lỗi",json);
             }
         });
 
@@ -224,7 +232,7 @@ public class UserRepository {
                 if(response.isSuccessful()) {
                     ApiResponse<List<UserResponse>> listApiResponse = response.body();
                     mutableLiveData.setValue(listApiResponse);
-                    Log.d("allUsers", mutableLiveData.getValue().getData().toString());
+                    Log.d("Request Tracking",mutableLiveData.getValue().getData().toString());
                 } else {
                     // Xử lý khi phản hồi không thành công
                 }
@@ -232,6 +240,55 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    // HANDLE GET DETAIL USER BY ID
+    public MutableLiveData<ApiResponse<UserResponse>> getDetailUserById(String id) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        userService.getDetailUserById(id).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<UserResponse> user = response.body();
+                    mutableLiveData.setValue(user);
+                    Log.d("Detail User:",mutableLiveData.getValue().getData().toString());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    // HANDLE UPDATE USER
+    public MutableLiveData<ApiResponse<UserResponse>> updateUser(RequestUpdateUser requestUpdateUser) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        userService.updateUser(requestUpdateUser).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<UserResponse> user = response.body();
+                    mutableLiveData.setValue(user);
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
             }
         });

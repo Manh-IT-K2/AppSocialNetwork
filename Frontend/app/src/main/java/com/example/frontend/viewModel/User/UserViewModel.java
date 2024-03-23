@@ -8,6 +8,7 @@ import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 
@@ -31,14 +32,20 @@ public class UserViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
     }
-    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
-        return userRepository.sendOtp_forgotpassword(email);
+    public MutableLiveData<ApiResponse<String>> sendOTP_forgotpassword(String email) {
+        return userRepository.sendOTP_forgotpassword(email);
     }
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userRepository.getAllUsers();
     }
     public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
         return userRepository.getRequestTrackingUser();
+    }
+    public MutableLiveData<ApiResponse<UserResponse>> getDetailUserById(String id) {
+        return userRepository.getDetailUserById(id);
+    }
+    public MutableLiveData<ApiResponse<UserResponse>> updateUser(RequestUpdateUser requestUpdateUser) {
+        return userRepository.updateUser(requestUpdateUser);
     }
     public MutableLiveData<ApiResponse<UserResponse>> changePW(RequestChangePW request) {
         return userRepository.changePW(request);
