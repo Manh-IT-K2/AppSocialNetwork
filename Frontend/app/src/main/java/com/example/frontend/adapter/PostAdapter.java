@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
-    public Context mContext;
+    public static Context mContext;
     public List<RequestPostByUserId> listPost;
 
     public PostAdapter(Context mContext, List<RequestPostByUserId> listPost) {

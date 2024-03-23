@@ -14,8 +14,8 @@ public class CallApi {
     public static String URL_MrLinh = "https://6z9v602p-8080.asse.devtunnels.ms/api/";
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
-            retrofit    = new Retrofit.Builder()
-                    .baseUrl(URL_MrLinh)
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(URL_Manh)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

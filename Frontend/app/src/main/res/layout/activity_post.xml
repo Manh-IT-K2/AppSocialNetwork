@@ -43,7 +43,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="300dp"
         android:gravity="center"
         android:background="@color/grey"
         android:orientation="horizontal">
@@ -80,7 +80,7 @@
             android:gravity="center"
             android:layout_marginEnd="10dp"
             android:background="@drawable/background_btn_radius"
-            android:text="CHỌN NHIỀU" />
+            android:text="Chọn nhiều" />
         <LinearLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -96,6 +96,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_mainPost"
+        android:layout_marginEnd="5dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 </LinearLayout>

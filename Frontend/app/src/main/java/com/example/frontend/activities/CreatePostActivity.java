@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,10 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.frontend.R;
@@ -42,7 +44,6 @@ import java.util.Map;
 
 public class CreatePostActivity extends AppCompatActivity {
 
-    // init variable
     private ImageView img_createPost;
     private Button btn_sharePost;
     private EditText edt_description;
@@ -55,13 +56,12 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        // init view
         img_createPost = findViewById(R.id.img_createPost);
         btn_sharePost = findViewById(R.id.btn_sharePost);
         btn_backCreatePost = findViewById(R.id.btn_backCreatePost);
         edt_description = findViewById(R.id.edt_description);
 
-        String userId = SharedPreferenceLocal.read(getApplicationContext(),"userId");
+        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         selectedFiles = new ArrayList<>();
 
         Bundle extras = getIntent().getExtras();
@@ -83,6 +83,12 @@ public class CreatePostActivity extends AppCompatActivity {
         btn_sharePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Hiển thị Dialog progress
+                final Dialog dialog = new Dialog(CreatePostActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_progress_bar);
+                dialog.setCancelable(false);
+                dialog.show();
                 if (img_createPost != null) {
                     Bitmap bitmap = ((BitmapDrawable) img_createPost.getDrawable()).getBitmap();
 
@@ -99,7 +105,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
                             postViewModel.createPost(requestCreatePost, "65e8a525714ccc3a3caa7f77");
 
-                            // Cập nhật dữ liệu vào Firebase Realtime Database
                             DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("posts");
                             String postId = postsRef.push().getKey();
                             String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
@@ -110,30 +115,35 @@ public class CreatePostActivity extends AppCompatActivity {
                             postData.put("description", description);
                             postData.put("createdAt", isoDateString);
 
-                            postsRef.child(postId).setValue(postData)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d("TAG", "Post created successfully in Realtime Database");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.e("TAG", "Failed to create post in Realtime Database: " + e.getMessage());
-                                        }
-                                    });
+                            postsRef.child(postId).setValue(postData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("TAG", "Post created successfully in Realtime Database");
+                                    startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
+                                    // Đóng Dialog khi tác vụ hoàn thành
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("TAG", "Failed to create post in Realtime Database: " + e.getMessage());
+                                }
+                            });
+                            // Đóng Dialog khi tác vụ hoàn thành
+                            dialog.dismiss();
 
-                            startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
                         }
 
                         @Override
                         public void onUploadFailed(String errorMessage) {
                             Toast.makeText(CreatePostActivity.this, "Failed to upload image: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            // Đóng Dialog khi tác vụ hoàn thành
+                            dialog.dismiss();
                         }
                     });
                 } else {
                     Toast.makeText(CreatePostActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    // Đóng Dialog khi tác vụ hoàn thành
+                    dialog.dismiss();
                 }
             }
         });
