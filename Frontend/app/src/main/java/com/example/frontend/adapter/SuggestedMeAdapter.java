@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
-import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.User.UserResponse;
 
 import java.util.List;
