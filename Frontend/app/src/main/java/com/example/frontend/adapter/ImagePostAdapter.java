@@ -1,7 +1,7 @@
 package com.example.frontend.adapter;
 
+
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +18,14 @@ import java.util.List;
 public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<Uri> imageList;
+    private List<String> imageList;
+    public int selectedPosition = 0; // Vị trí của hình ảnh được chọn
+    private PhotoListener photoListener;
 
-    public ImagePostAdapter(Context mContext, List<Uri> imageList) {
+    public ImagePostAdapter(Context mContext, List<String> imageList, PhotoListener photoListener) {
         this.mContext = mContext;
         this.imageList = imageList;
+        this.photoListener = photoListener;
     }
 
     @NonNull
@@ -34,18 +37,29 @@ public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Uri imageUri = imageList.get(position);
-        Glide.with(mContext)
-                .load(imageUri)
-                .into(holder.img_loadPostStore);
+        String imageUri = imageList.get(position);
+        Glide.with(mContext).load(imageUri).into(holder.img_loadPostStore);
 
-        // Load the first image into the designated ImageView
-        if (position == 0) {
-            Glide.with(mContext)
-                    .load(imageUri)
-                    .into(holder.img_mainPost);
+        // Kiểm tra nếu hình ảnh đầu tiên đã được chọn, và đang hiển thị ở vị trí đầu tiên, thì áp dụng hiệu ứng chọn
+        if (position == selectedPosition) {
+            holder.img_loadPostStore.setAlpha(0.5f);
+        } else {
+            holder.img_loadPostStore.setAlpha(1.0f);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cập nhật vị trí hình ảnh được chọn
+                selectedPosition = holder.getAdapterPosition();
+                // Thông báo cho Activity về vị trí hình ảnh được chọn
+                photoListener.onPhotoClick(imageUri);
+                // Cập nhật giao diện để hiển thị hiệu ứng chọn
+                notifyDataSetChanged();
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -53,13 +67,15 @@ public class ImagePostAdapter extends RecyclerView.Adapter<ImagePostAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView img_loadPostStore, img_mainPost;
-
+        ImageView img_loadPostStore;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             img_loadPostStore = itemView.findViewById(R.id.img_loadPostStore);
-            img_mainPost = itemView.findViewById(R.id.img_mainPost);
         }
+    }
+
+    public interface PhotoListener {
+        void onPhotoClick(String path);
     }
 }

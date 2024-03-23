@@ -101,7 +101,7 @@ public class UserImpl implements UserService {
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn", otp.toString());
     }
     @Override
-    public ApiResponse<String> sendOtp_forgotpassword(String email) {
+    public ApiResponse<String> sendOTP_forgotpassword(String email) {
         Query query = new Query(Criteria.where("email").is(email));
         User user = mongoTemplate.findOne(query, User.class, "users");
 

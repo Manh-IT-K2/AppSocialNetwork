@@ -31,7 +31,7 @@ public class ImageStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
             View headerView = LayoutInflater.from(context).inflate(R.layout.item_header_create_story, parent, false);
             return new HeaderViewHolderStory(headerView, context);

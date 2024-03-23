@@ -64,7 +64,7 @@ public class VerificationCodeFragment extends Fragment {
                     return;
                 }
                 System.out.println(email);
-                userViewModel.sendOtp_forgotpassword(email).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
+                userViewModel.sendOTP_forgotpassword(email).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
                     @Override
                     public void onChanged(ApiResponse<String> stringApiResponse) {
                         checkOTP  = stringApiResponse.getData();

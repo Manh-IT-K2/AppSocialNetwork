@@ -7,9 +7,11 @@
 
     <ImageView
         android:id="@+id/img_loadPostStore"
-        android:layout_width="130dp"
+        android:layout_width="160dp"
         android:layout_height="130dp"
         android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        android:scaleType="fitXY"
         android:layout_marginTop="5dp"
         tools:srcCompat="@tools:sample/avatars"/>
 </LinearLayout>

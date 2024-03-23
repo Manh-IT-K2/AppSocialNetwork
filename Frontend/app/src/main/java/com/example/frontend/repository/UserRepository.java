@@ -15,6 +15,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.List;
@@ -96,24 +97,30 @@ public class UserRepository {
 
         return mutableLiveData;
     }
-    public MutableLiveData<ApiResponse<String>> sendOtp_forgotpassword(String email) {
+    public MutableLiveData<ApiResponse<String>> sendOTP_forgotpassword(String email) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+        Log.d("email:",email);
+        userService.sendOTP_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
 
-        userService.sendOtp_forgotpassword(email).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {
+                    Log.d("email:",email);
                     ApiResponse<String> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
-                    Log.d("sendOTP", mutableLiveData.getValue().getData());
+                    Log.d("sendOTP1", mutableLiveData.getValue().getData());
                 } else {
                     // Xử lý khi phản hồi không thành công
+                    Log.d("Lỗi","");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
+                Gson gson = new Gson();
+                String json = gson.toJson(t);
+                Log.d("Lỗi",json);
             }
         });
 
