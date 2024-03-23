@@ -17,7 +17,7 @@ public class FollowController {
     @Autowired
     FollowsService followsService;
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<String>> createAccount(@RequestBody RequestCreateFollows requestCreateFollows) throws Exception{
+    public ResponseEntity<ApiResponse<String>> createFollows(@RequestBody RequestCreateFollows requestCreateFollows) throws Exception{
         followsService.createFollows(requestCreateFollows);
         ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Success","");
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
