@@ -77,8 +77,26 @@ public class SearchFragment extends Fragment {
 
                 // Khi nhan tim kiem -> put data vao Shared preferences
                 SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, new java.util.Date());
-                searchHistoryResponseArrayList.add(searchHistoryResponse);
+
+                // Them vao ArrayList searchHistoryResponseArrayList
+                if (searchHistoryResponseArrayList.isEmpty())
+                    searchHistoryResponseArrayList.add(searchHistoryResponse);
+                else {
+                    // Xoa text da co trong shared preference trung voi query
+                    int i = 0;
+                    while (i < searchHistoryResponseArrayList.size()) {
+                        if (searchHistoryResponseArrayList.get(i).getText().equals(query)) {
+                            searchHistoryResponseArrayList.remove(searchHistoryResponseArrayList.get(i));
+                            break;
+                        }
+                        i++;
+                    }
+                    searchHistoryResponseArrayList.add(0, searchHistoryResponse);
+                }
+
+                // Them object vao shared preference
                 saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+
 
                 // Không hiện con trỏ nhấp nháy trong searchview
                 searchView.clearFocus();
@@ -125,7 +143,6 @@ public class SearchFragment extends Fragment {
         Type type = new TypeToken<List<SearchHistoryResponse>>() {
         }.getType();
         searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
-        System.out.println(searchHistoryResponseArrayList.size());
 
         if (searchHistoryResponseArrayList == null) {
             searchHistoryResponseArrayList = new ArrayList<>();

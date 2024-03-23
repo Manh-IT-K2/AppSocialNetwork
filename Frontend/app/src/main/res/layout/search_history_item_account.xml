@@ -34,10 +34,10 @@
 
         <ImageButton
             android:id="@+id/delete_account_item"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:src="@drawable/icon_close"
             android:background="@android:color/transparent"
             android:layout_toRightOf="@+id/txt_UserName" />

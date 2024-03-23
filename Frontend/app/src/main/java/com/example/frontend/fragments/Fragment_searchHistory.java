@@ -64,7 +64,6 @@ public class Fragment_searchHistory extends Fragment {
         String jsonHistory = sharedPreferenceLocal.read_SearchHistoryList();
         Type type = new TypeToken<List<SearchHistoryResponse>>(){}.getType();
         searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
-        System.out.println(searchHistoryResponseArrayList.size());
 
         if (searchHistoryResponseArrayList == null) {
             searchHistoryResponseArrayList = new ArrayList<>();
