@@ -10,6 +10,7 @@ import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
@@ -222,5 +223,76 @@ public class UserRepository {
         return mutableLiveData;
     }
 
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
+        MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
 
+        userService.getRequestTrackingUser().enqueue(new Callback<ApiResponse<List<UserResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<UserResponse>>> call, Response<ApiResponse<List<UserResponse>>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<List<UserResponse>> listApiResponse = response.body();
+                    mutableLiveData.setValue(listApiResponse);
+                    Log.d("Request Tracking",mutableLiveData.getValue().getData().toString());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    // HANDLE GET DETAIL USER BY ID
+    public MutableLiveData<ApiResponse<UserResponse>> getDetailUserById(String id) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        userService.getDetailUserById(id).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<UserResponse> user = response.body();
+                    mutableLiveData.setValue(user);
+                    Log.d("Detail User:",mutableLiveData.getValue().getData().toString());
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    // HANDLE UPDATE USER
+    public MutableLiveData<ApiResponse<UserResponse>> updateUser(RequestUpdateUser requestUpdateUser) {
+        MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
+
+        userService.updateUser(requestUpdateUser).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if(response.isSuccessful()) {
+                    ApiResponse<UserResponse> user = response.body();
+                    mutableLiveData.setValue(user);
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+
+        return mutableLiveData;
+    }
 }

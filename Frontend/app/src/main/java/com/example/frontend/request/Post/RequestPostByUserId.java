@@ -8,17 +8,21 @@ public class RequestPostByUserId {
     String avtImage;
     String imagePost;
     String description;
+    String location;
+    String createAt;
 
     public RequestPostByUserId() {
     }
 
-    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, String imagePost, String description) {
+    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, String imagePost, String description, String location, String createAt) {
         this.idPost = idPost;
         this.userId = userId;
         this.userName = userName;
         this.avtImage = avtImage;
         this.imagePost = imagePost;
         this.description = description;
+        this.location = location;
+        this.createAt = createAt;
     }
 
     public String getIdPost() {
@@ -67,5 +71,21 @@ public class RequestPostByUserId {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
     }
 }

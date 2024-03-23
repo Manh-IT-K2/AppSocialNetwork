@@ -1,124 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.EditProfileFragment"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:background="@color/blackLite"
-    android:layout_height="match_parent">
-    <androidx.appcompat.widget.Toolbar
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
+        android:layout_height="50dp"
         android:background="@color/blackLite"
-        android:elevation="6dp"
-        app:contentInsetStart="0dp"
-        app:contentInsetEnd="0dp"
-        android:id="@+id/toolbar" >
-        <RelativeLayout
+        android:id="@+id/toolbar">
+        <LinearLayout
             android:layout_width="match_parent"
-
-            android:layout_height="match_parent">
-            <TextView
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <Button
+                android:layout_weight="1"
+                android:id="@+id/editBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/toolbarNameTV"
-                android:layout_centerVertical="true"
+                android:layout_height="match_parent"
                 android:text="Edit profile"
-                android:textColor="@color/colorPrimary"
+                android:layout_gravity="end"
+                android:gravity="start|center"
+                android:background="@null"
+                android:backgroundTint="#2E2D2D"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/colorPrimary"
+                android:layout_marginLeft="15dp"
+                android:padding="0dp"/>
 
             <Button
+                android:layout_weight="1"
                 android:id="@+id/Done_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
-
+                android:layout_height="match_parent"
                 android:text="Done"
                 android:background="@null"
                 android:backgroundTint="#2E2D2D"
                 android:textSize="18sp"
                 android:textColor="@color/blue1"
-
-
-
-                >
-            </Button>
-
+                android:layout_gravity="center"/>
             <Button
+                android:layout_weight="1"
                 android:id="@+id/Cancel_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true"
-
+                android:layout_height="match_parent"
                 android:text="Cancel"
+                android:layout_gravity="end"
+                android:gravity="end|center"
                 android:background="@null"
                 android:backgroundTint="#2E2D2D"
                 android:textSize="18sp"
                 android:textColor="@color/colorPrimary"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
-
-
-
-            </Button>
-
-
-
-        </RelativeLayout>
-    </androidx.appcompat.widget.Toolbar>
-
-    <RelativeLayout
+                android:layout_marginRight="15dp"
+                android:padding="0dp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="@color/blackLite"
-        android:layout_below="@+id/toolbar"
-        android:id="@+id/edit_profilePhoto_Layout">
+        android:id="@+id/edit_profilePhoto_Layout"
+        android:orientation="vertical"
+        android:gravity="center">
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:layout_centerHorizontal="true"
             android:id="@+id/profileImage"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@null"
             android:layout_margin="14dp" />
-
         <Button
             android:id="@+id/edit_profile_photo_Btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:background="@null"
-            android:minWidth="300dp"
-            android:minHeight="4dp"
             android:backgroundTint="#2E2D2D"
             android:text="Change Profile Photo"
             android:textColor="@color/blue1"
             android:textStyle="bold"
-            android:translationY="150dp"
-            tools:ignore="TouchTargetSizeCheck">
-
-        </Button>
-
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="#C8C8C8"
-        android:layout_below="@+id/edit_profilePhoto_Layout"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/view3" />
-    <RelativeLayout
+            tools:ignore="TouchTargetSizeCheck"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/combineLayout"
         android:background="@color/blackLite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/edit_profilePhoto_Layout"
-        android:translationY="20dp">
+        android:layout_marginTop="10dp">
 
         <!-- Các thông tin của người dùng -->
         <LinearLayout
@@ -133,111 +103,109 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
                 <TextView
                     android:id="@+id/usernameLabel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Username:"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
-                    android:translationX="10dp" />
-
+                    android:layout_marginLeft="15dp"/>
                 <EditText
+                    android:layout_weight="3"
                     android:id="@+id/usernameEditText"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
                     android:hint="Enter username"
+                    android:backgroundTint="#575656"
                     android:inputType="text"
                     android:textColor="@color/white"
-                    android:translationX="20dp"
                     tools:ignore="TouchTargetSizeCheck" />
-
             </LinearLayout>
-
             <!-- Dòng 2: Website -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
                 <TextView
                     android:id="@+id/websiteLabel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Website:"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
-                    android:translationX="10dp" />
-
+                    android:layout_marginLeft="15dp"/>
                 <EditText
+                    android:layout_weight="3"
                     android:id="@+id/websiteEditText"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:hint="Enter website"
+                    android:backgroundTint="#575656"
+                    android:layout_marginRight="15dp"
                     android:textColor="@color/white"
                     android:inputType="textUri"
-                    android:translationX="40dp"
                     tools:ignore="TouchTargetSizeCheck" />
 
             </LinearLayout>
-
             <!-- Dòng 3: Bio -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
                 <TextView
                     android:id="@+id/bioLabel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Bio:"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
-                    android:translationX="10dp" />
-
+                    android:layout_marginLeft="15dp"/>
                 <EditText
+                    android:layout_weight="3"
                     android:id="@+id/bioEditText"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:hint="Enter bio"
+                    android:backgroundTint="#575656"
                     android:textColor="@color/white"
+                    android:layout_marginRight="15dp"
                     android:inputType="textMultiLine"
-                    android:translationX="80dp"
                     tools:ignore="TouchTargetSizeCheck" />
-
             </LinearLayout>
-
             <!-- Dòng 4: Name -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
                 <TextView
                     android:id="@+id/nameLabel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Name:"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
-                    android:translationX="10dp" />
-
+                    android:layout_marginLeft="15dp"/>
                 <EditText
+                    android:layout_weight="3"
                     android:id="@+id/nameEditText"
-                    android:layout_width="280dp"
+                    android:backgroundTint="#575656"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Enter name"
                     android:textColor="@color/white"
                     android:inputType="textMultiLine"
-                    android:translationX="60dp"
+                    android:layout_marginRight="15dp"
                     tools:ignore="DuplicateIds,TouchTargetSizeCheck" />
-
             </LinearLayout>
 
         </LinearLayout>
@@ -245,63 +213,57 @@
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_below="@+id/infoLayout"
+            android:layout_height="1dp"
             android:layout_marginTop="14dp"
-            android:background="#E3E3E3" />
-
+            android:background="#575656" />
 
         <!-- Button dưới thông tin -->
         <Button
             android:id="@+id/infoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/infoLayout"
-            android:layout_centerHorizontal="true"
             android:backgroundTint="#2E2D2D"
-            android:layout_marginTop="20dp"
             android:textStyle="bold"
             android:background="@null"
+            android:padding="0dp"
+            android:layout_marginLeft="15dp"
             android:text="Switch to Professional Account"
             android:textColor="@color/blue1" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="#C8C8C8"
-            android:layout_below="@+id/infoButton"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="1dp"
+            android:background="#575656"
+            android:layout_marginTop="5dp"
             android:id="@+id/view" />
-
         <LinearLayout
             android:id="@+id/privateInfoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/infoButton"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:translationY="20dp">
-
+            android:orientation="vertical">
             <!-- Email -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Email:"
                     android:textSize="18sp"
+                    android:layout_marginLeft="15dp"
                     android:textColor="@color/colorPrimary" />
-
                 <EditText
-                    android:layout_width="280dp"
+                    android:id="@+id/editTextEmail"
+                    android:layout_weight="3"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:hint="Enter email"
+                    android:backgroundTint="#575656"
                     android:inputType="textEmailAddress"
-                    android:translationX="50dp"
+                    android:layout_marginRight="15dp"
                     tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
@@ -309,22 +271,25 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Phone:"
                     android:textSize="18sp"
                     android:textColor="@color/colorPrimary" />
-
                 <EditText
-                    android:layout_width="280dp"
+                    android:id="@+id/editTextPhone"
+                    android:layout_weight="3"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:hint="Enter phone"
+                    android:backgroundTint="#575656"
                     android:inputType="phone"
-                    android:translationX="45dp"
+                    android:layout_marginRight="15dp"
                     tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
@@ -332,26 +297,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Gender:"
                     android:textSize="18sp"
                     android:textColor="@color/colorPrimary" />
 
                 <EditText
-                    android:layout_width="280dp"
+                    android:id="@+id/editTextGender"
+                    android:layout_weight="3"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:hint="Enter Gender"
                     android:inputType="phone"
-                    android:translationX="40dp"
+                    android:backgroundTint="#575656"
+                    android:layout_marginRight="15dp"
                     tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
         </LinearLayout>
-
-
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

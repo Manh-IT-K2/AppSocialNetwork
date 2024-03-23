@@ -25,13 +25,25 @@ public class PostIml implements PostService{
 
     // create post
     @Override
-    public void createPost(RequestPost requestPost, String userId) throws Exception{
+    public void createPost(RequestPost requestPost, String userId) throws Exception {
         Post post = new Post();
         post.setUserId(userId);
         post.setImagePost(requestPost.getImagePost());
         post.setDescription(requestPost.getDescription());
-        mongoTemplate.insert(post,"post");
+
+        // Kiểm tra xem trường location có giá trị không
+        if (!requestPost.getLocation().isEmpty()) {
+            post.setLocation(requestPost.getLocation());
+        } else {
+            // Xử lý khi location là null
+            // Ví dụ, gán một giá trị mặc định cho location hoặc thực hiện hành động khác tùy thuộc vào logic của bạn
+            post.setLocation("Unknown Location");
+        }
+
+        post.setCreateAt(requestPost.getCreateAt());
+        mongoTemplate.insert(post, "post");
     }
+
 
     // select post by userId
     @Override
@@ -52,7 +64,10 @@ public class PostIml implements PostService{
                 .andExpression("avatarImg").as("avtImage")
                 .andExpression("posts.idPost").as("idPost")
                 .andExpression("posts.imagePost").as("imagePost")
-                .andExpression("posts.description").as("description");
+                .andExpression("posts.description").as("description")
+                .andExpression("posts.location").as("location")
+                .andExpression("posts.createAt").as("createAt");
+
 
         Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation);
 

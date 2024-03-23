@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@color/blackLite"
             app:iconifiedByDefault="false"
-            app:queryHint="@string/searchbar_hint" />
+            app:queryHint="@string/searchbar_hint"/>
 
     </androidx.cardview.widget.CardView>
 

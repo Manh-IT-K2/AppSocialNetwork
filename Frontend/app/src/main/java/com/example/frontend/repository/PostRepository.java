@@ -30,21 +30,32 @@ public class PostRepository {
     // create post
     public void createPost(RequestCreatePost request, String userId) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
-
-        postService.createPost(request,userId).enqueue(new Callback<ApiResponse<String>>() {
+        postService.createPost(request, userId).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {
                     ApiResponse<String> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
+                    Log.d("create","success");
                 } else {
                     // Xử lý khi phản hồi không thành công
+                    // Ví dụ: Lấy mã lỗi HTTP và thông báo lỗi
+                    Log.d("create","err");
+                    int errorCode = response.code();
+                    Log.d("create",String.valueOf(errorCode));
+                    String errorMessage = "Error occurred with code: " + errorCode;
+                    ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                    mutableLiveData.setValue(errorResponse);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
+                Log.d("create","failure");
+                String errorMessage = "Failed to create post: " + t.getMessage();
+                ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                mutableLiveData.setValue(errorResponse);
             }
         });
     }
@@ -59,7 +70,6 @@ public class PostRepository {
                     ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
                     Gson gson = new Gson();
                     String json = gson.toJson(apiResponse);
-                    Log.d("err", json);
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công
