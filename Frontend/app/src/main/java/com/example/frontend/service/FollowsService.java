@@ -2,6 +2,7 @@ package com.example.frontend.service;
 
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Follows.FollowsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
