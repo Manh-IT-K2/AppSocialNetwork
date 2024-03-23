@@ -40,9 +40,9 @@ public class UserController {
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
     @GetMapping("/sendOTP_forgotpassword")
-    public ResponseEntity<ApiResponse<String>> sendOtp_forgotpassword( @RequestParam String email) throws Exception {
+    public ResponseEntity<ApiResponse<String>> sendOTP_forgotpassword( @RequestParam String email) throws Exception {
         System.out.println(email);
-        ApiResponse<String> apiResponse = userService.sendOtp_forgotpassword(email);
+        ApiResponse<String> apiResponse = userService.sendOTP_forgotpassword(email);
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
 
