@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 public class RequestPost {
 
     private String imagePost;
-    private String userId;
+    private ObjectId userId;
     private String description;
     private String location;
     private Date createAt;

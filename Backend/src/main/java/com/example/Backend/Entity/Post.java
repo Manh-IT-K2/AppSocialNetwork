@@ -3,6 +3,7 @@ package com.example.Backend.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
@@ -17,7 +18,7 @@ public class Post {
     @Id
     private String idPost;
 
-    private String userId;
+    private ObjectId userId;
 
     private String imagePost;
 

@@ -30,7 +30,7 @@ public class StoryActivity extends AppCompatActivity {
     private ImageView btn_closeStory;
     private RecyclerView list_imageStory;
     private ImageStoryAdapter adapter;
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

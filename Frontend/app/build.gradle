@@ -83,13 +83,16 @@ dependencies {
     implementation 'com.google.zxing:core:3.4.1'
 
     //
-    implementation 'androidx.camera:camera-core:1.2.2'
-    implementation 'androidx.camera:camera-camera2:1.2.2'
-    implementation 'androidx.camera:camera-lifecycle:1.2.2'
-    implementation 'androidx.camera:camera-view:1.2.2'
+    implementation 'androidx.camera:camera-core:1.2.1'
+    implementation 'androidx.camera:camera-camera2:1.2.1'
+    implementation 'androidx.camera:camera-lifecycle:1.2.1'
+    implementation 'androidx.camera:camera-view:1.2.1'
 
     // Material
     implementation 'com.google.android.material:material:1.2.0'
+
+    // custom progress bar
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     //WebSocket
     implementation ('io.socket:socket.io-client:2.0.0') {

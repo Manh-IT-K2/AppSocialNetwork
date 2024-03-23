@@ -4,6 +4,7 @@ import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestPost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -27,7 +28,8 @@ public class PostIml implements PostService{
     @Override
     public void createPost(RequestPost requestPost, String userId) throws Exception {
         Post post = new Post();
-        post.setUserId(userId);
+        ObjectId objectId = new ObjectId(userId);
+        post.setUserId(objectId);
         post.setImagePost(requestPost.getImagePost());
         post.setDescription(requestPost.getDescription());
 
@@ -48,21 +50,20 @@ public class PostIml implements PostService{
     // select post by userId
     @Override
     public ApiResponse<List<RequestPostByUserId>> getListPostsByUserId(String userId) {
+        ObjectId objectId = new ObjectId(userId);
         LookupOperation lookupOperation = LookupOperation.newLookup()
                 .from("post")
-                .localField("idUser")
+                .localField("_id")
                 .foreignField("userId")
                 .as("posts");
 
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("idUser").is(userId));
-
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("_id").is(objectId));
         AggregationOperation unwindOperation = Aggregation.unwind("posts");
-
         AggregationOperation projectOperation = Aggregation.project()
-                .andExpression("idUser").as("userId")
+                .andExpression("_id").as("userId")
                 .andExpression("username").as("userName")
                 .andExpression("avatarImg").as("avtImage")
-                .andExpression("posts.idPost").as("idPost")
+                .andExpression("posts._id").as("idPost")
                 .andExpression("posts.imagePost").as("imagePost")
                 .andExpression("posts.description").as("description")
                 .andExpression("posts.location").as("location")
