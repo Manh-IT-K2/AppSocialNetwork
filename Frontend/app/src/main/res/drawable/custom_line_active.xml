@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-</selector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="-2dp" android:left="-2dp" android:right="-2dp">
+        <shape>
+            <solid android:color="@android:color/transparent"/>
+            <stroke
+                android:color="#ffff"
+                android:width="2dp" />
+        </shape>
+    </item>
+</layer-list>

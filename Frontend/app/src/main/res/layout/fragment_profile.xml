@@ -127,6 +127,7 @@
                     android:layout_weight="10"
                     >
                     <LinearLayout
+                        android:id="@+id/openFollowing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -152,6 +153,7 @@
                             android:textColor="@color/colorPrimary" />
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/openFollows"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -282,19 +284,19 @@
                     android:text="Log out"/>
        </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#C8C8C8"
-        android:layout_below="@+id/combineLayout"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/view" />
+       <View
+           android:id="@+id/view2"
+           android:layout_width="match_parent"
+           android:layout_height="1dp"
+           android:layout_marginTop="14dp"
+           android:background="#575656" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_below="@+id/view" >
 
     </androidx.recyclerview.widget.RecyclerView>

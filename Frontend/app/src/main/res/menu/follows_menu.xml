@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/black">
     <item
         android:id="@+id/menu_Followers"
-        android:title="Followers">
+        android:title="Followers"
+        android:enabled="true">
     </item>
     <item
         android:id="@+id/menu_Following"
-        android:title="Following">
+        android:title="Following"
+        android:enabled="true">
     </item>
     <item
         android:id="@+id/menu_Subscriptions"
-        android:title="Subscriptions">
+        android:title="Suggest"
+        android:enabled="true">
     </item>
 </menu>

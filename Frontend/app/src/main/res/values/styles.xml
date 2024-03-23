@@ -10,4 +10,8 @@
         <item name="cornerFamily">rounded</item> <!-- Loại hình dạng là "rounded" -->
         <item name="cornerSize">50%</item> <!-- CornerSize được thiết lập là 50% để tạo hình dạng hình tròn -->
     </style>
+    <style name="ShapeAppearanceOverlay.Nav" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
 </resources>

@@ -3,9 +3,11 @@ package com.example.Backend.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -15,13 +17,15 @@ public class Follows {
     @Id
     private String idFollows;
 
-    private String idFollower;
+    private ObjectId idFollower;
 
-    private String idFollowing;
+    private ObjectId idFollowing;
 
-    private String created_at;
+    private Date created_at;
 
-    private String update_at;
+    private Date update_at;
 
-    private String delete_at;
+    private Date delete_at;
+
+    private int status;
 }
