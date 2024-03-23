@@ -199,6 +199,3 @@ public class UserImpl implements UserService {
         return mongoTemplate.findOne(query, User.class, "users");
     }
 }
-
-
-

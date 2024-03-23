@@ -27,6 +27,9 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="34">
         <activity
+            android:name=".activities.FollowsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CreatePostActivity"
             android:exported="false" />
         <activity
@@ -37,10 +40,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false" />
