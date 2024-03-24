@@ -180,7 +180,7 @@
             android:id="@+id/googleSignInBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign in with Google"
+            android:text="Login with Google"
             android:backgroundTint="@color/blue1"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
@@ -192,6 +192,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             android:layout_marginBottom="25dp"
+            android:drawableLeft="@drawable/icon_google"
             />
 
         <TextView
