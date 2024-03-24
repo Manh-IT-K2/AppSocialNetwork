@@ -54,21 +54,24 @@ public class UserRepository {
 
     public MutableLiveData<ApiResponse<UserResponse>> login(RequestLogin request) {
         MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
-        Log.d("log1", request.isFromGoogle() + "");
+
         userService.login(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful()) {
                     ApiResponse<UserResponse> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
+                    Log.d("log1", new Gson().toJson(apiResponse));
                 } else {
                     // Xử lý khi phản hồi không thành công
+                    Log.d("log1", "Lỗi");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
+                Log.d("log1", new Gson().toJson(t));
             }
         });
         return mutableLiveData;

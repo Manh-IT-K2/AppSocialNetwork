@@ -61,25 +61,6 @@
             android:layout_marginBottom="15dp"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/scanBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Scan"
-            android:textSize="20sp"
-            app:backgroundTint="@color/blue1"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/refreshBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Refresh"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            app:backgroundTint="@color/blue1"
-            />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/downloadBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

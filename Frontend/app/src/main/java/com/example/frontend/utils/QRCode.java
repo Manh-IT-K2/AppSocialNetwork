@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
@@ -110,5 +112,33 @@ public class QRCode {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String readQRCodeFromUri(Context context, Uri imageUri) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (bitmap != null) {
+            int[] intArray = new int[bitmap.getWidth() * bitmap.getHeight()];
+            bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+            RGBLuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray);
+            BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+            QRCodeReader reader = new QRCodeReader();
+            Result result = null;
+            try {
+                result = reader.decode(binaryBitmap);
+                return result.getText();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
     }
 }

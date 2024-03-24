@@ -26,6 +26,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<User>> loginAccount(@RequestBody RequestLogin requestLogin) throws Exception {
+        System.out.println(requestLogin.getEmail());
         ApiResponse<User> user = userService.loginAccount(requestLogin);
         return new ResponseEntity<ApiResponse<User>>(user, HttpStatus.OK);
     }

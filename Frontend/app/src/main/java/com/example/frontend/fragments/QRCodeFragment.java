@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,36 +21,26 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
 import com.example.frontend.utils.QRCode;
 import com.example.frontend.utils.SharedPreferenceLocal;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
-import com.google.mlkit.vision.common.InputImage;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 public class QRCodeFragment extends Fragment {
 
-    MaterialButton cameraBtn, galleryBtn, scanBtn, refreshBtn, downloadBtn, shareBtn;
+    MaterialButton cameraBtn, galleryBtn, downloadBtn, shareBtn;
     ImageView imageIv;
 
     static final int CAMERA_REQUEST_CODE = 100, STORAGE_REQUEST_CODE = 101;
@@ -96,7 +84,7 @@ public class QRCodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(checkCameraPermission()) pickImageCamera();
-                else requestCameraPermission();
+                else ActivityCompat.requestPermissions(getActivity(), cameraPermission, CAMERA_REQUEST_CODE);
             }
         });
 
@@ -104,26 +92,7 @@ public class QRCodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(checkStoragePermission()) pickImageGallery();
-                else requestStoragePermission();
-            }
-        });
-
-        scanBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userId = QRCode.readQRCodeFromImageView(imageIv);
-                if(userId != null){
-                    Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getContext(), "Cannot read this Image", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadQRCode();
+                else ActivityCompat.requestPermissions(getActivity(), storagePermission, STORAGE_REQUEST_CODE);
             }
         });
 
@@ -195,7 +164,23 @@ public class QRCodeFragment extends Fragment {
                         imageUri = data.getData();
                         Log.d(TAG,"onActivityResult: imageUri "+imageUri);
 
-                        imageIv.setImageURI(imageUri);
+                        //imageIv.setImageURI(imageUri);
+                        String userId = QRCode.readQRCodeFromUri(getActivity(),imageUri);
+
+                        if(userId != null){
+                            // Tạo một Bundle để đóng gói dữ liệu email
+                            Bundle bundle = new Bundle();
+                            bundle.putString("userId", userId);
+
+                            // Tạo Fragment mới và gắn Bundle vào đó
+                            ProfileFragment profileFragment = new ProfileFragment();
+                            profileFragment.setArguments(bundle);
+
+                            // Chuyển sang profileFragment
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,profileFragment).commit();
+                        }else{
+                            Toast.makeText(getActivity(), "Can not read this QR code...", Toast.LENGTH_SHORT).show();
+                        }
                     }else{
                         Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
                     }
@@ -224,7 +209,24 @@ public class QRCodeFragment extends Fragment {
                         Intent data = result.getData();
                         Log.d(TAG,"onActivityResult Camera: imageUri "+imageUri);
 
-                        imageIv.setImageURI(imageUri);
+                        //imageIv.setImageURI(imageUri);
+                        String userId = QRCode.readQRCodeFromImageView(imageIv);
+                        //String userId = QRCode.readQRCodeFromUri(getActivity(),imageUri);
+
+                        if(userId != null){
+                            // Tạo một Bundle để đóng gói dữ liệu email
+                            Bundle bundle = new Bundle();
+                            bundle.putString("userId", userId);
+
+                            // Tạo Fragment mới và gắn Bundle vào đó
+                            ProfileFragment profileFragment = new ProfileFragment();
+                            profileFragment.setArguments(bundle);
+
+                            // Chuyển sang profileFragment
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,profileFragment).commit();
+                        }else{
+                            Toast.makeText(getActivity(), "Can not read this QR code...", Toast.LENGTH_SHORT).show();
+                        }
                     }else{
                         Toast.makeText(getActivity(), "Cancelled...", Toast.LENGTH_SHORT).show();
                     }
@@ -238,10 +240,6 @@ public class QRCodeFragment extends Fragment {
         return result;
     }
 
-    private void requestStoragePermission(){
-        ActivityCompat.requestPermissions(getActivity(), storagePermission, STORAGE_REQUEST_CODE);
-    }
-
     private boolean checkCameraPermission(){
         boolean resultCamera = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
@@ -250,10 +248,6 @@ public class QRCodeFragment extends Fragment {
                 == PackageManager.PERMISSION_GRANTED;
 
         return resultCamera && resultStorage;
-    }
-
-    private void requestCameraPermission(){
-        ActivityCompat.requestPermissions(getActivity(), cameraPermission, CAMERA_REQUEST_CODE);
     }
 
     @Override
@@ -292,8 +286,6 @@ public class QRCodeFragment extends Fragment {
 
         cameraBtn = view.findViewById(R.id.cameraBtn);
         galleryBtn = view.findViewById(R.id.galleryBtn);
-        scanBtn = view.findViewById(R.id.scanBtn);
-        refreshBtn = view.findViewById(R.id.refreshBtn);
         downloadBtn = view.findViewById(R.id.downloadBtn);
         shareBtn = view.findViewById(R.id.shareBtn);
 

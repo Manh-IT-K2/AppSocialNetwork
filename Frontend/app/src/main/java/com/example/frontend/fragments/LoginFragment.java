@@ -146,17 +146,7 @@ public class LoginFragment extends Fragment {
         signUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
-                try {
-                    // Gửi tin nhắn đến máy chủ với sự kiện "sendMessage"
-                    JSONObject message = new JSONObject();
-                    message.put("message", "hallo");
-                    mSocket.emit("sendMessage", message);
-                    Log.d("errors1", "Tin nhắn đã được gửi: ");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("errors1", new Gson().toJson(e));
-                }
+                ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
             }
         });
 
