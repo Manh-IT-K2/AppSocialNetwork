@@ -2,7 +2,9 @@ package com.example.frontend.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,21 +31,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.CaptureAct;
 import com.example.frontend.utils.QRCode;
 import com.example.frontend.utils.SharedPreferenceLocal;
-import com.google.android.material.button.MaterialButton;
+import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class QRCodeFragment extends Fragment {
-
-    MaterialButton cameraBtn, galleryBtn, downloadBtn, shareBtn;
-    ImageView imageIv;
+    TextView nameTv;
+    ImageView imageIv, cameraBtn, downloadBtn, shareBtn, backBtn, galleryBtn;
 
     static final int CAMERA_REQUEST_CODE = 100, STORAGE_REQUEST_CODE = 101;
 
@@ -53,6 +66,8 @@ public class QRCodeFragment extends Fragment {
 
     BarcodeScannerOptions barcodeScannerOptions;
     BarcodeScanner barcodeScanner;
+    CircleImageView avatar;
+    UserViewModel userViewModel;
 
     public QRCodeFragment() { }
 
@@ -68,14 +83,24 @@ public class QRCodeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_q_r_code, container, false);
 
         init(view);
-        clickListener();
+
         loadQRCode();
+        clickListener();
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.getDetailUserById(SharedPreferenceLocal.read(getContext(),"userId")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
+                nameTv.setText(userResponseApiResponse.getData().getUsername());
+                Picasso.get().load(userResponseApiResponse.getData().getAvatarImg()).into(avatar);
+            }
+        });
         return view;
     }
 
     private void loadQRCode() {
         String userId = SharedPreferenceLocal.read(getContext(),"userId");
-        Bitmap qrcodeBitmap = QRCode.generateQRCode("65e8a525714ccc3a3caa7f77");
+        Bitmap qrcodeBitmap = QRCode.generateQRCode(userId);
         imageIv.setImageBitmap(qrcodeBitmap);
     }
 
@@ -83,8 +108,11 @@ public class QRCodeFragment extends Fragment {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkCameraPermission()) pickImageCamera();
-                else ActivityCompat.requestPermissions(getActivity(), cameraPermission, CAMERA_REQUEST_CODE);
+//                if(checkCameraPermission()) pickImageCamera();
+//                else ActivityCompat.requestPermissions(getActivity(), cameraPermission, CAMERA_REQUEST_CODE);
+                ScanOptions scanOptions = new ScanOptions();
+                scanOptions.setPrompt("Camera").setBeepEnabled(true).setOrientationLocked(true).setCaptureActivity(CaptureAct.class);
+                barLauncher.launch(scanOptions);
             }
         });
 
@@ -100,12 +128,8 @@ public class QRCodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String userId = QRCode.readQRCodeFromImageView(imageIv);
-                if(userId != null){
-                    QRCode.saveQRCodeFromImageView(getContext(), imageIv, userId);
-                    Toast.makeText(getContext(), "Download is success", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getContext(), "Cannot download this QR Code", Toast.LENGTH_SHORT).show();
-                }
+                QRCode.saveQRCodeFromImageView(getContext(), imageIv, userId);
+                Toast.makeText(getContext(), "Download is success", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -146,7 +170,39 @@ public class QRCodeFragment extends Fragment {
                 }
             }
         });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
     }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if(result.getContents() != null){
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//            builder.setTitle("Result: ");
+//            builder.setMessage(result.getContents());
+//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                }
+//            }).show();
+
+            // Tạo một Bundle để đóng gói dữ liệu email
+            Bundle bundle = new Bundle();
+            bundle.putString("userId", result.getContents());
+
+            // Tạo Fragment mới và gắn Bundle vào đó
+            ProfileFragment profileFragment = new ProfileFragment();
+            profileFragment.setArguments(bundle);
+
+            // Chuyển sang profileFragment
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,profileFragment).commit();
+        }
+    });
 
     private void pickImageGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -288,7 +344,10 @@ public class QRCodeFragment extends Fragment {
         galleryBtn = view.findViewById(R.id.galleryBtn);
         downloadBtn = view.findViewById(R.id.downloadBtn);
         shareBtn = view.findViewById(R.id.shareBtn);
+        backBtn = view.findViewById(R.id.backBtn);
 
         imageIv = view.findViewById(R.id.imageIv);
+        avatar = view.findViewById(R.id.avatar);
+        nameTv = view.findViewById(R.id.nameTv);
     }
 }

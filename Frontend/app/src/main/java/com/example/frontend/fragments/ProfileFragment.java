@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +26,13 @@ import com.example.frontend.R;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.User.UserViewModel;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
@@ -32,6 +40,10 @@ public class ProfileFragment extends Fragment {
     Button editprofileBtn, logoutBtn, qrcodeBtn;
     TextView username;
     LinearLayout openFollows,openFollowing;
+    UserViewModel userViewModel;
+    String userId;
+    CircleImageView profileImage;
+    TextView nameTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,6 +58,30 @@ public class ProfileFragment extends Fragment {
         editprofileBtn = view.findViewById(R.id.edit_profileBtn);
         editprofileImageBtn = view.findViewById(R.id.edit_profileImage);
         menuSetting = view.findViewById(R.id.menu_btn);
+        profileImage = view.findViewById(R.id.profileImage);
+        nameTV = view.findViewById(R.id.nameTV);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+        // Nhận dữ liệu email từ Bundle
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            userId = bundle.getString("userId", "");
+            qrcodeBtn.setVisibility(View.INVISIBLE);
+            logoutBtn.setVisibility(View.INVISIBLE);
+            menuSetting.setVisibility(View.INVISIBLE);
+            editprofileBtn.setVisibility(View.INVISIBLE);
+        }
+        else userId = SharedPreferenceLocal.read(getContext(),"userId");
+
+        userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
+                username.setText(userResponseApiResponse.getData().getUsername());
+                Picasso.get().load(userResponseApiResponse.getData().getAvatarImg()).into(profileImage);
+                nameTV.setText(userResponseApiResponse.getData().getUsername());
+            }
+        });
 
         openFollows.setOnClickListener(new View.OnClickListener() {
             @Override

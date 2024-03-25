@@ -9,76 +9,183 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingTop="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAlignment="center"
-            android:textSize="25sp"
-            android:layout_marginTop="25dp"
-            android:text="QR Code" />
-        
+        <ImageView
+            android:id="@+id/backBtn"
+            android:padding="10dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/baseline_arrow_back_24_black"
+        />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/border_background"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_launcher_background"
+                    app:civ_border_color="#76D1FA"
+                    app:civ_border_width="1dp" />
+
+                <TextView
+                    android:id="@+id/nameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:text="Name" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:padding="10dp"
+                android:id="@+id/imageIv"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:src="@drawable/icon_splash"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="50dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/cameraBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Camera"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:gravity="center"
                 android:layout_weight="1"
-                android:layout_marginEnd="5dp"
-                android:textSize="20sp"
-                app:backgroundTint="@color/blue1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/galleryBtn"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_qr_code_scanner_24"
                 />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/galleryBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Gallery"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chọn ảnh"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:gravity="center"
                 android:layout_weight="1"
-                android:layout_marginStart="5dp"
-                android:textSize="20sp"
-                app:backgroundTint="@color/blue1"
-                />
-            
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/downloadBtn"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_download_24"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lưu"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/shareBtn"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_share_24"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Share"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/cameraBtn"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_photo_camera_24"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Camera"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"/>
+            </LinearLayout>
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/galleryBtn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Gallery"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:textSize="20sp"-->
+<!--                app:backgroundTint="@color/blue1"-->
+<!--                />-->
+
         </LinearLayout>
-        
-        <ImageView
-            android:padding="10dp"
-            android:id="@+id/imageIv"
-            android:layout_width="350dp"
-            android:layout_height="350dp"
-            android:src="@drawable/icon_splash"
-            android:adjustViewBounds="true"
-            android:layout_gravity="center"
-            android:layout_marginBottom="15dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/downloadBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Download QR Code"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            app:backgroundTint="@color/blue1"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/shareBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Share QR Code"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            app:backgroundTint="@color/blue1"
-            />
 
     </LinearLayout>
 

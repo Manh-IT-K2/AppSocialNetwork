@@ -24,12 +24,12 @@ public class SlashActivity extends AppCompatActivity {
             public void run() {
                 String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
 
-//                if(userId.equals("")){
-//                    startActivity(new Intent(SlashActivity.this, FragmentReplacerActivity.class));
-//                    finish();
-//                }else{
+                if(userId.equals("")){
+                    startActivity(new Intent(SlashActivity.this, FragmentReplacerActivity.class));
+                    finish();
+                }else{
                     startActivity(new Intent(SlashActivity.this, MainActivity.class));
-//                }
+                }
 
             }
         }, 1500);
