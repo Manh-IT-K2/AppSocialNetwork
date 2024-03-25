@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnEvent;
 import com.example.Backend.Config.PusherConfig;
+import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
@@ -30,11 +31,18 @@ public class PrivateChatController {
     public ApiResponse<PrivateChatResponse> createPrivateChat(@RequestBody RequestCreatePrivateChat requestCreatePrivateChat) throws Exception{
         pusherConfig.triggerEvent("privateChat", "getMessage", privateChatService.createPrivateChat(requestCreatePrivateChat));
         return new ApiResponse<>(true, "OK", privateChatService.createPrivateChat(requestCreatePrivateChat));
-    }
 
+    }
     @GetMapping()
-    public ApiResponse<PrivateChatWithMessagesResponse> getMessagesByPrivateChatId(@RequestParam String id){
+    public ApiResponse<PrivateChatWithMessagesResponse> getMessagesByPrivateChatId(@RequestParam String id) throws Exception{
         return new ApiResponse<PrivateChatWithMessagesResponse>(true, "", privateChatService.getMessagesByPrivateChatId(id));
     }
+    @PostMapping("/send_mess")
+    public ApiResponse<PrivateChatWithMessagesResponse> sendMessage(@RequestBody RequestChatPrtivate request) throws Exception {
+        PrivateChatWithMessagesResponse response = privateChatService.SendMessage(request);
+        pusherConfig.triggerEvent("privateChat", "getMessage", response);
+        return new ApiResponse<>(true, "OK", response);
+    }
+
 
 }

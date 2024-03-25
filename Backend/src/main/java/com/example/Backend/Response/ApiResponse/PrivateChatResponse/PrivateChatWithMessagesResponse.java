@@ -15,4 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 public class PrivateChatWithMessagesResponse {
     private List<MessageWithSenderInfo> messages;
+
 }
