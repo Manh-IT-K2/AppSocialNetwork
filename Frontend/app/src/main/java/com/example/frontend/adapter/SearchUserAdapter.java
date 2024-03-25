@@ -56,6 +56,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
     public int getItemCount() {
         return user_searchList.size();
     }
+
     public class MyHolder extends RecyclerView.ViewHolder {
 
         TextView userName;

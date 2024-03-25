@@ -2,7 +2,6 @@ package com.example.frontend.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,7 +12,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
+import com.example.frontend.response.Search.SearchHistoryResponse;
+import com.example.frontend.utils.SharedPreference_SearchHistory;
 import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SearchFragment extends Fragment {
@@ -23,6 +30,10 @@ public class SearchFragment extends Fragment {
     Fragment_searchHistory fragment_searchHistory;
     private SearchQuery_ViewModel searchQueryViewModel;
     private SearchView searchView;
+
+    private SharedPreference_SearchHistory sharedPreferences;
+    private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
+    private Gson gson;
 
 
     @Override
@@ -38,6 +49,10 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        gson = new Gson();
+        sharedPreferences = new SharedPreference_SearchHistory(getActivity());
+        getSearchHistoryListFromSharedPreference();
+
         fragment_searchHistory = new Fragment_searchHistory();
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.fragment_Search_Container, fragment_searchHistory)
@@ -50,6 +65,13 @@ public class SearchFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+                getSearchHistoryListFromSharedPreference();
+
+                // Khi nhan tim kiem -> put data vao Shared preferences
+                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, new java.util.Date());
+                // Luu vao shared preference
+                saveToSearchHistory(searchHistoryResponse, query);
 
                 // Không hiện con trỏ nhấp nháy trong searchview
                 searchView.clearFocus();
@@ -84,12 +106,47 @@ public class SearchFragment extends Fragment {
                 }
                 else fragment_searchUser.resultList();
 
-
                 return false;
             }
         });
 
-
     }
 
+    private void getSearchHistoryListFromSharedPreference() {
+        String jsonHistory = sharedPreferences.read_SearchHistoryList();
+        Type type = new TypeToken<List<SearchHistoryResponse>>() {}.getType();
+        searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
+
+        if (searchHistoryResponseArrayList == null) {
+            searchHistoryResponseArrayList = new ArrayList<>();
+        }
+    }
+
+    private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
+        // convert object to String by Gson
+        String jsonHistory = gson.toJson(searchHistoryList);
+
+        // save to shared preference
+        sharedPreferences.save_SearchHistoryList(jsonHistory);
+    }
+
+    private void saveToSearchHistory(SearchHistoryResponse searchHistoryResponse, String query) {
+        if (searchHistoryResponseArrayList.isEmpty())
+            searchHistoryResponseArrayList.add(searchHistoryResponse);
+        else {
+            // Xoa object trong shared preference co text trung voi query
+            int i = 0;
+            while (i < searchHistoryResponseArrayList.size()) {
+                if (searchHistoryResponseArrayList.get(i).getText().equals(query) && !searchHistoryResponseArrayList.get(i).getAccount()) {
+                    searchHistoryResponseArrayList.remove(searchHistoryResponseArrayList.get(i));
+                    break;
+                }
+                i++;
+            }
+            searchHistoryResponseArrayList.add(0, searchHistoryResponse);
+        }
+
+        // Luu vao shared preference
+        saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+    }
 }

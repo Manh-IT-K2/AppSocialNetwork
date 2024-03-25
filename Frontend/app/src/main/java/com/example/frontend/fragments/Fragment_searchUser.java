@@ -37,8 +37,8 @@ public class Fragment_searchUser extends Fragment {
     ProgressBar progressBar;
     Button btnSearch;
     TextView search_noResult;
-    List<UserResponse> userList = new ArrayList<>();
-    List<UserResponse> user_searchList;
+    private List<UserResponse> userList = new ArrayList<>();
+    private List<UserResponse> user_searchList;
     Fragment_searchHistory fragment_searchHistory;
 
     public Fragment_searchUser() {
@@ -76,7 +76,7 @@ public class Fragment_searchUser extends Fragment {
         }
     }
 
-    // Lấy dữ liệu allUsers và kết quả tìm kiếm user
+    // Lấy dữ liệu allUsers và kết quả tìm kiếm user thong qua ham searchUser
     public void resultList() {
         if (userList.isEmpty()) {
             progressBar.setVisibility(View.VISIBLE);
