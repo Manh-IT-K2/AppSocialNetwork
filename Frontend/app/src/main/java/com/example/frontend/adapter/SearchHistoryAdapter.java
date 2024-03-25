@@ -27,7 +27,8 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClickToRemove(int position);
+        void onItemClickToSearch(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
@@ -57,7 +58,6 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     public void onBindViewHolder(@NonNull SearchHistoryAdapter.MyHolder holder, int position) {
         if (getItemViewType(position) == 0) {
             holder.text.setText(searchHistoryResponseList.get(position).getText());
-            holder.searchHistoryResponse = searchHistoryResponseList.get(position);
         }
         else {
             holder.userName.setText(searchHistoryResponseList.get(position).getText());
@@ -83,7 +83,6 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         TextView userName;
         CircleImageView avatar;
         TextView text;
-        SearchHistoryResponse searchHistoryResponse;
         ImageButton imgButtonDelete;
 
         public MyHolder(@NonNull View itemView, OnItemClickListener listener) {
@@ -97,9 +96,19 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
 
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(getAdapterPosition());
+                    listener.onItemClickToRemove(getAdapterPosition());
                 }
             });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClickToSearch(getAdapterPosition());
+                }
+            });
+
+
         }
     }
 }

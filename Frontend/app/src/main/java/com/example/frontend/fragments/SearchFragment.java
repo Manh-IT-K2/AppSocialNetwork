@@ -29,7 +29,7 @@ public class SearchFragment extends Fragment {
     Fragment_performSearch fragment_performSearch;
     Fragment_searchHistory fragment_searchHistory;
     private SearchQuery_ViewModel searchQueryViewModel;
-    private SearchView searchView;
+    SearchView searchView;
 
     private SharedPreference_SearchHistory sharedPreferences;
     private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
@@ -86,7 +86,7 @@ public class SearchFragment extends Fragment {
                         .addToBackStack(null) // Optional: Add to back stack for navigation
                         .commit();
 
-                return false;
+                return true;
             }
 
             @Override

@@ -4,7 +4,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,7 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.SearchHistoryAdapter;
 import com.example.frontend.response.Search.SearchHistoryResponse;
 import com.example.frontend.utils.SharedPreference_SearchHistory;
+import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -26,9 +29,12 @@ import java.util.List;
 public class Fragment_searchHistory extends Fragment {
 
     private RecyclerView recyclerView_searchHistory;
+    private SearchHistoryAdapter searchHistoryAdapter;
     private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
     private SharedPreference_SearchHistory sharedPreferenceSearchHistory;
     private Gson gson;
+
+    private SearchQuery_ViewModel searchQueryViewModel;
 
 
     public Fragment_searchHistory() {
@@ -38,6 +44,8 @@ public class Fragment_searchHistory extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Khởi tạo search Query ViewModel
+        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_history, container, false);
     }
@@ -54,6 +62,8 @@ public class Fragment_searchHistory extends Fragment {
         getSearchHistoryListFromSharedPreference();
         // Dua search history vao recyclerView
         putSearchHistoryListToRecyclerView();
+        // Xu ly click mot item trong recycler view
+        clickOneSearchHistory();
     }
 
     private void getSearchHistoryListFromSharedPreference() {
@@ -69,22 +79,48 @@ public class Fragment_searchHistory extends Fragment {
     private void putSearchHistoryListToRecyclerView() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView_searchHistory.setLayoutManager(layoutManager);
-        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getContext(), searchHistoryResponseArrayList);
+        searchHistoryAdapter = new SearchHistoryAdapter(getContext(), searchHistoryResponseArrayList);
         recyclerView_searchHistory.setAdapter(searchHistoryAdapter);
+    }
+
+    private void clickOneSearchHistory() {
+
         searchHistoryAdapter.setOnItemClickListener(new SearchHistoryAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClickToRemove(int position) {
                 deleteOneSearchHistory(position);
-                searchHistoryAdapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onItemClickToSearch(int position) {
+                clickOneSearchHistoryToSearch(position);
             }
         });
     }
 
     private void deleteOneSearchHistory(int position) {
+
+        // Xoa mot item
+        // Xoa item o vi tri position
         searchHistoryResponseArrayList.remove(position);
 
         // Cap nhat lai lich su tim kiem trong shared preference
         saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+
+        // Thong bao cho Adapter khi du lieu bi thay doi
+        searchHistoryAdapter.notifyItemRemoved(position);
+    }
+
+    private void clickOneSearchHistoryToSearch(int position) {
+
+        // Set text o vi tri position vào ViewModel để Fragment_searchUser có thể lấy được text
+        searchQueryViewModel.setSearchQuery(searchHistoryResponseArrayList.get(position).getText());
+
+        // Chuyen sang fragment perform search
+        Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_Search_Container, fragment_performSearch)
+                .commit();
     }
 
     private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
@@ -94,5 +130,4 @@ public class Fragment_searchHistory extends Fragment {
         // save to shared preference
         sharedPreferenceSearchHistory.save_SearchHistoryList(jsonHistory);
     }
-
 }
