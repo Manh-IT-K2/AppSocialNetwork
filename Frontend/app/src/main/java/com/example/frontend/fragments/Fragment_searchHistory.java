@@ -1,7 +1,5 @@
 package com.example.frontend.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,24 +14,20 @@ import android.view.ViewGroup;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.SearchHistoryAdapter;
-import com.example.frontend.adapter.SearchUserAdapter;
 import com.example.frontend.response.Search.SearchHistoryResponse;
-import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.utils.SharedPreference_SearchHistory;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Fragment_searchHistory extends Fragment {
 
     private RecyclerView recyclerView_searchHistory;
-
     private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
-    private SharedPreference_SearchHistory sharedPreferenceLocal;
+    private SharedPreference_SearchHistory sharedPreferenceSearchHistory;
     private Gson gson;
 
 
@@ -55,13 +49,15 @@ public class Fragment_searchHistory extends Fragment {
         recyclerView_searchHistory = view.findViewById(R.id.recyclerView_SearchHistory);
 
         gson = new Gson();
-        sharedPreferenceLocal = new SharedPreference_SearchHistory(getActivity());
+        sharedPreferenceSearchHistory = new SharedPreference_SearchHistory(getActivity());
+        // Lay du lieu trong shared preference
         getSearchHistoryListFromSharedPreference();
+        // Dua search history vao recyclerView
         putSearchHistoryListToRecyclerView();
     }
 
     private void getSearchHistoryListFromSharedPreference() {
-        String jsonHistory = sharedPreferenceLocal.read_SearchHistoryList();
+        String jsonHistory = sharedPreferenceSearchHistory.read_SearchHistoryList();
         Type type = new TypeToken<List<SearchHistoryResponse>>(){}.getType();
         searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
 
@@ -75,6 +71,28 @@ public class Fragment_searchHistory extends Fragment {
         recyclerView_searchHistory.setLayoutManager(layoutManager);
         SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getContext(), searchHistoryResponseArrayList);
         recyclerView_searchHistory.setAdapter(searchHistoryAdapter);
+        searchHistoryAdapter.setOnItemClickListener(new SearchHistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                deleteOneSearchHistory(position);
+                searchHistoryAdapter.notifyItemRemoved(position);
+            }
+        });
+    }
+
+    private void deleteOneSearchHistory(int position) {
+        searchHistoryResponseArrayList.remove(position);
+
+        // Cap nhat lai lich su tim kiem trong shared preference
+        saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+    }
+
+    private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
+        // convert object to String by Gson
+        String jsonHistory = gson.toJson(searchHistoryList);
+
+        // save to shared preference
+        sharedPreferenceSearchHistory.save_SearchHistoryList(jsonHistory);
     }
 
 }

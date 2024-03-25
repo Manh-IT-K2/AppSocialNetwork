@@ -25,7 +25,7 @@
             android:text="hh"/>
 
         <ImageButton
-            android:id="@+id/delete_text_item"
+            android:id="@+id/delete_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
