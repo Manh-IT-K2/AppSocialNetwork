@@ -1,6 +1,8 @@
 package com.example.Backend.Service.User;
 
+import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.model.User;
+import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import org.mindrot.jbcrypt.BCrypt;
@@ -197,5 +199,66 @@ public class UserImpl implements UserService {
     public User findUserById(String id) {
         Query query = new Query(Criteria.where("_id").is(id));
         return mongoTemplate.findOne(query, User.class, "users");
+    }
+
+
+    @Override
+    public List<User> findUsersByIds(List<String> ids) {
+        Query query = new Query(Criteria.where("_id").in(ids));
+        return mongoTemplate.find(query, User.class, "users");
+    }
+
+    @Override
+    public ApiResponse<GroupChat> createGroupChat(RequestCreateGroupChat requestCreateGroupChat) {
+        GroupChat groupChat = new GroupChat();
+        groupChat.setGroupName(requestCreateGroupChat.getGroupName());
+        groupChat.setMemberIds(requestCreateGroupChat.getMemberIds());
+        mongoTemplate.save(groupChat, "groupchats");
+        return new ApiResponse<>(true, "Group chat created successfully", groupChat);
+    }
+
+    @Override
+    public ApiResponse<List<GroupChat>> getGroupChatsByUserId(String userId) {
+        Query query = new Query(Criteria.where("memberIds").in(userId));
+        List<GroupChat> groupChats = mongoTemplate.find(query, GroupChat.class, "groupchats");
+        return new ApiResponse<>(true, "Group chats retrieved successfully", groupChats);
+    }
+
+    @Override
+    public ApiResponse<GroupChat> addMemberToGroupChat(String groupId, String memberId) {
+        Query query = new Query(Criteria.where("_id").is(groupId));
+        GroupChat groupChat = mongoTemplate.findOne(query, GroupChat.class, "groupchats");
+        if (groupChat != null) {
+            List<String> memberIds = groupChat.getMemberIds();
+            if (!memberIds.contains(memberId)) {
+                memberIds.add(memberId);
+                groupChat.setMemberIds(memberIds);
+                mongoTemplate.save(groupChat, "groupchats");
+                return new ApiResponse<>(true, "Member added to group chat successfully", groupChat);
+            } else {
+                return new ApiResponse<>(false, "Member already exists in the group chat", null);
+            }
+        } else {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
+    }
+
+    @Override
+    public ApiResponse<GroupChat> removeMemberFromGroupChat(String groupId, String memberId) {
+        Query query = new Query(Criteria.where("_id").is(groupId));
+        GroupChat groupChat = mongoTemplate.findOne(query, GroupChat.class, "groupchats");
+        if (groupChat != null) {
+            List<String> memberIds = groupChat.getMemberIds();
+            if (memberIds.contains(memberId)) {
+                memberIds.remove(memberId);
+                groupChat.setMemberIds(memberIds);
+                mongoTemplate.save(groupChat, "groupchats");
+                return new ApiResponse<>(true, "Member removed from group chat successfully", groupChat);
+            } else {
+                return new ApiResponse<>(false, "Member does not exist in the group chat", null);
+            }
+        } else {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
     }
 }
