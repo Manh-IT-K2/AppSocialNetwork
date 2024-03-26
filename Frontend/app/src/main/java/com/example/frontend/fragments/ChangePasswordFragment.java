@@ -66,7 +66,16 @@ public class ChangePasswordFragment extends Fragment {
                     Toast.makeText(getContext(), "Cofirm mật khẩu không đúng", Toast.LENGTH_SHORT).show();
                 }else {
                     userViewModel.changePW(new RequestChangePW(email, new_p));
+                    // Tạo một Bundle để đóng gói dữ liệu email
+                    Bundle bundle = new Bundle();
+                    bundle.putString("email", email);
+                    // Tạo Fragment mới và gắn Bundle vào đó
+                    LoginFragment login = new LoginFragment();
+                    login.setArguments(bundle);
+                    // Chuyển sang fragment login
+                    ((FragmentReplacerActivity) requireActivity()).setFragment(login);
                 }
+
             }
         });
         return view;
