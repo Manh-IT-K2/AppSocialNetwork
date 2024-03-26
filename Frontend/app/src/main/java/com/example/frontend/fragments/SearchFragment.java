@@ -29,7 +29,7 @@ public class SearchFragment extends Fragment {
     Fragment_performSearch fragment_performSearch;
     Fragment_searchHistory fragment_searchHistory;
     private SearchQuery_ViewModel searchQueryViewModel;
-    SearchView searchView;
+    private SearchView searchView;
 
     private SharedPreference_SearchHistory sharedPreferences;
     private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
@@ -148,5 +148,9 @@ public class SearchFragment extends Fragment {
 
         // Luu vao shared preference
         saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+    }
+
+    public void setQueryToSearchView(String query) {
+        searchView.setQuery(query, false);
     }
 }

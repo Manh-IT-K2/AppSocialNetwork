@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Fragment_searchHistory extends Fragment {
 
@@ -35,6 +36,7 @@ public class Fragment_searchHistory extends Fragment {
     private Gson gson;
 
     private SearchQuery_ViewModel searchQueryViewModel;
+    private SearchView searchView;
 
 
     public Fragment_searchHistory() {
@@ -55,6 +57,7 @@ public class Fragment_searchHistory extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView_searchHistory = view.findViewById(R.id.recyclerView_SearchHistory);
+        searchView = getActivity().findViewById(R.id.searchView);
 
         gson = new Gson();
         sharedPreferenceSearchHistory = new SharedPreference_SearchHistory(getActivity());
@@ -115,6 +118,10 @@ public class Fragment_searchHistory extends Fragment {
 
         // Set text o vi tri position vào ViewModel để Fragment_searchUser có thể lấy được text
         searchQueryViewModel.setSearchQuery(searchHistoryResponseArrayList.get(position).getText());
+
+        // Set search query to searchView of SearchFragment
+        searchView.setQuery(searchHistoryResponseArrayList.get(position).getText(), true);
+        searchView.clearFocus();
 
         // Chuyen sang fragment perform search
         Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
