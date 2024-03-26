@@ -51,7 +51,6 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class QRCodeFragment extends Fragment {
     TextView nameTv;
     ImageView imageIv, cameraBtn, downloadBtn, shareBtn, backBtn, galleryBtn;
@@ -191,16 +190,22 @@ public class QRCodeFragment extends Fragment {
 //                }
 //            }).show();
 
-            // Tạo một Bundle để đóng gói dữ liệu email
-            Bundle bundle = new Bundle();
-            bundle.putString("userId", result.getContents());
+            Log.d("https", result.getContents());
+            if(result.getContents().contains("https")){
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result.getContents()));
+                startActivity(intent);
+            }else{
+                // Tạo một Bundle để đóng gói dữ liệu email
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", result.getContents());
 
-            // Tạo Fragment mới và gắn Bundle vào đó
-            ProfileFragment profileFragment = new ProfileFragment();
-            profileFragment.setArguments(bundle);
+                // Tạo Fragment mới và gắn Bundle vào đó
+                ProfileFragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(bundle);
 
-            // Chuyển sang profileFragment
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,profileFragment).commit();
+                // Chuyển sang profileFragment
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,profileFragment).commit();
+            }
         }
     });
 
