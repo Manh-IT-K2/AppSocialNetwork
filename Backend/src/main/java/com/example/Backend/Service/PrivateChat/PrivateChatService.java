@@ -15,4 +15,6 @@ public interface PrivateChatService {
     PrivateChatResponse createPrivateChat(RequestCreatePrivateChat requestCreatePrivateChat);
     PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception;
     PrivateChatWithMessagesResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception;
+    List<PrivateChatWithMessagesResponse> getListChat(String id);
+
 }
