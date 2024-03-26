@@ -86,7 +86,7 @@ public class SearchFragment extends Fragment {
                         .addToBackStack(null) // Optional: Add to back stack for navigation
                         .commit();
 
-                return false;
+                return true;
             }
 
             @Override
@@ -148,5 +148,9 @@ public class SearchFragment extends Fragment {
 
         // Luu vao shared preference
         saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+    }
+
+    public void setQueryToSearchView(String query) {
+        searchView.setQuery(query, false);
     }
 }
