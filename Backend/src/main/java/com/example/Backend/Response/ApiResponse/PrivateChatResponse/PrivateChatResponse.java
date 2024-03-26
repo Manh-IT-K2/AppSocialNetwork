@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrivateChatResponse {
+public class PrivateChatResponse{
     private String id;
     private User recipient;
     private User creator;

@@ -16,6 +16,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/private_chat")
 public class PrivateChatController {
@@ -42,6 +44,11 @@ public class PrivateChatController {
         PrivateChatWithMessagesResponse response = privateChatService.SendMessage(request);
         pusherConfig.triggerEvent("privateChat", "getMessage", response);
         return new ApiResponse<>(true, "OK", response);
+    }
+    @GetMapping("/get_list_mess")
+        public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {
+            List<PrivateChatWithMessagesResponse> list = privateChatService.getListChat(id);
+            return new ApiResponse<>(true, "OK", list);
     }
 
 

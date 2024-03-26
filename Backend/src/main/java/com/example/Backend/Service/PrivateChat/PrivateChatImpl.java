@@ -21,10 +21,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PrivateChatImpl implements PrivateChatService {
@@ -66,20 +63,44 @@ public class PrivateChatImpl implements PrivateChatService {
         }
     }
 
-    @Override
-    public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
-        Criteria criteria = Criteria.where("privateChatId").is(id);
+//    @Override
+//    public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
+//        Criteria criteria = Criteria.where("privateChatId").is(id);
+//
+//        Aggregation aggregation = Aggregation.newAggregation(
+//                Aggregation.match(criteria),
+//                Aggregation.lookup("users", "senderId", "_id", "sender"),
+//                Aggregation.unwind("sender"),
+//                Aggregation.project("id", "content", "createdAt", "urlFile")
+//        );
+//        AggregationResults<PrivateChatWithMessagesResponse> result = mongoTemplate.aggregate(aggregation, "messages", PrivateChatWithMessagesResponse.class);
+//        return (PrivateChatWithMessagesResponse) result.getMappedResults();
+//
+//    }
+@Override
+public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
+    Criteria criteria = Criteria.where("privateChatId").is(id);
 
-        Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.lookup("users", "senderId", "_id", "sender"),
-                Aggregation.unwind("sender"),
-                Aggregation.project("id", "content", "createdAt", "urlFile")
-        );
-        AggregationResults<PrivateChatWithMessagesResponse> result = mongoTemplate.aggregate(aggregation, "messages", PrivateChatWithMessagesResponse.class);
-        return (PrivateChatWithMessagesResponse) result.getMappedResults();
+    Aggregation aggregation = Aggregation.newAggregation(
+            Aggregation.match(criteria),
+            Aggregation.lookup("users", "senderId", "_id", "sender"),
+            Aggregation.unwind("sender"),
+            Aggregation.project()
+                    .and("id").as("id")
+                    .and("content").as("content")
+                    .and("createdAt").as("createdAt")
+                    .and("urlFile").as("urlFile")
+    );
 
+    AggregationResults<PrivateChatWithMessagesResponse> result = mongoTemplate.aggregate(aggregation, "messages", PrivateChatWithMessagesResponse.class);
+    List<PrivateChatWithMessagesResponse> mappedResults = result.getMappedResults();
+    if (!mappedResults.isEmpty()) {
+        return mappedResults.get(0);
+    } else {
+        throw new Exception("Private chat not found for id: " + id);
     }
+}
+
     @Override
     public PrivateChatWithMessagesResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception {
         String creatorId = requestChatPrtivate.getCreatorId();
@@ -103,11 +124,35 @@ public class PrivateChatImpl implements PrivateChatService {
         response.setMessages(messages);
         return response;
 }
+
+    @Override
+    public List<PrivateChatWithMessagesResponse> getListChat(String id) {
+        List<PrivateChatWithMessagesResponse> responses = new ArrayList<>();
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("creatorId").is(id),
+                Criteria.where("recipientId").is(id)
+        );
+        Query query = new Query(criteria);
+        List<PrivateChat> privateChats = mongoTemplate.find(query, PrivateChat.class);
+        for (PrivateChat chat : privateChats) {
+            String recipientId = chat.getCreatorId().equals(id) ? chat.getRecipientId() : chat.getCreatorId();
+            PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
+            User recipient = userService.findUserById(recipientId);
+            response.setRecipient(recipient);
+
+            List<MessageWithSenderInfo> messages = getMessageList(chat);
+            if (!messages.isEmpty()) {
+                MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);
+                response.setLastMessage(lastMessage.getContent());
+            }
+            responses.add(response);
+        }
+        return responses;
+    }
     private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
             List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
             List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
         for (Message message : messages) {
-            // Tạo đối tượng MessageWithSenderInfo và thiết lập thông tin tin nhắn cùng với thông tin người gửi
             MessageWithSenderInfo messageWithSenderInfo = new MessageWithSenderInfo();
             messageWithSenderInfo.setContent(message.getContent());
             messageWithSenderInfo.setId(message.getId());
@@ -120,8 +165,6 @@ public class PrivateChatImpl implements PrivateChatService {
         }
         return messageWithSenderInfos;
     }
-
-
 }
 
 

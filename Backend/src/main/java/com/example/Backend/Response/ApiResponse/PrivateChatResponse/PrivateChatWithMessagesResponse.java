@@ -2,6 +2,7 @@ package com.example.Backend.Response.ApiResponse.PrivateChatResponse;
 
 import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
+import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrivateChatWithMessagesResponse {
+    private User recipient;
+    private String lastMessage;
     private List<MessageWithSenderInfo> messages;
-
 }
