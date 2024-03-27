@@ -1,11 +1,12 @@
 package com.example.frontend.response.Post;
 
 import java.util.Date;
+import java.util.List;
 
 public class PostResponse {
     private String idPost;
     private String userId;
-    private String imagePost;
+    private List<String> imagePost;
     private String description;
     private String location;
     private Date createAt;
@@ -13,7 +14,7 @@ public class PostResponse {
     public PostResponse() {
     }
 
-    public PostResponse(String idPost, String userId, String imagePost, String description, String location, Date createAt) {
+    public PostResponse(String idPost, String userId, List<String> imagePost, String description, String location, Date createAt) {
         this.idPost = idPost;
         this.userId = userId;
         this.imagePost = imagePost;
@@ -38,11 +39,11 @@ public class PostResponse {
         this.userId = userId;
     }
 
-    public String getImagePost() {
+    public List<String> getImagePost() {
         return imagePost;
     }
 
-    public void setImagePost(String imagePost) {
+    public void setImagePost(List<String> imagePost) {
         this.imagePost = imagePost;
     }
 

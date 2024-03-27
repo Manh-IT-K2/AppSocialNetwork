@@ -1,0 +1,7 @@
+<!-- res/drawable/custom_scrollbar.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/blue1" />
+    <size android:width="10dp" android:height="5dp" />
+    <corners android:radius="10dp"></corners>
+</shape>

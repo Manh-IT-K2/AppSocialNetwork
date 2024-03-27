@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class RequestPostByUserId {
     private String userId;
     private String userName;
     private String avtImage;
-    private String imagePost;
+    private List<String> imagePost;
     private String description;
     private String location;
     private Date createAt;
