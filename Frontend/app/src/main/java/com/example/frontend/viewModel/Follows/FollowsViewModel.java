@@ -31,4 +31,10 @@ public class FollowsViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<String>> updateFollows(RequestUpdateFollows requestUpdateFollows) {
         return followsRepository.updateFollows(requestUpdateFollows);
     }
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getUserFollowingById(String id) {
+        return followsRepository.getUserFollowingById(id);
+    }
+    public MutableLiveData<ApiResponse<List<UserResponse>>> getUserFollowerById(String id) {
+        return followsRepository.getUserFollowerById(id);
+    }
 }

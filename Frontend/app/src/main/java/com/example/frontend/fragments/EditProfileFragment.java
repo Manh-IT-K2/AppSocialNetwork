@@ -64,22 +64,7 @@ public class EditProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
-        doneBtn = view.findViewById(R.id.Done_btn);
-        cancelBtn = view.findViewById(R.id.Cancel_btn);
-        editBtn = view.findViewById(R.id.editBtn);
-        usernameEditText = view.findViewById(R.id.usernameEditText);
-        websiteEditText = view.findViewById(R.id.websiteEditText);
-        bioEditText = view.findViewById(R.id.bioEditText);
-        nameEditText = view.findViewById(R.id.nameEditText);
-        editTextEmail = view.findViewById(R.id.editTextEmail);
-        editTextPhone = view.findViewById(R.id.editTextPhone);
-        editTextGender = view.findViewById(R.id.editTextGender);
-        profileImage = view.findViewById(R.id.profileImage);
-        edit_profile_photo_Btn = view.findViewById(R.id.edit_profile_photo_Btn);
-
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userID = getArguments().getString("userId");
-
+        init(view);
         // HANDLE CHOOSE IMAGE
         edit_profile_photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +113,25 @@ public class EditProfileFragment extends Fragment {
         getDetailUserById(userID);
         return view;
     }
+
+    public void init(View view){
+        doneBtn = view.findViewById(R.id.Done_btn);
+        cancelBtn = view.findViewById(R.id.Cancel_btn);
+        editBtn = view.findViewById(R.id.editBtn);
+        usernameEditText = view.findViewById(R.id.usernameEditText);
+        websiteEditText = view.findViewById(R.id.websiteEditText);
+        bioEditText = view.findViewById(R.id.bioEditText);
+        nameEditText = view.findViewById(R.id.nameEditText);
+        editTextEmail = view.findViewById(R.id.editTextEmail);
+        editTextPhone = view.findViewById(R.id.editTextPhone);
+        editTextGender = view.findViewById(R.id.editTextGender);
+        profileImage = view.findViewById(R.id.profileImage);
+        edit_profile_photo_Btn = view.findViewById(R.id.edit_profile_photo_Btn);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userID = getArguments().getString("userId");
+    }
+
     // Phương thức giúp thiết lập giá trị của EditText
     private void setEditTextValue(EditText editText, String value, String defaultValue) {
         if(value != null && !value.isEmpty()){
@@ -166,6 +170,11 @@ public class EditProfileFragment extends Fragment {
         Uri fileUri = selectedFile;
         String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
         FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
+            @Override
+            public void onUploadComplete(List<String> fileUrls) {
+
+            }
+
             @Override
             public void onUploadComplete(String fileUrl) {
                 if( !fileUrl.isEmpty()) {
