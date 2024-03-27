@@ -1,9 +1,13 @@
 package com.example.frontend.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,11 +34,24 @@ import com.example.frontend.activities.CreatePostActivity;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
+import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,6 +65,7 @@ public class ProfileFragment extends Fragment {
     String userId;
     CircleImageView profileImage;
     TextView nameTV;
+    private List<Uri> selectedFiles;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,6 +113,16 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        editprofileImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/* video/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(intent, 1);
+            }
+        });
+
         openFollows.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,12 +167,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        editprofileImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(),"Clicked",Toast.LENGTH_LONG).show();
-            }
-        });
         menuSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,5 +199,60 @@ public class ProfileFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1  && resultCode == RESULT_OK){
+            selectedFiles = new ArrayList<>();
+            if(data != null && data.getData() != null) {
+                Uri fileUri = data.getData();
+                selectedFiles.add(fileUri);
+                uploadFilesToFirebaseStorage();
+            }
+        }
+    }
+
+    private void uploadFilesToFirebaseStorage() {
+        int totalFiles = selectedFiles.size();
+        final int[] uploadedFiles = {0};
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String timestamp = sdf.format(new Date());
+
+        for (int i = 0; i < selectedFiles.size(); i++) {
+            Uri fileUri = selectedFiles.get(i);
+            String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
+            FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
+                @Override
+                public void onUploadComplete(String fileUrl) {
+                    uploadedFiles[0]++;
+                    if (uploadedFiles[0] == totalFiles) {
+                        RequestUpdateUser requestUpdateUser = new RequestUpdateUser(
+                                userId, "","","",fileUrl,"","","",""
+                        );
+                        updateUser(requestUpdateUser);
+                    }
+                }
+                @Override
+                public void onUploadFailed(String errorMessage) {
+                    Toast.makeText(getContext(), "Upload failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void updateUser (RequestUpdateUser requestUpdateUser){
+        userViewModel.updateUser(requestUpdateUser).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Update Success!") && response.getStatus()){
+                    UserResponse userResponse = response.getData();
+                    Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
+                    Toast.makeText(getContext(), "Update Successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });;
     }
 }
