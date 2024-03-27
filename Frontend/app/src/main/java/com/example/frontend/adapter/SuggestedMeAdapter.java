@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
@@ -33,11 +34,11 @@ import java.util.List;
 public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.ViewHolder> {
 
     public static Context mContext;
-    public List<UserResponse> userResponseList;
+    public List<GetAllUserByFollowsResponse> userResponseList;
     public static FollowsViewModel followsViewModel;
     private LifecycleOwner lifecycleOwner;
 
-    public SuggestedMeAdapter(Context mContext, List<UserResponse> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner) {
+    public SuggestedMeAdapter(Context mContext, List<GetAllUserByFollowsResponse> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner) {
         this.mContext = mContext;
         this.userResponseList = userResponseList;
         this.followsViewModel = followsViewModel;
@@ -53,7 +54,7 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SuggestedMeAdapter.ViewHolder holder, int position) {
-        UserResponse userResponse = userResponseList.get(position);
+        GetAllUserByFollowsResponse userResponse = userResponseList.get(position);
         // Set thông tin bài đăng vào các view
         holder.idNameUser.setText(userResponse.getUsername());
         holder.nameUser.setText(userResponse.getName());
@@ -93,7 +94,7 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
             btnFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RequestCreateFollows requestCreateFollows = new RequestCreateFollows(idFollows,"65e8a525714ccc3a3caa7f77",formattedDate);
+                    RequestCreateFollows requestCreateFollows = new RequestCreateFollows(userId,idFollows,formattedDate);
                     followsViewModel.createFollows(requestCreateFollows).observe(lifecycleOwner, new Observer<ApiResponse<String>>() {
                         @Override
                         public void onChanged(ApiResponse<String> response) {
@@ -101,8 +102,6 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
                             String json = gson.toJson(response);
                             if(response.getStatus() && response.getMessage().equals("Success")){
                                 setTextBtn(btnFollow,"Đã theo dõi");
-                            } else {
-
                             }
                         }
                     });

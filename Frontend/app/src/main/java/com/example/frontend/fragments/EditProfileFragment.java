@@ -63,6 +63,7 @@ public class EditProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
 
         UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        String userID = getArguments().getString("userId");
 
         // HANDLE BTN DONE
         doneBtn.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +96,7 @@ public class EditProfileFragment extends Fragment {
                 String phone = editTextPhone.getText().toString();
                 String gender = editTextGender.getText().toString();
                 RequestUpdateUser requestUpdateUser = new RequestUpdateUser(
-                        "65e8a525714ccc3a3caa7f77",
+                        userID,
                         !userName.isEmpty() ? userName : "",
                         !email.isEmpty() ? email : "",
                         !phone.isEmpty() ? phone : "",
@@ -116,7 +117,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
         // HANDLE GET DETAIL USER BY ID
-        userViewModel.getDetailUserById("65e8a525714ccc3a3caa7f77").observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+        userViewModel.getDetailUserById(userID).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 Gson gson = new Gson();

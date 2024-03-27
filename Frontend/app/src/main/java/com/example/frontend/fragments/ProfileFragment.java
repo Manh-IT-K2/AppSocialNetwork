@@ -116,12 +116,14 @@ public class ProfileFragment extends Fragment {
         editprofileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FragmentReplacerActivity.class);
-                // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
-                intent.putExtra("fragment_to_load", "edit_profile");
-                // Bắt đầu activity với Intent đã tạo
-                startActivity(intent);
-
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", userId);
+                EditProfileFragment editProfileFragment = new EditProfileFragment();
+                editProfileFragment.setArguments(bundle); // Thiết lập arguments cho SettingFragment
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_layout_main, editProfileFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
@@ -134,9 +136,6 @@ public class ProfileFragment extends Fragment {
         menuSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), MainActivity.class);
-//                intent.putExtra("fragment_to_load", "setting_btn");
-//                startActivity(intent);
                 String usernameValue = username.getText().toString();
                 Bundle bundle = new Bundle();
                 bundle.putString("username", usernameValue);
