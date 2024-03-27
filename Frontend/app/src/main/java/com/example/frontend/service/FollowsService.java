@@ -5,6 +5,9 @@ import com.example.frontend.request.Follows.RequestUpdateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Follows.FollowsResponse;
 import com.example.frontend.response.Follows.GetQuantityResponse;
+import com.example.frontend.response.User.UserResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,4 +23,8 @@ public interface FollowsService {
     Call<ApiResponse<GetQuantityResponse>> getQuantityFollows(@Query("id") String id);
     @POST("follows/updateFollows")
     Call<ApiResponse<String>> updateFollows(@Body RequestUpdateFollows requestUpdateFollows);
+    @GET("follows/getUserFollowingById")
+    Call<ApiResponse<List<UserResponse>>> getUserFollowingById(@Query("id") String id);
+    @GET("follows/getUserFollowerById")
+    Call<ApiResponse<List<UserResponse>>> getUserFollowerById(@Query("id") String id);
 }

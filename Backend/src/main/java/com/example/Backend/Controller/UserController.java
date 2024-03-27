@@ -81,4 +81,9 @@ public class UserController {
         ApiResponse<User> apiResponse = userService.updateUser(requestUpdateUser);
         return new ResponseEntity<ApiResponse<User>>(apiResponse, HttpStatus.OK);
     }
+    @GetMapping("/getListUserName")
+    public ResponseEntity<ApiResponse<List<String>>> getListUserName() throws Exception {
+        ApiResponse<List<String>> apiResponse = userService.getListUserName();
+        return new ResponseEntity<ApiResponse<List<String>>>(apiResponse, HttpStatus.OK);
+    }
 }

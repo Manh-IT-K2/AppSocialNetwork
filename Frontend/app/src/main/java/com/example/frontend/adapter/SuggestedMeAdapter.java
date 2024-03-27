@@ -1,9 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +18,12 @@ import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.request.Follows.RequestUpdateFollows;
-import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Follows.GetQuantityResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
-import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.gson.Gson;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -14,5 +14,6 @@ public class RequestLogin {
     String password;
     String username;
     String avatarImg;
+    String name;
     boolean fromGoogle;
 }

@@ -42,6 +42,7 @@ public class UserImpl implements UserService {
         user.setEmail(requestCreateAccount.getEmail());
         user.setUsername(requestCreateAccount.getUsername());
         user.setPassword(BCrypt.hashpw(requestCreateAccount.getPassword(), BCrypt.gensalt()));
+        user.setName(requestCreateAccount.getName());
         user.setFromGoogle(false);
         mongoTemplate.insert(user, "users");
     }
@@ -58,6 +59,7 @@ public class UserImpl implements UserService {
                 savedUser.setUsername(requestLogin.getUsername());
                 savedUser.setAvatarImg(requestLogin.getAvatarImg());
                 savedUser.setFromGoogle(true);
+                savedUser.setName(requestLogin.getName());
                 savedUser.setStatus(true);
                 return new ApiResponse<User>(true, "", mongoTemplate.insert(savedUser, "users"));
             } else {
@@ -108,6 +110,19 @@ public class UserImpl implements UserService {
        javaMailSender.send(message);
         return new ApiResponse<String>(true, "Mã OTP đã được gửi đến email của bạn", otp.toString());
     }
+
+    @Override
+    public ApiResponse<List<String>> getListUserName() {
+        // Thực hiện truy vấn để lấy tất cả các username từ cơ sở dữ liệu
+        List<User> userList = mongoTemplate.findAll(User.class);
+
+        // Trích xuất các username từ danh sách người dùng và chuyển thành một danh sách mới
+        List<String> userNameList = userList.stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
+        return new ApiResponse<List<String>>(true, "Success" , userNameList);
+    }
+
     @Override
     public ApiResponse<String> sendOTP_forgotpassword(String email) {
         Query query = new Query(Criteria.where("email").is(email));
@@ -195,7 +210,7 @@ public class UserImpl implements UserService {
         Query query = new Query().limit(20);
         List<User> listUser = mongoTemplate.find(query, User.class);
         List<RequestGetAllUserByFollows> resultList = listUser.stream()
-                .filter(user -> !listUserId.contains(user.getId()))
+                .filter(user -> !listUserId.contains(user.getId()) && !userId.contains(user.getId()))
                 .map(user -> {
                     return new RequestGetAllUserByFollows(user.getId(),user.getUsername(),user.getAvatarImg(),user.getName());
                 })
