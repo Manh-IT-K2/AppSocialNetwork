@@ -16,7 +16,6 @@ import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -30,15 +29,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         this.context = context;
     }
 
-    public void setChatList(PrivateChatWithMessagesResponse chat) {
-        if (chatList == null) {
-            chatList = new ArrayList<>();
-        }
-        chatList.add(chat);
-        notifyDataSetChanged(); // Notify adapter that data set has changed
+    public void setChatList(List<PrivateChatWithMessagesResponse> chatList) {
+        this.chatList = chatList;
+        notifyDataSetChanged(); // Notify adapter that dataset has changed
     }
-
-
 
     @NonNull
     @Override
@@ -49,18 +43,21 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-       holder.lastMessage.setText(chatList.get(position).getLastMessage());
-       holder.recipientName.setText(chatList.get(position).getRecipient().getUsername());
-      // holder.img_user.setImageResource(chatList.get(position).getRecipient().getAvatarImg());
-        if(chatList.get(position).getRecipient().getAvatarImg() != null)
+        PrivateChatWithMessagesResponse chat = chatList.get(position);
+        holder.lastMessage.setText(chat.getLastMessage());
+        holder.recipientName.setText(chat.getRecipient().getUsername());
+        if (chat.getRecipient().getAvatarImg() != null) {
             Glide.with(context)
-                    .load(Uri.parse(chatList.get(position).getRecipient().getAvatarImg()))
+                    .load(Uri.parse(chat.getRecipient().getAvatarImg()))
                     .into(holder.img_user);
         }
+    }
+
     @Override
     public int getItemCount() {
         return chatList.size();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView recipientName;
         private TextView lastMessage;
@@ -72,20 +69,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             lastMessage = itemView.findViewById(R.id.last_message_text);
             img_user = itemView.findViewById(R.id.imgAvatar);
         }
-
-//        public void bind(PrivateChatWithMessagesResponse chat) {
-//            recipientName.setText(chat.getRecipient().getId()); // Set recipient name
-//            lastMessage.setText(chat.getLastMessage()); // Set last message
-//
-//            List<MessageWithSenderInfo> messages = chat.getMessages();
-//            if (messages != null && !messages.isEmpty()) {
-//                MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);
-//                UserResponse sender = lastMessage.getSender();
-//                if (sender != null) {
-//                    // Assuming sender has a drawable resource ID for avatar
-//                    img_user.setImageResource(sender.getAvatarImg());
-//                }
-//            }
-//        }
     }
 }

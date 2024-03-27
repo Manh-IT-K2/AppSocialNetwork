@@ -16,8 +16,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search User"
-            android:textSize="22sp"
+            android:text="username"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_marginStart="10dp"

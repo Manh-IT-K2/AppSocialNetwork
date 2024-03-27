@@ -26,8 +26,8 @@ public class MessageRepository {
         privateChatService = CallApi.getRetrofitInstance().create(PrivateChatService.class);
     }
 
-    public MutableLiveData<PrivateChatWithMessagesResponse> getListChat(String id) {
-        MutableLiveData<PrivateChatWithMessagesResponse> mutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<List<PrivateChatWithMessagesResponse>> getListChat(String id) {
+        MutableLiveData<List<PrivateChatWithMessagesResponse>> mutableLiveData = new MutableLiveData<>();
 
         privateChatService.getListChat(id).enqueue(new Callback<ApiResponse<List<PrivateChatWithMessagesResponse>>>() {
             @Override
@@ -37,26 +37,22 @@ public class MessageRepository {
                     if (apiResponse != null) {
                         if (apiResponse.isSuccess()) {
                             List<PrivateChatWithMessagesResponse> chatList = apiResponse.getData();
-                            if (chatList != null && !chatList.isEmpty()) {
-                                mutableLiveData.setValue(chatList.get(0)); // Assuming you only need the first chat in the list
-                            } else {
-                                // Handle empty or null chat list
-                            }
+                            mutableLiveData.setValue(chatList);
                         } else {
-                            // Handle unsuccessful response
+                            // Xử lý khi có phản hồi không thành công
                         }
                     } else {
-                        // Handle null response
+                        // Xử lý khi phản hồi là null
                     }
                 } else {
-                    // Handle unsuccessful HTTP response
+                    // Xử lý khi phản hồi HTTP không thành công
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<PrivateChatWithMessagesResponse>>> call, Throwable t) {
-                Log.i(TAG, "Unable to get data");
-                // Handle failure
+                Log.i(TAG, "Không thể lấy dữ liệu");
+                // Xử lý khi gặp lỗi
             }
         });
 
