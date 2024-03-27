@@ -63,7 +63,7 @@ public class SubscriptionsFragment extends Fragment{
                     progressBar.setVisibility(View.GONE);
                     list_suggestedMe.setVisibility(View.VISIBLE);
                     userResponseList = response.getData();
-                    suggestedMeAdapter = new SuggestedMeAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner());
+                    suggestedMeAdapter = new SuggestedMeAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner(),userViewModel);
                     list_suggestedMe.setAdapter(suggestedMeAdapter);
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi

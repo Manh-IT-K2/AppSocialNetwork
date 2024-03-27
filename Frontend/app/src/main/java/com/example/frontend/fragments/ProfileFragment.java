@@ -1,5 +1,6 @@
 package com.example.frontend.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.CreatePostActivity;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
@@ -38,7 +41,7 @@ public class ProfileFragment extends Fragment {
 
     ImageButton editprofileImageBtn,menuSetting;
     Button editprofileBtn, logoutBtn, qrcodeBtn;
-    TextView username;
+    TextView username,followingCount,followerCount,postCount;
     LinearLayout openFollows,openFollowing;
     UserViewModel userViewModel;
     String userId;
@@ -53,6 +56,9 @@ public class ProfileFragment extends Fragment {
         logoutBtn = view.findViewById(R.id.logout);
         qrcodeBtn = view.findViewById(R.id.qrcodeBtn);
         username = view.findViewById(R.id.toolbarNameTV);
+        followingCount = view.findViewById(R.id.followingCount);
+        followerCount = view.findViewById(R.id.followerCount);
+        postCount = view.findViewById(R.id.postCount);
         openFollows = view.findViewById(R.id.openFollows);
         openFollowing = view.findViewById(R.id.openFollowing);
         editprofileBtn = view.findViewById(R.id.edit_profileBtn);
@@ -73,13 +79,18 @@ public class ProfileFragment extends Fragment {
             editprofileBtn.setVisibility(View.INVISIBLE);
         }
         else userId = SharedPreferenceLocal.read(getContext(),"userId");
-
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
-            public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
-                username.setText(userResponseApiResponse.getData().getUsername());
-                Picasso.get().load(userResponseApiResponse.getData().getAvatarImg()).into(profileImage);
-                nameTV.setText(userResponseApiResponse.getData().getUsername());
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Success") && response.getStatus()){
+                    UserResponse userResponse = response.getData();
+                    username.setText(userResponse.getUsername());
+                    Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
+                    nameTV.setText(userResponse.getUsername());
+                    followerCount.setText(String.valueOf(userResponse.getFollowers()));
+                    followingCount.setText(String.valueOf(userResponse.getFollowing()));
+                    postCount.setText("0");
+                }
             }
         });
 
