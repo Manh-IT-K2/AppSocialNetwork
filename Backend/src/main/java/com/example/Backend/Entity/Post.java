@@ -28,4 +28,5 @@ public class Post {
     private String location;
 
     private Date createAt;
+    private List<String> like;
 }
