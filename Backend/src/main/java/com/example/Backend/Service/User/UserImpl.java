@@ -1,13 +1,17 @@
 package com.example.Backend.Service.User;
 
+import com.example.Backend.Entity.Follows;
 import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.sun.xml.txw2.Document;
+import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,8 +19,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserImpl implements UserService {
@@ -165,6 +171,36 @@ public class UserImpl implements UserService {
     @Override
     public ApiResponse<User> requestTrackingUser(RequestTracking requestTracking) {
         return null;
+    }
+
+    // Phương thức để lấy danh sách các người dùng đã theo dõi
+    private List<String> getFollowedUserIds(ObjectId currentUserId) {
+        Criteria criteria = Criteria.where("idFollower").is(currentUserId).and("status").is(1); // Lọc ra các người dùng đã theo dõi
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.project().and("idFollowing").as("idFollowing") // Chọn ra trường idFollowing
+        );
+        AggregationResults<Follows> results = mongoTemplate.aggregate(aggregation, "follows", Follows.class);
+        List<String> followedUserIds = new ArrayList<>();
+        for (Follows follows : results.getMappedResults()) {
+            followedUserIds.add(String.valueOf(follows.getIdFollowing()));
+        }
+        return followedUserIds;
+    }
+    @Override
+    public ApiResponse<List<RequestGetAllUserByFollows>> getAllUserByFollows(String userId) {
+        ObjectId objectId = new ObjectId(userId);
+        // Xác định các người dùng đã theo dõi
+        List<String> listUserId = getFollowedUserIds(objectId);
+        Query query = new Query().limit(20);
+        List<User> listUser = mongoTemplate.find(query, User.class);
+        List<RequestGetAllUserByFollows> resultList = listUser.stream()
+                .filter(user -> !listUserId.contains(user.getId()))
+                .map(user -> {
+                    return new RequestGetAllUserByFollows(user.getId(),user.getUsername(),user.getAvatarImg(),user.getName());
+                })
+                .toList();
+        return new ApiResponse<List<RequestGetAllUserByFollows>>(true, "Success", resultList);
     }
 
     @Override

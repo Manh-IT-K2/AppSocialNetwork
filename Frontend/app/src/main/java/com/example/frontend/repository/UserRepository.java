@@ -12,6 +12,7 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
@@ -155,6 +156,33 @@ public class UserRepository {
 
         return mutableLiveData;
     }
+
+    public MutableLiveData<ApiResponse<List<GetAllUserByFollowsResponse>>> getAllUsersByFollows(String id) {
+        MutableLiveData<ApiResponse<List<GetAllUserByFollowsResponse>>> mutableLiveData = new MutableLiveData<>();
+
+        userService.getAllUsersByFollows(id).enqueue(new Callback<ApiResponse<List<GetAllUserByFollowsResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<GetAllUserByFollowsResponse>>> call, Response<ApiResponse<List<GetAllUserByFollowsResponse>>> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        ApiResponse<List<GetAllUserByFollowsResponse>> listApiResponse = response.body();
+                        mutableLiveData.setValue(listApiResponse);
+                        Log.d("allUsers", mutableLiveData.getValue().getData().toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<GetAllUserByFollowsResponse>>> call, Throwable t) {
+                Log.i(TAG, "Unable to get data");
+            }
+        });
+
+        return mutableLiveData;
+    }
+
     public MutableLiveData<ApiResponse<UserResponse>> changePass(RequestChangePass request) {
         MutableLiveData<ApiResponse<UserResponse>> mutableLiveData = new MutableLiveData<>();
 
