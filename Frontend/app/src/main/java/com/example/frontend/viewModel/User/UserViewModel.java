@@ -30,6 +30,10 @@ public class UserViewModel extends ViewModel {
         return userRepository.login(requestLogin);
     }
 
+    public MutableLiveData<ApiResponse<List<String>>> getListUserName() {
+        return userRepository.getListUserName();
+    }
+
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
     }

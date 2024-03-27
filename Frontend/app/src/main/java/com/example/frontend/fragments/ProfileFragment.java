@@ -105,7 +105,7 @@ public class ProfileFragment extends Fragment {
                     UserResponse userResponse = response.getData();
                     username.setText(userResponse.getUsername());
                     Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
-                    nameTV.setText(userResponse.getUsername());
+                    nameTV.setText(userResponse.getName());
                     followerCount.setText(String.valueOf(userResponse.getFollowers()));
                     followingCount.setText(String.valueOf(userResponse.getFollowing()));
                     postCount.setText("0");
@@ -129,6 +129,7 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), FollowsActivity.class);
                 // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
                 intent.putExtra("fragment_to_load", "openFollows");
+                intent.putExtra("userName", username.getText().toString());
                 // Bắt đầu activity với Intent đã tạo
                 startActivity(intent);
             }
@@ -139,6 +140,7 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), FollowsActivity.class);
                 // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
                 intent.putExtra("fragment_to_load", "openFollowing");
+                intent.putExtra("userName", username.getText().toString());
                 // Bắt đầu activity với Intent đã tạo
                 startActivity(intent);
             }
@@ -225,6 +227,11 @@ public class ProfileFragment extends Fragment {
             Uri fileUri = selectedFiles.get(i);
             String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
             FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
+                @Override
+                public void onUploadComplete(List<String> fileUrls) {
+
+                }
+
                 @Override
                 public void onUploadComplete(String fileUrl) {
                     uploadedFiles[0]++;

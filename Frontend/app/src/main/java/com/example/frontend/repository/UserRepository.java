@@ -78,6 +78,31 @@ public class UserRepository {
         return mutableLiveData;
     }
 
+    public MutableLiveData<ApiResponse<List<String>>> getListUserName() {
+        MutableLiveData<ApiResponse<List<String>>> mutableLiveData = new MutableLiveData<>();
+
+        userService.getListUserName().enqueue(new Callback<ApiResponse<List<String>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<String>>> call, Response<ApiResponse<List<String>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<String>> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Log.d("log1", new Gson().toJson(apiResponse));
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                    //Log.d("log1", "Lỗi");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<String>>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+                Log.d("log1", new Gson().toJson(t));
+            }
+        });
+        return mutableLiveData;
+    }
+
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
 

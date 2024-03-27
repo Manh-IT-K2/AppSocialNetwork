@@ -14,4 +14,5 @@ public class RequestCreateAccount {
     private String username;
     private String password;
     private String avatarImg;
+    private String name;
 }

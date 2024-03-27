@@ -42,4 +42,6 @@ public interface  UserService {
     Call<ApiResponse<UserResponse>> getDetailUserById(@Query("id") String id);
     @POST("user/updateUser")
     Call<ApiResponse<UserResponse>> updateUser(@Body RequestUpdateUser request);
+    @GET("user/getListUserName")
+    Call<ApiResponse<List<String>>> getListUserName();
 }

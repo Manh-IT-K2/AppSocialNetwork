@@ -4,6 +4,7 @@ public class RequestCreateAccount {
     String username;
     String email;
     String password;
+    String name;
 
     public String getUsername() {
         return username;
@@ -29,9 +30,18 @@ public class RequestCreateAccount {
         this.password = password;
     }
 
-    public RequestCreateAccount(String username, String email, String password) {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public RequestCreateAccount(String username, String email, String password, String name) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.name = name;
     }
 }
