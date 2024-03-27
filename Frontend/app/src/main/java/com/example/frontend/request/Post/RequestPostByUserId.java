@@ -1,12 +1,14 @@
 package com.example.frontend.request.Post;
 
+import java.util.List;
+
 public class RequestPostByUserId {
 
     String idPost;
     String userId;
     String userName;
     String avtImage;
-    String imagePost;
+    List<String> imagePost;
     String description;
     String location;
     String createAt;
@@ -14,7 +16,7 @@ public class RequestPostByUserId {
     public RequestPostByUserId() {
     }
 
-    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, String imagePost, String description, String location, String createAt) {
+    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, List<String> imagePost, String description, String location, String createAt) {
         this.idPost = idPost;
         this.userId = userId;
         this.userName = userName;
@@ -57,11 +59,11 @@ public class RequestPostByUserId {
         this.avtImage = avtImage;
     }
 
-    public String getImagePost() {
+    public List<String> getImagePost() {
         return imagePost;
     }
 
-    public void setImagePost(String imagePost) {
+    public void setImagePost(List<String> imagePost) {
         this.imagePost = imagePost;
     }
 

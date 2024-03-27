@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class Post {
 
     private ObjectId userId;
 
-    private String imagePost;
+    private List<String> imagePost;
 
     private String description;
 
