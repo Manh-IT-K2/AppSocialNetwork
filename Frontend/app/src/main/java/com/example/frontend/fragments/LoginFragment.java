@@ -302,6 +302,11 @@ public class LoginFragment extends Fragment {
             String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
             FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
                 @Override
+                public void onUploadComplete(List<String> fileUrls) {
+
+                }
+
+                @Override
                 public void onUploadComplete(String fileUrl) {
                     urlFromFirebase.add(fileUrl);
                     uploadedFiles[0]++;

@@ -1,5 +1,9 @@
 package com.example.frontend.activities;
 
+import static com.example.frontend.activities.PostActivity.checkDataIntent;
+import static com.example.frontend.activities.PostActivity.checkScreen;
+import static com.example.frontend.activities.PostActivity.chooseMoreClickCount;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,7 +12,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +20,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.utils.CameraX;
@@ -35,12 +39,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CreatePostActivity extends AppCompatActivity {
 
@@ -49,7 +55,8 @@ public class CreatePostActivity extends AppCompatActivity {
     private EditText edt_description;
     private ImageView btn_backCreatePost;
     private PostViewModel postViewModel;
-    private List<Uri> selectedFiles;
+    private List<String> selectedFileChoseMore;
+    private LinearLayout linear_layout_drag_createPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,98 +67,135 @@ public class CreatePostActivity extends AppCompatActivity {
         btn_sharePost = findViewById(R.id.btn_sharePost);
         btn_backCreatePost = findViewById(R.id.btn_backCreatePost);
         edt_description = findViewById(R.id.edt_description);
+        linear_layout_drag_createPost = findViewById(R.id.linear_layout_drag_createPost);
 
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
-        selectedFiles = new ArrayList<>();
+        selectedFileChoseMore = new ArrayList<>();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String imagePath = extras.getString("imagePath");
-            if (imagePath != null) {
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                if (bitmap != null) {
-                    img_createPost.setImageBitmap(bitmap);
-                    selectedFiles.add(Uri.parse(imagePath));
-                } else {
-                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+        if (checkDataIntent == 0) {
+            // get image take a shot camera
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String imagePath = extras.getString("imagePath");
+                if (imagePath != null) {
+                    selectedFileChoseMore.add(imagePath);
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    if (bitmap != null) {
+                        img_createPost.setImageBitmap(bitmap);
+                    } else {
+                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            }
+        } else if (checkDataIntent == 1) {
+            //
+            selectedFileChoseMore = getIntent().getStringArrayListExtra("selectedImages");
+            if (selectedFileChoseMore != null && !selectedFileChoseMore.isEmpty()) {
+                loadImageSelectedCreatePost();
+            } else {
+                Toast.makeText(this, "No images selected", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Get the file path from intent extras
+            String imagePath = getIntent().getStringExtra("imagePaths");
+            if (imagePath != null) {
+                selectedFileChoseMore.add(imagePath);
+                // Check if the file exists
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    // Load image from file in a background thread
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Decode the file into a bitmap
+                            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                            if (bitmap != null) {
+                                // Update the ImageView on the UI thread
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        img_createPost.setImageBitmap(bitmap);
+                                    }
+                                });
+                            } else {
+                                // Show an error toast if failed to load the image
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(CreatePostActivity.this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
+                } else {
+                    Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
             }
         }
 
+        // init post view model
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
+        // action click btn_sharePost
         btn_sharePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Hiển thị Dialog progress
                 final Dialog dialog = new Dialog(CreatePostActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_progress_bar);
                 dialog.setCancelable(false);
                 dialog.show();
-                if (img_createPost != null) {
-                    Bitmap bitmap = ((BitmapDrawable) img_createPost.getDrawable()).getBitmap();
 
-                    uploadFilesToFirebaseStorage(bitmap, new FirebaseStorageUploader.OnUploadCompleteListener() {
-                        @Override
-                        public void onUploadComplete(String fileUrl) {
-                            String description = edt_description.getText().toString();
-                            Date createAt = new Date();
+                // Counter to keep track of successful uploads
+                AtomicInteger uploadCounter = new AtomicInteger(0);
 
-                            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                            String isoDateString = isoFormat.format(createAt);
-
-                            RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrl, "65e8a525714ccc3a3caa7f77", description, "", isoDateString);
-
-                            postViewModel.createPost(requestCreatePost, "65e8a525714ccc3a3caa7f77");
-
-                            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("posts");
-                            String postId = postsRef.push().getKey();
-                            String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
-
-                            Map<String, Object> postData = new HashMap<>();
-                            postData.put("imageUrl", fileUrl);
-                            postData.put("userId", "65e8a525714ccc3a3caa7f77");
-                            postData.put("description", description);
-                            postData.put("createdAt", isoDateString);
-
-                            postsRef.child(postId).setValue(postData).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("TAG", "Post created successfully in Realtime Database");
-                                    startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
-                                    // Đóng Dialog khi tác vụ hoàn thành
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("TAG", "Failed to create post in Realtime Database: " + e.getMessage());
-                                }
-                            });
-                            // Đóng Dialog khi tác vụ hoàn thành
-                            dialog.dismiss();
-
-                        }
-
-                        @Override
-                        public void onUploadFailed(String errorMessage) {
-                            Toast.makeText(CreatePostActivity.this, "Failed to upload image: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            // Đóng Dialog khi tác vụ hoàn thành
-                            dialog.dismiss();
-                        }
-                    });
-                } else {
-                    Toast.makeText(CreatePostActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
-                    // Đóng Dialog khi tác vụ hoàn thành
-                    dialog.dismiss();
+                // Tạo danh sách các URL của các file đã chọn
+                List<String> fileUrls = new ArrayList<>();
+                List<Bitmap> bitmaps = new ArrayList<>();
+                for (String imagePath : selectedFileChoseMore) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    bitmaps.add(bitmap);
                 }
+
+                uploadFilesToFirebaseStorage(bitmaps, new FirebaseStorageUploader.OnUploadCompleteListener() {
+                    @Override
+                    public void onUploadComplete(List<String> fileUrls) {
+                        // Kiểm tra nếu danh sách URL đã có đủ phần tử thì tiến hành tạo bài viết
+                        createPostWithUrls(fileUrls);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onUploadComplete(String fileUrl) {
+
+                    }
+
+                    @Override
+                    public void onUploadFailed(String errorMessage) {
+                        Toast.makeText(CreatePostActivity.this, "Failed to upload image: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
             }
         });
+
 
         btn_backCreatePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                if (checkScreen == 1 && chooseMoreClickCount == 1) {
+                    Intent intent = new Intent(CreatePostActivity.this, PostActivity.class);
+                    intent.putExtra("buttonColor", R.color.blue1);
+                    startActivity(intent);
+                } else if (checkScreen == 1 && chooseMoreClickCount == 0) {
+                    Intent intent = new Intent(CreatePostActivity.this, PostActivity.class);
+                    startActivity(intent);
+                } else {
+                    onBackPressed();
+                }
             }
         });
     }
@@ -163,40 +207,117 @@ public class CreatePostActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void uploadFilesToFirebaseStorage(Bitmap bitmap, final FirebaseStorageUploader.OnUploadCompleteListener listener) {
+    private void createPostWithUrls(List<String> fileUrls) {
+        String description = edt_description.getText().toString();
+        Date createAt = new Date();
+
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        String isoDateString = isoFormat.format(createAt);
+
+        // Sử dụng danh sách các URL trong việc tạo yêu cầu đăng bài viết
+        RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, "65e8a525714ccc3a3caa7f77", description, "", isoDateString);
+
+        postViewModel.createPost(requestCreatePost, "65e8a525714ccc3a3caa7f77");
+
+        DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("posts");
+        String postId = postsRef.push().getKey();
+
+        // Tạo dữ liệu cho bài viết trong Realtime Database
+        Map<String, Object> postData = new HashMap<>();
+        postData.put("imageUrl", fileUrls); // Lưu danh sách URL vào Firebase
+        postData.put("userId", "65e8a525714ccc3a3caa7f77");
+        postData.put("description", description);
+        postData.put("createdAt", isoDateString);
+
+        postsRef.child(postId).setValue(postData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("TAG", "Post created successfully in Realtime Database");
+                startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("TAG", "Failed to create post in Realtime Database: " + e.getMessage());
+            }
+        });
+    }
+
+    //
+    private void uploadFilesToFirebaseStorage(List<Bitmap> bitmaps, final FirebaseStorageUploader.OnUploadCompleteListener listener) {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://noteapp-f20f4.appspot.com");
         StorageReference storageRef = storage.getReference();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String timestamp = sdf.format(new Date());
-        String fileName = "temp_image_" + timestamp + ".jpg";
 
-        StorageReference fileRef = storageRef.child("uploadFiles/" + fileName);
+        AtomicInteger uploadCounter = new AtomicInteger(0);
+        List<String> fileUrls = new ArrayList<>();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+        for (int i = 0; i < bitmaps.size(); i++) {
+            Bitmap bitmap = bitmaps.get(i);
 
-        UploadTask uploadTask = fileRef.putBytes(data);
+            String timestamp = sdf.format(new Date());
+            String fileName = "temp_image_" + timestamp + "_" + i + ".jpg";
 
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri downloadUri) {
-                        String fileUrl = downloadUri.toString();
-                        Log.d("TAG success", "File uploaded successfully. URL: " + fileUrl);
-                        listener.onUploadComplete(fileUrl);
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("TAG Err", "File upload failed: " + exception.getMessage());
-                listener.onUploadFailed(exception.getMessage());
-            }
-        });
+            StorageReference fileRef = storageRef.child("uploadFiles/" + fileName);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = fileRef.putBytes(data);
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri downloadUri) {
+                            String fileUrl = downloadUri.toString();
+                            Log.d("TAG success", "File uploaded successfully. URL: " + fileUrl);
+                            fileUrls.add(fileUrl);
+
+                            int count = uploadCounter.incrementAndGet();
+
+                            if (count == bitmaps.size()) {
+                                listener.onUploadComplete(fileUrls);
+                            }
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("TAG Err", "File upload failed: " + exception.getMessage());
+                    listener.onUploadFailed(exception.getMessage()); // Gọi phương thức onUploadFailed khi quá trình tải lên thất bại
+                }
+            });
+        }
     }
+
+
+    //
+    private void loadImageSelectedCreatePost() {
+        linear_layout_drag_createPost.removeAllViews(); // Xóa tất cả các view con trong linear_layout_drag_createPost trước khi thêm các hình ảnh mới
+
+        for (String imageUrl : selectedFileChoseMore) {
+            ImageView imageView = new ImageView(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1200 // Set chiều cao mong muốn ở đây (350px)
+            );
+            layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
+            imageView.setLayoutParams(layoutParams);
+
+            Glide.with(this)
+                    .load(imageUrl)
+                    .into(imageView);
+
+            // Thêm ImageView vào linear_layout_drag_createPost
+            linear_layout_drag_createPost.addView(imageView);
+        }
+    }
+
+
 }
+
