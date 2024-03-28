@@ -18,7 +18,9 @@ import android.widget.ProgressBar;
 import com.example.frontend.R;
 import com.example.frontend.adapter.SuggestedMeAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.gson.Gson;
@@ -29,7 +31,7 @@ public class SubscriptionsFragment extends Fragment{
 
 
     private RecyclerView list_suggestedMe;
-    private List<UserResponse> userResponseList;
+    private List<GetAllUserByFollowsResponse> userResponseList;
     private SuggestedMeAdapter suggestedMeAdapter;
     private UserViewModel userViewModel;
     public FollowsViewModel followsViewModel;
@@ -51,17 +53,17 @@ public class SubscriptionsFragment extends Fragment{
         // Hiển thị ProgressBar
         progressBar.setVisibility(View.VISIBLE);
         list_suggestedMe.setVisibility(View.GONE);
-
-        userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+        String userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
+        userViewModel.getAllUsersByFollows(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<GetAllUserByFollowsResponse>>>() {
             @Override
-            public void onChanged(ApiResponse<List<UserResponse>> response) {
+            public void onChanged(ApiResponse<List<GetAllUserByFollowsResponse>> response) {
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 if (response.getData().size() > 0) {
                     progressBar.setVisibility(View.GONE);
                     list_suggestedMe.setVisibility(View.VISIBLE);
                     userResponseList = response.getData();
-                    suggestedMeAdapter = new SuggestedMeAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner());
+                    suggestedMeAdapter = new SuggestedMeAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner(),userViewModel);
                     list_suggestedMe.setAdapter(suggestedMeAdapter);
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi

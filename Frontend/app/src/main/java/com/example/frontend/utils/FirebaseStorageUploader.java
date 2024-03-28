@@ -11,6 +11,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.List;
+
 public class FirebaseStorageUploader {
 
     private static final String TAG = "FirebaseStorageHelper";
@@ -54,6 +56,8 @@ public class FirebaseStorageUploader {
 
     // Interface để định nghĩa phương thức callback
     public interface OnUploadCompleteListener {
+        void onUploadComplete(List<String> fileUrls);
+
         void onUploadComplete(String fileUrl);
         void onUploadFailed(String errorMessage);
     }

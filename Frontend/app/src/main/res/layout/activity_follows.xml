@@ -25,6 +25,7 @@
             android:layout_marginStart="10dp"
             android:contentDescription="@string/icon_back"/>
         <TextView
+            android:id="@+id/tvUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="wuynklink_2106"

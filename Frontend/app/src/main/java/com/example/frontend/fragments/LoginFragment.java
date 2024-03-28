@@ -28,11 +28,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.frontend.R;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
+import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.FirebaseStorageUploader;
+import com.example.frontend.utils.InitUserName;
 import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -167,7 +169,7 @@ public class LoginFragment extends Fragment {
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
-                userViewModel.login(new RequestLogin(email, "", "", password, false)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                userViewModel.login(new RequestLogin(email, "", "", password, false,"")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
                     @Override
                     public void onChanged(ApiResponse<UserResponse> response) {
                         if(response.isStatus() == false)
@@ -302,6 +304,11 @@ public class LoginFragment extends Fragment {
             String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
             FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
                 @Override
+                public void onUploadComplete(List<String> fileUrls) {
+
+                }
+
+                @Override
                 public void onUploadComplete(String fileUrl) {
                     urlFromFirebase.add(fileUrl);
                     uploadedFiles[0]++;
@@ -330,20 +337,31 @@ public class LoginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-
-                            userViewModel.login(new RequestLogin(user.getEmail(), user.getDisplayName(), user.getPhotoUrl().toString(), "", true)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                            userViewModel.getListUserName().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<String>>>() {
                                 @Override
-                                public void onChanged(ApiResponse<UserResponse> response) {
-                                    if(response.isStatus()){
-                                        SharedPreferenceLocal.save(getContext(), "userId", response.getData().getId());
-                                        Toast.makeText(requireContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                        progressBar.setVisibility(View.GONE);
+                                public void onChanged(ApiResponse<List<String>> response) {
+                                    if(response.getStatus() && response.getMessage().equals("Success")){
+                                        // Thiết lập danh sách các tên đã tồn tại và tên đầy đủ
+                                        InitUserName.setExistingNames(response.getData());
+                                        InitUserName.setFullName(user.getDisplayName());
+                                        // Format tên và lấy kết quả
+                                        String formattedName = InitUserName.formatName();
+                                        userViewModel.login(new RequestLogin(user.getEmail(),formattedName, user.getPhotoUrl().toString(), "", true,user.getDisplayName())).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                                            @Override
+                                            public void onChanged(ApiResponse<UserResponse> response) {
+                                                if(response.isStatus()){
+                                                    SharedPreferenceLocal.save(getContext(), "userId", response.getData().getId());
+                                                    Toast.makeText(requireContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                                    progressBar.setVisibility(View.GONE);
 
-                                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                                        startActivity(intent);
+                                                    Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                                                    startActivity(intent);
 
-                                        getActivity().finish();
-                                    }else Toast.makeText(getContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    getActivity().finish();
+                                                }else Toast.makeText(getContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         } else {

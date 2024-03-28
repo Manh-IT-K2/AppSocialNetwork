@@ -1,18 +1,19 @@
 package com.example.frontend.request.Post;
 
 import java.util.Date;
+import java.util.List;
 
 public class RequestCreatePost {
-     String imagePost;
-     String userId;
-     String description;
-     String location;
-     String createAt;
+    List<String> imagePost;
+    String userId;
+    String description;
+    String location;
+    String createAt;
 
     public RequestCreatePost() {
     }
 
-    public RequestCreatePost(String imagePost, String userId, String description, String location, String createAt) {
+    public RequestCreatePost(List<String> imagePost, String userId, String description, String location, String createAt) {
         this.imagePost = imagePost;
         this.userId = userId;
         this.description = description;
@@ -20,11 +21,11 @@ public class RequestCreatePost {
         this.createAt = createAt;
     }
 
-    public String getImagePost() {
+    public List<String> getImagePost() {
         return imagePost;
     }
 
-    public void setImagePost(String imagePost) {
+    public void setImagePost(List<String> imagePost) {
         this.imagePost = imagePost;
     }
 

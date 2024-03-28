@@ -1,12 +1,15 @@
 package com.example.frontend.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,11 +68,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                 .into(holder.img_user);
 
-        Glide.with(mContext)
-                .load(post.getImagePost())
-                .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
-                .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
-                .into(holder.img_post);
+       if(post.getImagePost().size() > 1){
+           // Thêm hình ảnh vào LinearLayout
+           LinearLayout linearLayout = holder.itemView.findViewById(R.id.linear_layout_drag_Post);
+           linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
+
+           // Lấy kích thước màn hình
+//           DisplayMetrics displayMetrics = new DisplayMetrics();
+//           ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//           int screenWidth = displayMetrics.widthPixels;
+
+           for (String imageUrl : post.getImagePost()) { // Giả sử getImageUrls() trả về danh sách URL hình ảnh
+               ImageView imageView = new ImageView(mContext);
+
+               // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
+               LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                       ViewGroup.LayoutParams.MATCH_PARENT,
+                       1200 // Set chiều cao mong muốn ở đây (350px)
+               );
+               layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
+               imageView.setLayoutParams(layoutParams);
+
+               Glide.with(mContext)
+                       .load(imageUrl)
+                       .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
+                       .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
+                       .into(imageView);
+
+               linearLayout.addView(imageView);
+           }
+       }else{
+           Glide.with(mContext)
+                   .load(post.getImagePost().get(0))
+                   .into(holder.img_post);
+       }
     }
 
     @Override
@@ -80,6 +112,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView img_user, img_userLiked, img_post, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
         private TextView txt_userName, txt_address, txt_contentPost, txt_timeCreatePost;
+        LinearLayout linear_layout_drag_Post;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -97,6 +130,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             txt_contentPost = itemView.findViewById(R.id.txt_contentPost);
             txt_address = itemView.findViewById(R.id.txt_address);
             txt_timeCreatePost = itemView.findViewById(R.id.txt_timeCreatePost);
+            linear_layout_drag_Post = itemView.findViewById(R.id.linear_layout_drag_Post);
 
             //
             btn_comment.setOnClickListener(new View.OnClickListener() {
