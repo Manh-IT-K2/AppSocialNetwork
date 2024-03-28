@@ -1,12 +1,13 @@
 package com.example.Backend.Controller;
 
-import com.example.Backend.Request.GroupChat.RequestChatGroup;
-import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
+import com.example.Backend.Request.GroupChat.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Service.GroupChat.GroupChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,5 +34,25 @@ public class GroupChatController {
         request.setGroupId(groupChatId);
         GroupChatWithMessagesResponse response = groupChatService.sendMessage(request);
         return new ApiResponse<>(true, "Message sent successfully", response);
+    }
+    @PostMapping("/{groupChatId}/add_member")
+    public ResponseEntity<ApiResponse<String>> addMemberToGroupChat(@PathVariable String groupChatId, @RequestBody RequestAddMemberToGroupChat request) throws Exception {
+        request.setGroupId(groupChatId);
+        ApiResponse<String> response = groupChatService.addMemberToGroupChat(request);
+        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{groupChatId}/remove_member")
+    public ResponseEntity<ApiResponse<String>> removeMemberFromGroupChat(@PathVariable String groupChatId, @RequestBody RequestRemoveMemberFromGroupChat request) throws Exception {
+        request.setGroupId(groupChatId);
+        ApiResponse<String> response = groupChatService.removeMemberFromGroupChat(request);
+        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{groupChatId}/rename")
+    public ResponseEntity<ApiResponse<String>> renameGroupChat(@PathVariable String groupChatId, @RequestBody RequestRenameGroupChat request) throws Exception {
+        request.setGroupId(groupChatId);
+        ApiResponse<String> response = groupChatService.renameGroupChat(request);
+        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
     }
 }
