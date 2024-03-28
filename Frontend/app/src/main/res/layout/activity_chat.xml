@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_primary"
+        android:background="@color/blue1"
         android:padding="10dp"
         android:id="@+id/toolbar">
 
@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Username"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_marginStart="10dp"
@@ -68,9 +68,10 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toLeftOf="@id/message_send_btn"
-            android:background="@drawable/edit_text_rounded_corner"
+            android:background="@drawable/background_editext_comment"
             android:elevation="4dp"
             android:hint="Write message here"
+            android:textColor="@color/colorPrimary"
             android:padding="10dp"
             android:id="@+id/chat_message_input"/>
 
@@ -81,7 +82,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/my_primary"
+            app:tint="@color/blue1"
             android:id="@+id/message_send_btn"
             android:padding="8dp"
             android:layout_marginStart="10dp"
