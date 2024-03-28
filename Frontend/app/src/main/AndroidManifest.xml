@@ -30,6 +30,9 @@
             android:name=".activities.FollowsActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.MainChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CreatePostActivity"
             android:exported="false" />
         <activity

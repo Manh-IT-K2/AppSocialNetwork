@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -102,11 +103,8 @@ public class HomeFragment extends Fragment {
        imgMessage.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-              //Toast.makeText(getContext(),"hello",Toast.LENGTH_LONG).show();
-               Intent intent = new Intent(getActivity(),MainChatActivity.class);
+               Intent intent = new Intent(getActivity(), MainChatActivity.class);
                startActivity(intent);
-
-
            }
        });
 
