@@ -55,4 +55,13 @@ public class GroupChatController {
         ApiResponse<String> response = groupChatService.renameGroupChat(request);
         return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
     }
+    @DeleteMapping("/{groupChatId}/delete")
+    public ResponseEntity<ApiResponse<String>> deleteGroupChat(@PathVariable String groupChatId) throws Exception {
+        RequestDeleteGroupChat request = new RequestDeleteGroupChat();
+        request.setGroupId(groupChatId);
+        ApiResponse<String> response = groupChatService.deleteGroupChat(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 }

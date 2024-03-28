@@ -15,6 +15,6 @@ public class GroupChat {
     @Id
     private String id;
     private String groupName;
+    private String creatorId;
     private List<String> memberIds;
-
 }

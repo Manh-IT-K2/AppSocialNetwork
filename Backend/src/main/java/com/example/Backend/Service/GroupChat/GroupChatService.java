@@ -12,4 +12,5 @@ public interface GroupChatService {
     ApiResponse<String> addMemberToGroupChat(RequestAddMemberToGroupChat requestGroupMember) throws Exception;
     ApiResponse<String> removeMemberFromGroupChat(RequestRemoveMemberFromGroupChat requestGroupMember) throws Exception;
     ApiResponse<String> renameGroupChat(RequestRenameGroupChat requestGroupChangeName) throws Exception;
+    ApiResponse<String> deleteGroupChat(RequestDeleteGroupChat requestDeleteGroupChat) throws Exception;
 }

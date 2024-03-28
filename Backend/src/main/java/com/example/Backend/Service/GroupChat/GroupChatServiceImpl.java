@@ -29,19 +29,25 @@ public class GroupChatServiceImpl implements GroupChatService {
     @Autowired
     UserService userService;
 
+
+
     @Override
     public GroupChatResponse createGroupChat(RequestCreateGroupChat requestCreateGroupChat) {
         GroupChat newGroupChat = new GroupChat();
+        newGroupChat.setCreatorId(requestCreateGroupChat.getCreatorId()); // Lưu thông tin về người tạo nhóm chat
         newGroupChat.setGroupName(requestCreateGroupChat.getGroupName());
         newGroupChat.setMemberIds(requestCreateGroupChat.getMemberIds());
         mongoTemplate.save(newGroupChat);
 
         GroupChatResponse groupChatResponse = new GroupChatResponse();
         groupChatResponse.setId(newGroupChat.getId());
+        groupChatResponse.setCreatorId(newGroupChat.getCreatorId());
         groupChatResponse.setGroupName(newGroupChat.getGroupName());
         groupChatResponse.setMembers(userService.findUsersByIds(newGroupChat.getMemberIds()));
         return groupChatResponse;
     }
+
+
 
     @Override
     public GroupChatWithMessagesResponse getMessagesByGroupChatId(String id) throws Exception {
@@ -127,5 +133,18 @@ public class GroupChatServiceImpl implements GroupChatService {
         mongoTemplate.save(groupChat);
         return new ApiResponse<>(true, "Group chat renamed successfully", null);
     }
+    @Override
+    public ApiResponse<String> deleteGroupChat(RequestDeleteGroupChat request) throws Exception {
+        GroupChat groupChat = mongoTemplate.findById(request.getGroupId(), GroupChat.class);
+        if (groupChat == null) {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
+
+        // Delete the group chat
+        mongoTemplate.remove(groupChat);
+
+        return new ApiResponse<>(true, "Group chat deleted successfully", null);
+    }
+
 
 }
