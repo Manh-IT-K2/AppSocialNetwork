@@ -4,8 +4,8 @@ import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
 import com.example.Backend.Entity.model.User;
-import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
-import com.example.Backend.Request.GroupChat.RequestChatGroup;
+import com.example.Backend.Request.GroupChat.*;
+import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
@@ -88,4 +88,44 @@ public class GroupChatServiceImpl implements GroupChatService {
         }
         return messageWithSenderInfos;
     }
+    @Override
+    public ApiResponse<String> addMemberToGroupChat(RequestAddMemberToGroupChat request) {
+        GroupChat groupChat = mongoTemplate.findById(request.getGroupId(), GroupChat.class);
+        if (groupChat == null) {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
+
+        List<String> memberIds = groupChat.getMemberIds();
+        memberIds.addAll(request.getMemberIds());
+        groupChat.setMemberIds(memberIds);
+        mongoTemplate.save(groupChat);
+        return new ApiResponse<>(true, "Members added successfully", null);
+    }
+
+    @Override
+    public ApiResponse<String> removeMemberFromGroupChat(RequestRemoveMemberFromGroupChat request) {
+        GroupChat groupChat = mongoTemplate.findById(request.getGroupId(), GroupChat.class);
+        if (groupChat == null) {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
+
+        List<String> memberIds = groupChat.getMemberIds();
+        memberIds.removeAll(request.getMemberIds());
+        groupChat.setMemberIds(memberIds);
+        mongoTemplate.save(groupChat);
+        return new ApiResponse<>(true, "Members removed successfully", null);
+    }
+
+    @Override
+    public ApiResponse<String> renameGroupChat(RequestRenameGroupChat request) {
+        GroupChat groupChat = mongoTemplate.findById(request.getGroupId(), GroupChat.class);
+        if (groupChat == null) {
+            return new ApiResponse<>(false, "Group chat not found", null);
+        }
+
+        groupChat.setGroupName(request.getNewGroupName());
+        mongoTemplate.save(groupChat);
+        return new ApiResponse<>(true, "Group chat renamed successfully", null);
+    }
+
 }
