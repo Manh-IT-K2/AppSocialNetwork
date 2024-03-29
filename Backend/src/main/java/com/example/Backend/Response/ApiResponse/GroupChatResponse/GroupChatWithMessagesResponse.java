@@ -17,5 +17,6 @@ public class GroupChatWithMessagesResponse {
     private String id;
     private String groupName;
     private List<User> members;
+    private String lastMessage;
     private List<MessageWithSenderInfo> messages;
 }

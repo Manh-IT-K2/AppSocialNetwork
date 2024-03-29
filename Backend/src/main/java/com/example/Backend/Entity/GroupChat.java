@@ -16,5 +16,6 @@ public class GroupChat {
     private String id;
     private String groupName;
     private String creatorId;
+    private String lastMessage;
     private List<String> memberIds;
 }

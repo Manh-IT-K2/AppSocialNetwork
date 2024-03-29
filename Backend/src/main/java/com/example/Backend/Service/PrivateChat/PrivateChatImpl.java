@@ -1,5 +1,6 @@
 package com.example.Backend.Service.PrivateChat;
 
+import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
@@ -7,6 +8,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
@@ -147,8 +149,63 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
             }
             responses.add(response);
         }
+
         return responses;
     }
+    public List<GroupChatWithMessagesResponse> getListChatGroup(String id) {
+
+        List<GroupChatWithMessagesResponse> responsesGroup = new ArrayList<>();
+        // Lấy danh sách các nhóm trò chuyện mà người dùng tham gia
+        List<GroupChat> groupChats = getGroupChatsByUserId(id);
+        // Xử lý danh sách các nhóm trò chuyện mà người dùng tham gia
+        for (GroupChat groupChat : groupChats) {
+            GroupChatWithMessagesResponse responseGroup = new GroupChatWithMessagesResponse();
+
+            // Lấy thông tin về các thành viên của nhóm trò chuyện
+            List<User> members = userService.findUsersByIds(groupChat.getMemberIds());
+
+            // Lấy tin nhắn cuối cùng từ nhóm trò chuyện
+            MessageWithSenderInfo lastMessage = getLastMessageFromGroupChat(groupChat);
+
+            // Thiết lập thông tin trong response
+            responseGroup.setMembers(members); // Trong trường hợp này, recipient là null vì đây là nhóm trò chuyện
+            responseGroup.setLastMessage(groupChat.getLastMessage());//lastMessage != null ? lastMessage.getContent() : null
+            responseGroup.setMessages(Collections.singletonList(lastMessage)); // Thêm tin nhắn cuối cùng vào danh sách tin nhắn
+            responsesGroup.add(responseGroup);
+        }
+        return responsesGroup;
+    }
+    // Phương thức để lấy danh sách các nhóm trò chuyện mà người dùng tham gia
+    private List<GroupChat> getGroupChatsByUserId(String userId) {
+        Criteria criteria = Criteria.where("memberIds").in(userId);
+        Query query = new Query(criteria);
+        return mongoTemplate.find(query, GroupChat.class);
+    }
+
+    private MessageWithSenderInfo getLastMessageFromGroupChat(GroupChat groupChat) {
+        // Lấy danh sách tin nhắn từ nhóm trò chuyện
+        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("groupChatId").is(groupChat.getId())), Message.class);
+
+        // Kiểm tra xem danh sách tin nhắn có rỗng không
+        if (!messages.isEmpty()) {
+            // Lấy tin nhắn cuối cùng từ danh sách
+            Message lastMessage = messages.get(messages.size() - 1);
+
+            // Tạo một đối tượng MessageWithSenderInfo cho tin nhắn cuối cùng
+            MessageWithSenderInfo lastMessageInfo = new MessageWithSenderInfo();
+            lastMessageInfo.setContent(lastMessage.getContent());
+            lastMessageInfo.setId(lastMessage.getId());
+            lastMessageInfo.setGroupChatId(lastMessage.getGroupChatId());
+            lastMessageInfo.setCreatedAt(lastMessage.getCreatedAt());
+            lastMessageInfo.setSender(userService.findUserById(lastMessage.getSenderId()));
+
+            return lastMessageInfo;
+        } else {
+            // Trả về null nếu không có tin nhắn nào trong danh sách
+            return null;
+        }
+    }
+
     private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
             List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
             List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
@@ -165,6 +222,7 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         }
         return messageWithSenderInfos;
     }
+
 }
 
 
