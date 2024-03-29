@@ -48,7 +48,6 @@ public class GroupChatServiceImpl implements GroupChatService {
     }
 
 
-
     @Override
     public GroupChatWithMessagesResponse getMessagesByGroupChatId(String id) throws Exception {
         GroupChat groupChat = mongoTemplate.findById(id, GroupChat.class);
@@ -58,9 +57,33 @@ public class GroupChatServiceImpl implements GroupChatService {
         response.setGroupName(groupChat.getGroupName());
         response.setMembers(userService.findUsersByIds(groupChat.getMemberIds()));
         response.setMessages(messages);
+        String lastMessage=getLastMessageFromGroupChat(groupChat);
+        response.setLastMessage(lastMessage);
         return response;
     }
+    private String getLastMessageFromGroupChat(GroupChat groupChat) {
+        // Lấy danh sách tin nhắn từ nhóm trò chuyện
+        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("groupChatId").is(groupChat.getId())), Message.class);
 
+        // Kiểm tra xem danh sách tin nhắn có rỗng không
+        if (!messages.isEmpty()) {
+            // Lấy tin nhắn cuối cùng từ danh sách
+            Message lastMessage = messages.get(messages.size() - 1);
+
+            // Tạo một đối tượng MessageWithSenderInfo cho tin nhắn cuối cùng
+            MessageWithSenderInfo lastMessageInfo = new MessageWithSenderInfo();
+            lastMessageInfo.setContent(lastMessage.getContent());
+            lastMessageInfo.setId(lastMessage.getId());
+            lastMessageInfo.setGroupChatId(lastMessage.getGroupChatId());
+            lastMessageInfo.setCreatedAt(lastMessage.getCreatedAt());
+            lastMessageInfo.setSender(userService.findUserById(lastMessage.getSenderId()));
+
+            return lastMessageInfo.getContent();
+        } else {
+            // Trả về null nếu không có tin nhắn nào trong danh sách
+            return null;
+        }
+    }
     @Override
     public GroupChatWithMessagesResponse sendMessage(RequestChatGroup requestChatGroup) throws Exception {
         GroupChat groupChat = mongoTemplate.findById(requestChatGroup.getGroupId(), GroupChat.class);
@@ -145,6 +168,10 @@ public class GroupChatServiceImpl implements GroupChatService {
 
         return new ApiResponse<>(true, "Group chat deleted successfully", null);
     }
-
-
+    @Override
+    public void updateLastMessage(String groupChatId, String lastMessage) {
+        GroupChat groupChat = mongoTemplate.findById(groupChatId, GroupChat.class);
+        groupChat.setLastMessage(lastMessage);
+        mongoTemplate.save(groupChat);
+    }
 }

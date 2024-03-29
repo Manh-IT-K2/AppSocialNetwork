@@ -62,6 +62,11 @@ public class GroupChatController {
         ApiResponse<String> response = groupChatService.deleteGroupChat(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PostMapping("/{groupChatId}/update_last_message")
+    public ResponseEntity<ApiResponse<String>> updateLastMessage(@PathVariable String groupChatId, @RequestBody String lastMessage) {
+        groupChatService.updateLastMessage(groupChatId, lastMessage);
+        return new ResponseEntity<>(new ApiResponse<>(true, "Last message updated successfully", null), HttpStatus.OK);
+    }
 
 
 }
