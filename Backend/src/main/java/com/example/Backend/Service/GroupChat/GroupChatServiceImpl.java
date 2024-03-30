@@ -174,4 +174,30 @@ public class GroupChatServiceImpl implements GroupChatService {
         groupChat.setLastMessage(lastMessage);
         mongoTemplate.save(groupChat);
     }
+
+    public List<GroupChatWithMessagesResponse> getListChatGroup(String userId) {
+        // Tìm tất cả các cuộc trò chuyện nhóm mà người dùng đã tham gia
+        Query query = new Query();
+        query.addCriteria(Criteria.where("memberIds").in(userId));
+        List<GroupChat> groupChats = mongoTemplate.find(query, GroupChat.class);
+
+        List<GroupChatWithMessagesResponse> groupChatsWithMessages = new ArrayList<>();
+
+        // Lặp qua từng cuộc trò chuyện nhóm và lấy thông tin tin nhắn gần đây nhất
+        for (GroupChat groupChat : groupChats) {
+            GroupChatWithMessagesResponse groupChatWithMessagesResponse = new GroupChatWithMessagesResponse();
+            groupChatWithMessagesResponse.setId(groupChat.getId());
+            groupChatWithMessagesResponse.setGroupName(groupChat.getGroupName());
+            groupChatWithMessagesResponse.setMembers(userService.findUsersByIds(groupChat.getMemberIds()));
+
+            // Lấy tin nhắn gần đây nhất của cuộc trò chuyện nhóm
+            String lastMessage = getLastMessageFromGroupChat(groupChat);
+            groupChatWithMessagesResponse.setLastMessage(lastMessage);
+
+            groupChatsWithMessages.add(groupChatWithMessagesResponse);
+        }
+
+        return groupChatsWithMessages;
+    }
+
 }
