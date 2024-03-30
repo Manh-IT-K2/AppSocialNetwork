@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.fragments.Fragment_searchHistory;
 import com.example.frontend.response.User.UserResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -25,7 +24,15 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
     Context context;
     List<UserResponse> user_searchList;
     LayoutInflater layoutInflater;
+    private OnItemClickListener itemClickListener;
 
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
 
     public SearchUserAdapter(Context context, List<UserResponse> user_searchList) {
 
@@ -66,6 +73,20 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
             super(itemView);
             userName = itemView.findViewById(R.id.txt_UserName);
             avatar = itemView.findViewById(R.id.imgAvatar);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemClickListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            itemClickListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
+
+
     }
 }

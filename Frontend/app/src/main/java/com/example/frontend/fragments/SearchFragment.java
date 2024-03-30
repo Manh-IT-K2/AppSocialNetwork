@@ -2,17 +2,22 @@ package com.example.frontend.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
 import com.example.frontend.response.Search.SearchHistoryResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreference_SearchHistory;
 import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 import com.google.common.reflect.TypeToken;
@@ -39,6 +44,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Khởi tạo search Query ViewModel
         searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
         // Inflate the layout for this fragment
@@ -150,7 +156,4 @@ public class SearchFragment extends Fragment {
         saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
     }
 
-    public void setQueryToSearchView(String query) {
-        searchView.setQuery(query, false);
-    }
 }
