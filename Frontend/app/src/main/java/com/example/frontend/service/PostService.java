@@ -3,6 +3,7 @@ package com.example.frontend.service;
 import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Post.PostResponse;
 
 import java.util.List;
 import retrofit2.Call;
@@ -20,4 +21,8 @@ public interface PostService {
     // get list post by userId
     @GET("post/getListPostByUserId")
     Call<ApiResponse<List<RequestPostByUserId>>> getListPostByUserId(@Query("userId") String userId);
-}
+
+    // add user like post
+    @POST("post/addLike")
+    Call<ApiResponse<PostResponse>> addLike(@Query("postId") String postId, @Query("userId") String userId);
+ }
