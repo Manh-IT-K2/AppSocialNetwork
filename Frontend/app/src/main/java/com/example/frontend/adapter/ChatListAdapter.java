@@ -58,10 +58,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start ChatActivity and pass necessary data if needed
                 Intent intent = new Intent(context, ChatActivity.class);
-                // You can put extra data if needed, for example, recipient user id
                 intent.putExtra("recipientUserId", chat.getRecipient().getUsername());
+                intent.putExtra("recipientAvater", chat.getRecipient().getAvatarImg());
+                intent.putExtra("recipientID", chat.getRecipient().getId());
                 context.startActivity(intent);
             }
         });

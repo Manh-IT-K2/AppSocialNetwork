@@ -5,7 +5,6 @@ import java.util.Date;
 public class RequestPrivateChat {
     String creatorId;
     String recipientId;
-    Date createdAt;
     String lastMessageSent;
 
     public String getCreatorId() {
@@ -24,14 +23,6 @@ public class RequestPrivateChat {
         this.recipientId = recipientId;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public String getLastMessageSent() {
         return lastMessageSent;
     }
@@ -40,10 +31,9 @@ public class RequestPrivateChat {
         this.lastMessageSent = lastMessageSent;
     }
 
-    public RequestPrivateChat(String creatorId, String recipientId, Date createdAt, String lastMessageSent) {
+    public RequestPrivateChat(String creatorId, String recipientId, String lastMessageSent) {
         this.creatorId = creatorId;
         this.recipientId = recipientId;
-        this.createdAt = createdAt;
         this.lastMessageSent = lastMessageSent;
     }
 }

@@ -21,6 +21,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -114,7 +116,8 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         Message newMessage = new Message();
         newMessage.setSenderId(requestChatPrtivate.getCreatorId());
         newMessage.setContent(requestChatPrtivate.getLastMessageSent());
-        newMessage.setCreatedAt(new Date());
+        Date createdAt = Date.from(Instant.now());
+        newMessage.setCreatedAt(createdAt);
         newMessage.setPrivateChatId(privateChat.getId());
         mongoTemplate.save(newMessage);
         privateChat.setLastMessageSent(requestChatPrtivate.getLastMessageSent());
@@ -139,7 +142,6 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
             PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
             User recipient = userService.findUserById(recipientId);
             response.setRecipient(recipient);
-
             List<MessageWithSenderInfo> messages = getMessageList(chat);
             if (!messages.isEmpty()) {
                 MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);

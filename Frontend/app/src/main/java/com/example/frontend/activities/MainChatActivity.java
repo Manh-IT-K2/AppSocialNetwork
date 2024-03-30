@@ -36,12 +36,13 @@ public class MainChatActivity extends AppCompatActivity {
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main_chat);
 //    }
-private RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private ChatListAdapter adapter;
     private MessageViewModel messageViewModel;
     private ImageButton img_back;
     private TextView username;
     UserViewModel userViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +66,10 @@ private RecyclerView recyclerView;
                 if (response.getMessage().equals("Success") && response.getStatus()){
                     UserResponse userResponse = response.getData();
                     username.setText(userResponse.getUsername());
+
                 }
             }
         });
-
-
         // Khởi tạo và lắng nghe dữ liệu từ MessageViewModel
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         messageViewModel.getListChat(userId).observe(this, chatList -> {
