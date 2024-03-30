@@ -15,6 +15,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Query;
 
 public class FollowsRepository {
     FollowsService followsService;
@@ -70,6 +71,28 @@ public class FollowsRepository {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
 
         followsService.updateFollows(requestUpdateFollows).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    // Xử lý khi phản hồi không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+            }
+        });
+        return mutableLiveData;
+    }
+
+    public MutableLiveData<ApiResponse<String>> deleteFollows(String idFollower,String idFollowing) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        followsService.deleteFollows(idFollower,idFollowing).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {

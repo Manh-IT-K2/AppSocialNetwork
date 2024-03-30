@@ -68,6 +68,25 @@ public class ProfileFragment extends Fragment {
     private List<Uri> selectedFiles;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Success") && response.getStatus()){
+                    UserResponse userResponse = response.getData();
+                    username.setText(userResponse.getUsername());
+                    Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
+                    nameTV.setText(userResponse.getName());
+                    followerCount.setText(String.valueOf(userResponse.getFollowers()));
+                    followingCount.setText(String.valueOf(userResponse.getFollowing()));
+                    postCount.setText("0");
+                }
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

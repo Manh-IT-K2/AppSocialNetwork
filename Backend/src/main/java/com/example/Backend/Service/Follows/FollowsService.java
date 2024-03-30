@@ -14,6 +14,7 @@ public interface FollowsService {
     ApiResponse<String> createFollows (RequestCreateFollows requestCreateFollows) throws Exception;
     ApiResponse<GetQuantityFollows> getQuantityFollows (String id);
     ApiResponse<String> updateFollows(RequestUpdateFollows follows);
+    ApiResponse<String> deleteFollow(String idFollower,String idFollowing);
     ApiResponse<List<User>> getUserFollowingById(String id);
     ApiResponse<List<User>> getUserFollowerById(String id);
 }

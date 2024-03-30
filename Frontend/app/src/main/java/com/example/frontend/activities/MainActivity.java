@@ -95,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     case "back_setting":
                         selectedFragment = new ProfileFragment();
                         break;
+                    case "back_profile":
+                        selectedFragment = new ProfileFragment();
+                        break;
 
                 }
                 // Replace the fragment with the selected one

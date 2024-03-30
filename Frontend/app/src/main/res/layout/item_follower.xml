@@ -55,7 +55,7 @@
         android:orientation="horizontal"
         android:gravity="center">
         <Button
-            android:id="@+id/btnFollow"
+            android:id="@+id/btnRemove"
             android:layout_width="70dp"
             android:layout_height="30dp"
             android:text="Remove"

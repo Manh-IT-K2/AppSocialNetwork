@@ -4,9 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +18,8 @@ import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.FollowersFragment;
 import com.example.frontend.fragments.FollowingFragment;
 import com.example.frontend.fragments.SubscriptionsFragment;
-import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.User.UserResponse;
-import com.example.frontend.utils.SharedPreferenceLocal;
-import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.squareup.picasso.Picasso;
-
+import com.example.frontend.fragments.ProfileFragment;
 public class FollowsActivity extends AppCompatActivity {
     ImageButton iconBack;
     BottomNavigationView bottomNavigationView;
@@ -57,7 +51,9 @@ public class FollowsActivity extends AppCompatActivity {
         iconBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("fragment_to_load", "back_profile");
+                startActivity(intent);
             }
         });
     }

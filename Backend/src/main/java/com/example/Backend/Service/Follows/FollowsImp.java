@@ -63,6 +63,16 @@ public class FollowsImp implements FollowsService {
         return new ApiResponse<>(true, "Update Success!","");
     }
 
+    @Override
+    public ApiResponse<String> deleteFollow(String idFollower, String idFollowing) {
+        ObjectId objectIdFollower = new ObjectId(idFollower);
+        ObjectId objectIdFollowing = new ObjectId(idFollowing);
+        Query query = new Query(Criteria.where("idFollower").is(objectIdFollower).and("idFollowing").is(objectIdFollowing));
+        // Thực hiện xóa mục từ bảng follows
+        mongoTemplate.remove(query, Follows.class, "follows");
+        return new ApiResponse<String>(true, "Delete Success!", "");
+    }
+
     private List<String> getFollowedUserIds(ObjectId currentUserId) {
         Criteria criteria = Criteria.where("idFollower").is(currentUserId).and("status").is(1); // Lọc ra các người dùng đã theo dõi
         Aggregation aggregation = Aggregation.newAggregation(

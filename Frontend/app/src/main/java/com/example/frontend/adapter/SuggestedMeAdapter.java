@@ -101,7 +101,7 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
                         @Override
                         public void onChanged(ApiResponse<String> response) {
                             if(response.getStatus() && response.getMessage().equals("Success")){
-                                setTextBtn(btnFollow,"Đã theo dõi");
+                                setTextBtn(btnFollow,"Following");
                                 handleGetQuantityFollows(userId,"following");
                                 handleGetQuantityFollows(idFollows,"follower");
                             }
