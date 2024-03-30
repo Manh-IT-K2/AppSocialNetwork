@@ -10,11 +10,8 @@ import android.widget.FrameLayout;
 import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
-import com.example.frontend.fragments.EditProfileFragment;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
-import com.example.frontend.fragments.ProfileFragment;
-import com.example.frontend.fragments.SettingFragment;
 import com.example.frontend.fragments.VerificationCodeFragment;
 
 public class FragmentReplacerActivity extends AppCompatActivity {
@@ -52,6 +49,5 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();
     }
-
 
 }

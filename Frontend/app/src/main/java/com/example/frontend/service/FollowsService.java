@@ -23,6 +23,8 @@ public interface FollowsService {
     Call<ApiResponse<GetQuantityResponse>> getQuantityFollows(@Query("id") String id);
     @POST("follows/updateFollows")
     Call<ApiResponse<String>> updateFollows(@Body RequestUpdateFollows requestUpdateFollows);
+    @GET("follows/deleteFollow")
+    Call<ApiResponse<String>> deleteFollows(@Query("idFollower") String idFollower,@Query("idFollowing") String idFollowing);
     @GET("follows/getUserFollowingById")
     Call<ApiResponse<List<UserResponse>>> getUserFollowingById(@Query("id") String id);
     @GET("follows/getUserFollowerById")

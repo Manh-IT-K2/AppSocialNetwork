@@ -30,6 +30,11 @@ public class FollowController {
         ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Success","");
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
     }
+    @GetMapping("/deleteFollow")
+    public ResponseEntity<ApiResponse<String>> deleteFollows(@RequestParam String idFollower,@RequestParam String idFollowing) throws Exception{
+        ApiResponse<String> apiResponse = followsService.deleteFollow(idFollower,idFollowing);
+        return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
+    }
     @GetMapping("/getQuantityFollows")
     public ResponseEntity<ApiResponse<GetQuantityFollows>> getQuantityFollows(@RequestParam String id) throws Exception{
         ApiResponse<GetQuantityFollows> apiResponse = followsService.getQuantityFollows(id);
