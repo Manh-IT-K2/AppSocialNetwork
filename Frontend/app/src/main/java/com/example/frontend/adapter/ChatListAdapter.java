@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.ChatActivity;
+import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
@@ -24,13 +25,18 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
     private List<PrivateChatWithMessagesResponse> chatList;
+    private List<GroupChatWithMessagesResponse> groupChatList;
     private Context context;
 
     public ChatListAdapter(List<PrivateChatWithMessagesResponse> chatList, Context context) {
         this.chatList = chatList;
         this.context = context;
     }
-
+    public ChatListAdapter(List<PrivateChatWithMessagesResponse> chatList, List<GroupChatWithMessagesResponse> groupChatList, Context context) {
+        this.chatList = chatList;
+        this.groupChatList = groupChatList;
+        this.context = context;
+    }
     public void setChatList(List<PrivateChatWithMessagesResponse> chatList) {
         this.chatList = chatList;
         notifyDataSetChanged(); // Notify adapter that dataset has changed
