@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -93,7 +94,7 @@ public class HomeFragment extends Fragment {
                 Log.d("check", json);
                 if (response.getData().size() > 0) {
                     postList = response.getData();
-                    postAdapter = new PostAdapter(getContext(), postList);
+                    postAdapter = new PostAdapter(getContext(), postList, (LifecycleOwner) getContext());
                     recyclerViewPost.setAdapter(postAdapter);
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi

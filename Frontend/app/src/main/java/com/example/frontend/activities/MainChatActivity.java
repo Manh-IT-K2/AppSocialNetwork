@@ -27,6 +27,11 @@ import java.util.List;
 
 public class MainChatActivity extends AppCompatActivity {
 
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main_chat);
+//    }
     private RecyclerView recyclerView;
     private ChatListAdapter adapter;
     private MessageViewModel messageViewModel;
@@ -34,6 +39,7 @@ public class MainChatActivity extends AppCompatActivity {
     private ImageButton img_back;
     private TextView username;
     private UserViewModel userViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +74,18 @@ public class MainChatActivity extends AppCompatActivity {
                 if (response != null && response.getMessage().equals("Success") && response.getStatus()) {
                     UserResponse userResponse = response.getData();
                     username.setText(userResponse.getUsername());
+
                 }
             }
         });
 
         // Xử lý sự kiện nút back
         img_back = findViewById(R.id.back_btn);
+        // Khởi tạo và lắng nghe dữ liệu từ MessageViewModel
+        messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
+        messageViewModel.getListChat(userId).observe(this, chatList -> {
+            adapter.setChatList(chatList);
+        });
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

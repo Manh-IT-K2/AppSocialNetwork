@@ -1,5 +1,7 @@
 package com.example.frontend.request.Post;
 
+import com.example.frontend.response.User.UserResponse;
+
 import java.util.Date;
 import java.util.List;
 

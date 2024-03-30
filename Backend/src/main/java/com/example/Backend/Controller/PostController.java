@@ -1,5 +1,6 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestPost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -34,6 +35,16 @@ public class PostController {
         System.out.println(userId);
         ApiResponse<List<RequestPostByUserId>> result = postService.getListPostsByUserId(userId);
         return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(result, HttpStatus.OK);
+    }
+
+    // add user like post
+    @PostMapping("/addLike")
+    public ResponseEntity<ApiResponse<Post>> addLikeToPost(@RequestParam String postId, @RequestParam String userId){
+        if (!postId.isEmpty() && !userId.isEmpty()) {
+            ApiResponse<Post> apiResponse =  postService.addLikeToPost(postId, userId);
+            return new ResponseEntity<ApiResponse<Post>>(apiResponse, HttpStatus.OK);
+        }
+        return null;
     }
 
 }

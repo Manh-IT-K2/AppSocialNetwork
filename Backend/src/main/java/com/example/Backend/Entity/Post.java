@@ -1,5 +1,6 @@
 package com.example.Backend.Entity;
 
+import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 public class Post {
 
     @Id
-    private String idPost;
+    private String id;
 
     private ObjectId userId;
 
@@ -28,4 +29,6 @@ public class Post {
     private String location;
 
     private Date createAt;
+
+    private List<User> like;
 }
