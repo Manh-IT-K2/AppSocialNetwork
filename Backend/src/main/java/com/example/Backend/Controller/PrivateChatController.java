@@ -37,7 +37,7 @@ public class PrivateChatController {
     @PostMapping("/send_mess")
     public ApiResponse<PrivateChatWithMessagesResponse> sendMessage(@RequestBody RequestChatPrtivate request) throws Exception {
         PrivateChatWithMessagesResponse response = privateChatService.SendMessage(request);
-        pusherConfig.triggerEvent("privateChat", "getMessage", response);
+        pusherConfig.triggerEvent("newmess", "send", response);
         return new ApiResponse<>(true, "OK", response);
     }
     @GetMapping("/get_list_mess")

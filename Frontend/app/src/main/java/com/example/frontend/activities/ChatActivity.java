@@ -181,6 +181,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(ApiResponse<PrivateChatWithMessagesResponse> response) {
                         if (response != null && response.isSuccess()) {
+                            inputMessage.setText(null);
                             // Xử lý dữ liệu trên Pusher và nhận dữ liệu mới
                             pusher = PusherClient.init();
                             pusher.connect();
@@ -199,7 +200,7 @@ public class ChatActivity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
                                                         adapter.setListMessage(messages);
-                                                        inputMessage.setText(null);
+
                                                         // Sửa đổi tên phương thức thành setListMessage
                                                     }
                                                 });
