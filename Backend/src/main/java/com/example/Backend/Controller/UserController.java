@@ -49,6 +49,16 @@ public class UserController {
         ApiResponse<List<User>> apiResponse = userService.getAllUsers();
         return new ResponseEntity<ApiResponse<List<User>>>(apiResponse, HttpStatus.OK);
     }
+    @GetMapping("/allUsersByFollows")
+    public ResponseEntity<ApiResponse<List<RequestGetAllUserByFollows>>> getAllUsersByFollows(@RequestParam String id) throws Exception {
+        ApiResponse<List<RequestGetAllUserByFollows>> apiResponse = userService.getAllUserByFollows(id);
+        ApiResponse<List<RequestGetAllUserByFollows>> errApiResponse = new ApiResponse<>();
+        errApiResponse.setData(null);
+        errApiResponse.setMessage("No data");
+        errApiResponse.setStatus(false);
+        if(apiResponse.getData().isEmpty())  return new ResponseEntity<ApiResponse<List<RequestGetAllUserByFollows>>>(errApiResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ApiResponse<List<RequestGetAllUserByFollows>>>(apiResponse, HttpStatus.OK);
+    }
     @PostMapping("/changePW")
     public ResponseEntity<ApiResponse<User>> changePW(@RequestBody RequestForgetPass requestForgetPass) throws Exception {
         ApiResponse<User> user = userService.changePW(requestForgetPass);
@@ -70,5 +80,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<User>> updateUser(@RequestBody RequestUpdateUser requestUpdateUser) throws Exception {
         ApiResponse<User> apiResponse = userService.updateUser(requestUpdateUser);
         return new ResponseEntity<ApiResponse<User>>(apiResponse, HttpStatus.OK);
+    }
+    @GetMapping("/getListUserName")
+    public ResponseEntity<ApiResponse<List<String>>> getListUserName() throws Exception {
+        ApiResponse<List<String>> apiResponse = userService.getListUserName();
+        return new ResponseEntity<ApiResponse<List<String>>>(apiResponse, HttpStatus.OK);
     }
 }

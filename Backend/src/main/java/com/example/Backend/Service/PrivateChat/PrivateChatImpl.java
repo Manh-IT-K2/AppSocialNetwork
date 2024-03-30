@@ -1,5 +1,6 @@
 package com.example.Backend.Service.PrivateChat;
 
+import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
@@ -7,6 +8,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
@@ -21,6 +23,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -114,7 +118,8 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         Message newMessage = new Message();
         newMessage.setSenderId(requestChatPrtivate.getCreatorId());
         newMessage.setContent(requestChatPrtivate.getLastMessageSent());
-        newMessage.setCreatedAt(new Date());
+        Date createdAt = Date.from(Instant.now());
+        newMessage.setCreatedAt(createdAt);
         newMessage.setPrivateChatId(privateChat.getId());
         mongoTemplate.save(newMessage);
         privateChat.setLastMessageSent(requestChatPrtivate.getLastMessageSent());
@@ -139,7 +144,6 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
             PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
             User recipient = userService.findUserById(recipientId);
             response.setRecipient(recipient);
-
             List<MessageWithSenderInfo> messages = getMessageList(chat);
             if (!messages.isEmpty()) {
                 MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);
@@ -147,8 +151,11 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
             }
             responses.add(response);
         }
+
         return responses;
     }
+
+
     private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
             List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
             List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
@@ -165,6 +172,7 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         }
         return messageWithSenderInfos;
     }
+
 }
 
 

@@ -22,8 +22,11 @@ import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.R;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.utils.InitUserName;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
 
 public class CreateAccountFragment extends Fragment {
     private UserViewModel userViewModel;
@@ -104,12 +107,23 @@ public class CreateAccountFragment extends Fragment {
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
-
-                userViewModel.registerUser(new RequestCreateAccount(name, email,password));
-                Toast.makeText(getActivity(), "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-
-                ((FragmentReplacerActivity) getActivity()).setFragment(new LoginFragment());
+                userViewModel.getListUserName().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<String>>>() {
+                    @Override
+                    public void onChanged(ApiResponse<List<String>> response) {
+                        if(response.getStatus() && response.getMessage().equals("Success")){
+                            // Thiết lập danh sách các tên đã tồn tại và tên đầy đủ
+                            InitUserName.setExistingNames(response.getData());
+                            InitUserName.setFullName(name);
+                            // Format tên và lấy kết quả
+                            String formattedName = InitUserName.formatName();
+                            Log.d("username",formattedName);
+                            userViewModel.registerUser(new RequestCreateAccount(formattedName,email,password,name));
+                            Toast.makeText(getActivity(), "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            ((FragmentReplacerActivity) getActivity()).setFragment(new LoginFragment());
+                        }
+                    }
+                });
             }
         });
 

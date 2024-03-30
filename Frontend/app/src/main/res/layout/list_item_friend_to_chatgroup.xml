@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <CheckBox
+        android:id="@+id/checkboxFriend"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentStart="true"
+        android:checked="false"
+        android:button="@drawable/custom_checkbox_checked_circle"
+        android:background="@drawable/custom_checkbox_unchecked_circle"/>
+
+
+    <TextView
+        android:id="@+id/textFriendName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/checkboxFriend"
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        android:text="Friend Name" />
+
+    <!-- Sub information -->
+    <TextView
+        android:id="@+id/subInformation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textFriendName"
+        android:layout_toEndOf="@id/checkboxFriend"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:text="Sub Information" />
+
+</RelativeLayout>

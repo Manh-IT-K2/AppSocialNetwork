@@ -6,6 +6,7 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
@@ -29,6 +30,8 @@ public interface  UserService {
 
     @GET("user/allUsers")
     Call<ApiResponse<List<UserResponse>>> getAllUsers();
+    @GET("user/allUsersByFollows")
+    Call<ApiResponse<List<GetAllUserByFollowsResponse>>> getAllUsersByFollows(@Query("id") String id);
     @GET("user/requestTracking")
     Call<ApiResponse<List<UserResponse>>> getRequestTrackingUser();
     @POST("user/changePass")
@@ -39,4 +42,6 @@ public interface  UserService {
     Call<ApiResponse<UserResponse>> getDetailUserById(@Query("id") String id);
     @POST("user/updateUser")
     Call<ApiResponse<UserResponse>> updateUser(@Body RequestUpdateUser request);
+    @GET("user/getListUserName")
+    Call<ApiResponse<List<String>>> getListUserName();
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestCreateGroupChat {
+    private String creatorId;
     private String groupName;
     private List<String> memberIds;
 }

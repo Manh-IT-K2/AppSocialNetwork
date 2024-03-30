@@ -27,9 +27,7 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.frameLayout);
         if (getIntent() != null && getIntent().hasExtra("fragment_to_load")) {
             String fragmentToLoad = getIntent().getStringExtra("fragment_to_load");
-            if (fragmentToLoad.equals("edit_profile")) {
-                setFragment(new EditProfileFragment());
-            }else if(fragmentToLoad.equals("createaccount_setting")){
+            if(fragmentToLoad.equals("createaccount_setting")){
                 setFragment(new CreateAccountFragment());
             }else if(fragmentToLoad.equals("verify_code")){
                 setFragment(new VerificationCodeFragment());
