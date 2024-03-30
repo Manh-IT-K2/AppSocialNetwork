@@ -63,17 +63,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.bindGroupChat(groupChat);
         }
 
-        // Set click listener for the user item
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ChatActivity.class);
-                intent.putExtra("recipientUserId", chat.getRecipient().getUsername());
-                intent.putExtra("recipientAvater", chat.getRecipient().getAvatarImg());
-                intent.putExtra("recipientID", chat.getRecipient().getId());
-                context.startActivity(intent);
-            }
-        });
+
     }
 
     @Override
@@ -108,6 +98,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ChatActivity.class);
                     intent.putExtra("recipientUserId", privateChat.getRecipient().getUsername());
+                    intent.putExtra("recipientAvater", privateChat.getRecipient().getAvatarImg());
+                    intent.putExtra("recipientID", privateChat.getRecipient().getId());
                     context.startActivity(intent);
                 }
             });
