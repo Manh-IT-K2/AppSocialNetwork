@@ -9,6 +9,7 @@ import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Post.PostResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.PostService;
 import com.example.frontend.utils.CallApi;
@@ -81,6 +82,34 @@ public class PostRepository {
             public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
                 mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error: " + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
+
+    // add user like post
+    public MutableLiveData<ApiResponse<PostResponse>> addLike(String postId, String userId) {
+        MutableLiveData<ApiResponse<PostResponse>> mutableLiveData = new MutableLiveData<>();
+        postService.addLike(postId, userId).enqueue(new Callback<ApiResponse<PostResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<PostResponse>> call, Response<ApiResponse<PostResponse>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<PostResponse> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Gson gson = new Gson();
+                    String dataaaa = gson.toJson(apiResponse);
+                    Log.d("add",dataaaa);
+                } else {
+
+                    Log.d("create", "errr");
+
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
+                // Xử lý khi gọi API thất bại
+                Log.e("giiii",t.getMessage());
+                mutableLiveData.setValue(new ApiResponse<PostResponse>(false, "Error: " + t.getMessage(), null));
             }
         });
         return mutableLiveData;

@@ -1,5 +1,6 @@
 package com.example.Backend.Request.Post;
 
+import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

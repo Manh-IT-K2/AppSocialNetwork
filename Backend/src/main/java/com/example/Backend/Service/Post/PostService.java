@@ -1,5 +1,6 @@
 package com.example.Backend.Service.Post;
 
+import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestPost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -15,4 +16,7 @@ public interface PostService {
 
      // select post by userId
      ApiResponse<List<RequestPostByUserId>> getListPostsByUserId(String userId);
+
+     // add user like post
+     ApiResponse<Post> addLikeToPost(String postId, String userId);
 }

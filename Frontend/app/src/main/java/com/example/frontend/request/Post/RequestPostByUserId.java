@@ -1,5 +1,7 @@
 package com.example.frontend.request.Post;
 
+import com.example.frontend.response.User.UserResponse;
+
 import java.util.List;
 
 public class RequestPostByUserId {
@@ -12,11 +14,14 @@ public class RequestPostByUserId {
     String description;
     String location;
     String createAt;
+    List<UserResponse> like;
+    private boolean isLiked;
+
 
     public RequestPostByUserId() {
     }
 
-    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, List<String> imagePost, String description, String location, String createAt) {
+    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, List<String> imagePost, String description, String location, String createAt, List<UserResponse> like) {
         this.idPost = idPost;
         this.userId = userId;
         this.userName = userName;
@@ -25,6 +30,7 @@ public class RequestPostByUserId {
         this.description = description;
         this.location = location;
         this.createAt = createAt;
+        this.like = like;
     }
 
     public String getIdPost() {
@@ -89,5 +95,20 @@ public class RequestPostByUserId {
 
     public void setCreateAt(String createAt) {
         this.createAt = createAt;
+    }
+
+    public List<UserResponse> getLike() {
+        return like;
+    }
+
+    public void setLike(List<UserResponse> like) {
+        this.like = like;
+    }
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }

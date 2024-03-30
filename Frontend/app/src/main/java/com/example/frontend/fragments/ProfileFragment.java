@@ -90,14 +90,20 @@ public class ProfileFragment extends Fragment {
 
         // Nhận dữ liệu email từ Bundle
         Bundle bundle = getArguments();
-        if (bundle != null){
+        if (bundle.getString("userId") != null){
             userId = bundle.getString("userId", "");
             qrcodeBtn.setVisibility(View.INVISIBLE);
             logoutBtn.setVisibility(View.INVISIBLE);
             menuSetting.setVisibility(View.INVISIBLE);
             editprofileBtn.setVisibility(View.INVISIBLE);
+        } else if (bundle.getString("userIdLiked") != null) {
+            userId = bundle.getString("userIdLiked");
+        } else userId = SharedPreferenceLocal.read(getContext(),"userId");
+        Log.e("iddau", userId);
+
         }
         else userId = SharedPreferenceLocal.read(getContext(),"userId");
+
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {

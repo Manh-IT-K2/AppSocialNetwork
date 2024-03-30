@@ -75,7 +75,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-   //circleimageview
+    //circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //QR Code
@@ -96,10 +96,12 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     //WebSocket
-    implementation ('io.socket:socket.io-client:2.0.0') {
+    implementation('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
     implementation 'com.pusher:pusher-java-client:1.8.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
+    //
+    implementation'org.mongodb:mongodb-driver-legacy:4.1.1'
 }

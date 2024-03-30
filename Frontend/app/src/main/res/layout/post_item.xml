@@ -115,8 +115,8 @@
             android:id="@+id/imageView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/icon_pagination" />
+            android:layout_weight="1"></ImageView>
+<!--            app:srcCompat="@drawable/icon_pagination" />-->
 
         <ImageView
             android:id="@+id/btn_save"
@@ -132,23 +132,23 @@
         android:orientation="horizontal"
         android:layout_marginTop="10dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/img_userLiked"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="4dp"
-            app:shapeAppearanceOverlay="@style/circle_image"
-            tools:srcCompat="@tools:sample/avatars" />
+<!--        <com.google.android.material.imageview.ShapeableImageView-->
+<!--            android:id="@+id/img_userLiked"-->
+<!--            android:layout_width="26dp"-->
+<!--            android:layout_height="26dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginEnd="4dp"-->
+<!--            app:shapeAppearanceOverlay="@style/circle_image"-->
+<!--            tools:srcCompat="@tools:sample/avatars" />-->
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/txt_liked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:textSize="13sp"
+            android:layout_marginStart="20dp"
+            android:text="Liked by craig_love"
             android:textColor="@color/white"
-            android:text="Liked by craig_love" />
+            android:textSize="13sp" />
     </LinearLayout>
 
     <TextView
@@ -156,7 +156,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
         android:textColor="@color/white"
         android:textSize="13sp"
         android:text="joshua_l The game in" />
@@ -166,7 +166,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
         android:textStyle="italic"
         android:textSize="13sp"
         android:text="1 ngày trước" />
