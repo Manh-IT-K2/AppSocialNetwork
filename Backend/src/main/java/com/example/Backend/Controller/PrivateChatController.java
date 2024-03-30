@@ -1,19 +1,14 @@
 package com.example.Backend.Controller;
 
-import com.corundumstudio.socketio.SocketIOClient;
-import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.annotation.OnEvent;
 import com.example.Backend.Config.PusherConfig;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.PrivateChat.PrivateChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,9 +41,9 @@ public class PrivateChatController {
         return new ApiResponse<>(true, "OK", response);
     }
     @GetMapping("/get_list_mess")
-        public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {
-            List<PrivateChatWithMessagesResponse> list = privateChatService.getListChat(id);
-            return new ApiResponse<>(true, "OK", list);
+    public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {
+        List<PrivateChatWithMessagesResponse> list = privateChatService.getListChat(id);
+        return new ApiResponse<>(true, "OK", list);
     }
 
 

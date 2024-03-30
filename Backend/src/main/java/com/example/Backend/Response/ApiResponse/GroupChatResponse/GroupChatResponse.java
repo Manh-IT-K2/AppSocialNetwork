@@ -15,5 +15,6 @@ import java.util.List;
 public class GroupChatResponse {
     private String id;
     private String groupName;
+    private String creatorId;
     private List<User> members;
 }

@@ -5,14 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestCreateGroupChat {
-    private String creatorId;
-    private String groupName;
-    private List<String> memberIds;
+public class RequestDeleteGroupChat {
+    private String groupId;
 }

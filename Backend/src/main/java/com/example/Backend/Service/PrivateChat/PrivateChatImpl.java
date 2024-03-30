@@ -1,5 +1,6 @@
 package com.example.Backend.Service.PrivateChat;
 
+import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
@@ -7,6 +8,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Request.User.RequestCreateAccount;
+import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
@@ -149,8 +151,11 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
             }
             responses.add(response);
         }
+
         return responses;
     }
+
+
     private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
             List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
             List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
@@ -167,6 +172,7 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         }
         return messageWithSenderInfos;
     }
+
 }
 
 

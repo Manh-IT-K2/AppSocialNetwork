@@ -4,6 +4,7 @@ import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
+import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import org.springframework.stereotype.Service;
