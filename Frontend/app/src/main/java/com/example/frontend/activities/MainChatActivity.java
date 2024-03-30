@@ -54,8 +54,7 @@ private RecyclerView recyclerView;
 
         // Khởi tạo RecyclerView và Adapter
         recyclerView = findViewById(R.id.user_recycler_view);
-        //adapter = new ChatListAdapter(new ArrayList<>(), this);
-        adapter = new ChatListAdapter(new ArrayList<>(), new ArrayList<>(), this);
+        adapter = new ChatListAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //set user name name

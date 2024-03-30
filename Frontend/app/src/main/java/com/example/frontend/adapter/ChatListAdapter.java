@@ -32,11 +32,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         this.chatList = chatList;
         this.context = context;
     }
-    public ChatListAdapter(List<PrivateChatWithMessagesResponse> chatList, List<GroupChatWithMessagesResponse> groupChatList, Context context) {
-        this.chatList = chatList;
-        this.groupChatList = groupChatList;
-        this.context = context;
-    }
     public void setChatList(List<PrivateChatWithMessagesResponse> chatList) {
         this.chatList = chatList;
         notifyDataSetChanged(); // Notify adapter that dataset has changed
