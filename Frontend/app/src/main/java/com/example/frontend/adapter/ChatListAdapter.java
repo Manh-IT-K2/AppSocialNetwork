@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,24 +16,33 @@ import com.example.frontend.R;
 import com.example.frontend.activities.ChatActivity;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
-import com.example.frontend.response.Message.MessageWithSenderInfo;
-import com.example.frontend.response.User.UserResponse;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
-    private List<PrivateChatWithMessagesResponse> chatList;
+    private List<PrivateChatWithMessagesResponse> privateChatList;
     private List<GroupChatWithMessagesResponse> groupChatList;
     private Context context;
 
-    public ChatListAdapter(List<PrivateChatWithMessagesResponse> chatList, Context context) {
-        this.chatList = chatList;
+    public ChatListAdapter(List<PrivateChatWithMessagesResponse> privateChatList, List<GroupChatWithMessagesResponse> groupChatList, Context context) {
+        this.privateChatList = privateChatList;
+        this.groupChatList = groupChatList;
         this.context = context;
     }
-    public void setChatList(List<PrivateChatWithMessagesResponse> chatList) {
-        this.chatList = chatList;
-        notifyDataSetChanged(); // Notify adapter that dataset has changed
+    public void setChatList(List<PrivateChatWithMessagesResponse> privateChatList) {
+        this.privateChatList = privateChatList;
+        notifyDataSetChanged();
+    }
+    public void setGroupChatList(List<GroupChatWithMessagesResponse> groupChatList) {
+        this.groupChatList = groupChatList;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position < privateChatList.size() ? 0 : 1;
     }
 
     @NonNull
@@ -46,32 +54,22 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PrivateChatWithMessagesResponse chat = chatList.get(position);
-        holder.lastMessage.setText(chat.getLastMessage());
-        holder.recipientName.setText(chat.getRecipient().getUsername());
-        if (chat.getRecipient().getAvatarImg() != null) {
-            Glide.with(context)
-                    .load(Uri.parse(chat.getRecipient().getAvatarImg()))
-                    .into(holder.img_user);
+        if (position < privateChatList.size()) {
+            PrivateChatWithMessagesResponse privateChat = privateChatList.get(position);
+            holder.bindPrivateChat(privateChat);
+        } else {
+            int adjustedPosition = position - privateChatList.size();
+            GroupChatWithMessagesResponse groupChat = groupChatList.get(adjustedPosition);
+            holder.bindGroupChat(groupChat);
         }
-
-        // Set click listener for the user item
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start ChatActivity and pass necessary data if needed
-                Intent intent = new Intent(context, ChatActivity.class);
-                // You can put extra data if needed, for example, recipient user id
-                intent.putExtra("recipientUserId", chat.getRecipient().getUsername());
-                context.startActivity(intent);
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
-        return chatList.size();
+        return privateChatList.size() + groupChatList.size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView recipientName;
@@ -83,6 +81,42 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             recipientName = itemView.findViewById(R.id.user_name_text);
             lastMessage = itemView.findViewById(R.id.last_message_text);
             img_user = itemView.findViewById(R.id.imgAvatar);
+        }
+
+        public void bindPrivateChat(PrivateChatWithMessagesResponse privateChat) {
+            recipientName.setText(privateChat.getRecipient().getUsername());
+            lastMessage.setText(privateChat.getLastMessage());
+            if (privateChat.getRecipient().getAvatarImg() != null) {
+                Glide.with(context)
+                        .load(Uri.parse(privateChat.getRecipient().getAvatarImg()))
+                        .into(img_user);
+            }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra("recipientUserId", privateChat.getRecipient().getUsername());
+                    context.startActivity(intent);
+                }
+            });
+        }
+
+        public void bindGroupChat(GroupChatWithMessagesResponse groupChat) {
+            recipientName.setText(groupChat.getGroupName());
+            lastMessage.setText(groupChat.getLastMessage() != null ? groupChat.getLastMessage() : "Chưa có tin nhắn");
+            if (!groupChat.getMembers().isEmpty() && groupChat.getMembers().get(0).getAvatarImg() != null) {
+                Glide.with(context)
+                        .load(Uri.parse(groupChat.getMembers().get(0).getAvatarImg()))
+                        .into(img_user);
+            }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra("groupChatId", groupChat.getId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

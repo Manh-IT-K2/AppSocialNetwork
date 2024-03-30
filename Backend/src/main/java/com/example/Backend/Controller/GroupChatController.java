@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/group_chat")
 public class GroupChatController {
@@ -67,6 +69,13 @@ public class GroupChatController {
         groupChatService.updateLastMessage(groupChatId, lastMessage);
         return new ResponseEntity<>(new ApiResponse<>(true, "Last message updated successfully", null), HttpStatus.OK);
     }
+    @GetMapping("/list_chat/{userId}")
+    public ResponseEntity<List<GroupChatWithMessagesResponse>> getListChatGroup(@PathVariable String userId) {
+        // Gọi phương thức getListChatGroup từ GroupChatService để lấy danh sách các cuộc trò chuyện nhóm mà người dùng đã tham gia
+        List<GroupChatWithMessagesResponse> groupChats = groupChatService.getListChatGroup(userId);
 
+        // Trả về danh sách các cuộc trò chuyện nhóm kèm theo thông tin tin nhắn gần đây nhất
+        return new ResponseEntity<>(groupChats, HttpStatus.OK);
+    }
 
 }

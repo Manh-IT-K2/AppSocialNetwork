@@ -4,6 +4,8 @@ import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.request.GroupChat.*;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -31,5 +33,7 @@ public interface GroupChatService {
 
     @DELETE("/api/group_chat/{groupChatId}/delete")
     Call<ApiResponse<String>> deleteGroupChat(@Path("groupChatId") String groupChatId);
+    @GET("/api/group_chat/list_chat/{userId}")
+    Call<List<GroupChatWithMessagesResponse>> getListChat(@Path("userId") String userId);
 
 }
