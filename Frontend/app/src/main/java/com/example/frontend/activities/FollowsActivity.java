@@ -5,34 +5,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.frontend.R;
-import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
-import com.example.frontend.fragments.EditProfileFragment;
 import com.example.frontend.fragments.FollowersFragment;
 import com.example.frontend.fragments.FollowingFragment;
-import com.example.frontend.fragments.Function_change_password;
-import com.example.frontend.fragments.HomeFragment;
-import com.example.frontend.fragments.LoginFragment;
-import com.example.frontend.fragments.NotificationFragment;
-import com.example.frontend.fragments.ProfileFragment;
-import com.example.frontend.fragments.SearchFragment;
-import com.example.frontend.fragments.SettingFragment;
 import com.example.frontend.fragments.SubscriptionsFragment;
-import com.example.frontend.fragments.VerificationCodeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
+import com.example.frontend.fragments.ProfileFragment;
 public class FollowsActivity extends AppCompatActivity {
     ImageButton iconBack;
     BottomNavigationView bottomNavigationView;
     Fragment selectedFragment = null;
     FrameLayout fragment_layout_main;
+    TextView tvUserName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +33,12 @@ public class FollowsActivity extends AppCompatActivity {
         iconBack = findViewById(R.id.iconBack);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         fragment_layout_main = findViewById(R.id.fragment_layout_main);
+        tvUserName = findViewById(R.id.tvUserName);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
 
         if (getIntent() != null && getIntent().hasExtra("fragment_to_load")) {
             String fragmentToLoad = getIntent().getStringExtra("fragment_to_load");
+            tvUserName.setText(getIntent().getStringExtra("userName"));
             if (fragmentToLoad.equals("openFollowing")) {
                 setFragment(new FollowingFragment());
                 bottomNavigationView.setSelectedItemId(R.id.menu_Following);
@@ -52,10 +47,13 @@ public class FollowsActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(R.id.menu_Followers);
             }
         }
+
         iconBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("fragment_to_load", "back_profile");
+                startActivity(intent);
             }
         });
     }

@@ -1,8 +1,10 @@
 package com.example.frontend.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,8 +14,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.MainChatActivity;
 import com.example.frontend.adapter.PostAdapter;
 import com.example.frontend.adapter.StoryAdapter;
 import com.example.frontend.request.Post.RequestPostByUserId;
@@ -35,9 +40,11 @@ public class HomeFragment extends Fragment {
     private List<RequestStoryByUserId> storyList;
     private PostViewModel postViewModel;
     private StoryViewModel storyViewModel;
+    private ImageView imgMessage;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -56,6 +63,8 @@ public class HomeFragment extends Fragment {
         // init call api story
         storyViewModel = new ViewModelProvider(this).get(StoryViewModel.class);
 
+        //View Chat
+        imgMessage = view.findViewById(R.id.img_message);
         // init userId
         String userId = SharedPreferenceLocal.read(getContext(),"userId");
 
@@ -85,14 +94,20 @@ public class HomeFragment extends Fragment {
                 Log.d("check", json);
                 if (response.getData().size() > 0) {
                     postList = response.getData();
-                    postAdapter = new PostAdapter(getContext(), postList);
+                    postAdapter = new PostAdapter(getContext(), postList, (LifecycleOwner) getContext());
                     recyclerViewPost.setAdapter(postAdapter);
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi
                 }
             }
         });
-
+       imgMessage.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(getActivity(), MainChatActivity.class);
+               startActivity(intent);
+           }
+       });
 
         return view;
     }

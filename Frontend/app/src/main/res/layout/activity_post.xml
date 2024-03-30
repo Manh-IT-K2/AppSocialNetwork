@@ -36,18 +36,15 @@
             android:id="@+id/btn_netPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:text="Tiếp"
             android:textSize="15sp"
-            android:text="Tiếp">
-        </com.example.frontend.utils.GradientTextView>
+            android:textStyle="bold"></com.example.frontend.utils.GradientTextView>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:gravity="center"
-        android:background="@color/grey"
-        android:orientation="horizontal">
-
+        android:background="@color/grey">
         <ImageView
             android:id="@+id/img_mainPost"
             android:layout_width="300dp"
@@ -79,7 +76,7 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/background_btn_radius"
+                android:background="@drawable/background_btn_radius"
             android:text="Chọn nhiều" />
         <LinearLayout
             android:layout_width="40dp"

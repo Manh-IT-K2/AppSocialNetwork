@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_primary"
+        android:background="@color/blue1"
         android:padding="10dp"
         android:id="@+id/toolbar">
 
@@ -17,23 +17,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Username"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_marginStart="10dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/profile_pic_layout"
+            android:layout_toRightOf="@id/imgAvatar"
             android:id="@+id/other_username"
             />
-
-        <include layout="@layout/profile_pic_view"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="10dp"
             android:layout_toRightOf="@id/back_btn"
-            android:id="@+id/profile_pic_layout"
-            />
-
+            android:src="@drawable/baseline_account_circle_24" />
         <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -46,11 +44,13 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
         android:layout_above="@id/bottom_layout"
-        android:id="@+id/chat_recycler_view"/>
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="22dp"
+        android:layout_marginBottom="-23dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -68,9 +68,10 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toLeftOf="@id/message_send_btn"
-            android:background="@drawable/edit_text_rounded_corner"
+            android:background="@drawable/background_editext_comment"
             android:elevation="4dp"
             android:hint="Write message here"
+            android:textColor="@color/colorPrimary"
             android:padding="10dp"
             android:id="@+id/chat_message_input"/>
 
@@ -81,7 +82,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/my_primary"
+            app:tint="@color/blue1"
             android:id="@+id/message_send_btn"
             android:padding="8dp"
             android:layout_marginStart="10dp"

@@ -1,48 +1,55 @@
 package com.example.frontend.response.Post;
 
+import com.example.frontend.response.User.UserResponse;
+
 import java.util.Date;
+import java.util.List;
+import org.bson.types.ObjectId;
+
 
 public class PostResponse {
-    private String idPost;
-    private String userId;
-    private String imagePost;
+    private String id;
+    private ObjectId userId;
+    private List<String> imagePost;
     private String description;
     private String location;
     private Date createAt;
+    private List<UserResponse> like;
 
     public PostResponse() {
     }
 
-    public PostResponse(String idPost, String userId, String imagePost, String description, String location, Date createAt) {
-        this.idPost = idPost;
+    public PostResponse(String id, ObjectId userId, List<String> imagePost, String description, String location, Date createAt, List<UserResponse> like) {
+        this.id = id;
         this.userId = userId;
         this.imagePost = imagePost;
         this.description = description;
         this.location = location;
         this.createAt = createAt;
+        this.like = like;
     }
 
-    public String getIdPost() {
-        return idPost;
+    public String getId() {
+        return id;
     }
 
-    public void setIdPost(String idPost) {
-        this.idPost = idPost;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getUserId() {
+    public ObjectId getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(ObjectId userId) {
         this.userId = userId;
     }
 
-    public String getImagePost() {
+    public List<String> getImagePost() {
         return imagePost;
     }
 
-    public void setImagePost(String imagePost) {
+    public void setImagePost(List<String> imagePost) {
         this.imagePost = imagePost;
     }
 
@@ -68,5 +75,13 @@ public class PostResponse {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public List<UserResponse> getLike() {
+        return like;
+    }
+
+    public void setLike(List<UserResponse> like) {
+        this.like = like;
     }
 }

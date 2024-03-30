@@ -1,18 +1,23 @@
 package com.example.Backend.Service.Post;
 
 import com.example.Backend.Entity.Post;
+import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Post.RequestPost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,12 +72,66 @@ public class PostIml implements PostService{
                 .andExpression("posts.imagePost").as("imagePost")
                 .andExpression("posts.description").as("description")
                 .andExpression("posts.location").as("location")
-                .andExpression("posts.createAt").as("createAt");
+                .andExpression("posts.createAt").as("createAt")
+                .andExpression("posts.like").as("like");
 
 
         Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation);
 
         List<RequestPostByUserId> list = mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
         return new ApiResponse<List<RequestPostByUserId>>(true, "", list);
+    }
+
+    @Override
+    // add user like post
+    public ApiResponse<Post> addLikeToPost(String postId, String userId) {
+        ObjectId postIdOb = new ObjectId(postId);
+        ObjectId userIdOb = new ObjectId(userId);
+        // Tìm bài đăng theo postId
+        Query query = new Query(Criteria.where("_id").is(postIdOb));
+        Post post = mongoTemplate.findOne(query, Post.class,"post");
+
+        Query queryUser = new Query(Criteria.where("_id").is(userIdOb));
+        User users = mongoTemplate.findOne(queryUser, User.class,"users");
+
+
+        // Kiểm tra xem bài đăng có tồn tại không
+        if (post != null) {
+            // Thêm người dùng vào danh sách likes
+            if (post.getLike() == null) {
+                post.setLike(new ArrayList<>());
+            }
+
+
+            boolean userExists = false;
+            User userToRemove = null;
+
+            for (User u : post.getLike()) {
+                System.out.println(u.getId());
+                System.out.println(userId);
+                if (u.getId().equals(userId)) {
+                    userExists = true;
+                    userToRemove = u;
+                    break;
+                }
+            }
+            System.out.println(userExists);
+            if (userExists) {
+                post.getLike().remove(userToRemove);
+                mongoTemplate.save(post);
+                System.out.println("Người dùng với ID " + userId + " đã được xóa khỏi danh sách.");
+            } else {
+                post.getLike().add(users);
+                mongoTemplate.save(post);
+                System.out.println("Người dùng với ID " + userId + " đã được thêm vào danh sách.");
+            }
+
+            // Cập nhật bài đăng trong cơ sở dữ liệu
+            return new ApiResponse<Post>(true,"add like success",post);
+        } else {
+            // Xử lý trường hợp bài đăng không tồn tại
+            // (Có thể throw exception hoặc xử lý theo nhu cầu của ứng dụng)
+            return new ApiResponse<Post>(true,"add like success",post);
+        }
     }
 }

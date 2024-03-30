@@ -10,6 +10,7 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 
 import java.util.List;
@@ -29,6 +30,10 @@ public class UserViewModel extends ViewModel {
         return userRepository.login(requestLogin);
     }
 
+    public MutableLiveData<ApiResponse<List<String>>> getListUserName() {
+        return userRepository.getListUserName();
+    }
+
     public MutableLiveData<ApiResponse<String>> sendOTP(String email) {
         return userRepository.sendOTP(email);
     }
@@ -37,6 +42,9 @@ public class UserViewModel extends ViewModel {
     }
     public MutableLiveData<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userRepository.getAllUsers();
+    }
+    public MutableLiveData<ApiResponse<List<GetAllUserByFollowsResponse>>> getAllUsersByFollows(String id) {
+        return userRepository.getAllUsersByFollows(id);
     }
     public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
         return userRepository.getRequestTrackingUser();

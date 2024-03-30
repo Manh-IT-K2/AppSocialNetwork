@@ -7,14 +7,16 @@ public class RequestLogin {
     String password;
     String username;
     String avatarImg;
+    String name;
     boolean fromGoogle;
 
-    public RequestLogin(String email,String username, String avatarImg, String password, boolean fromGoogle) {
+    public RequestLogin(String email,String username, String avatarImg, String password, boolean fromGoogle,String name) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.avatarImg = avatarImg;
         this.fromGoogle = fromGoogle;
+        this.name = name;
     }
 
     public String getEmail() {
@@ -55,5 +57,13 @@ public class RequestLogin {
 
     public void setAvatarImg(String avatarImg) {
         this.avatarImg = avatarImg;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

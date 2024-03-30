@@ -10,11 +10,8 @@ import android.widget.FrameLayout;
 import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
-import com.example.frontend.fragments.EditProfileFragment;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
-import com.example.frontend.fragments.ProfileFragment;
-import com.example.frontend.fragments.SettingFragment;
 import com.example.frontend.fragments.VerificationCodeFragment;
 
 public class FragmentReplacerActivity extends AppCompatActivity {
@@ -27,9 +24,7 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.frameLayout);
         if (getIntent() != null && getIntent().hasExtra("fragment_to_load")) {
             String fragmentToLoad = getIntent().getStringExtra("fragment_to_load");
-            if (fragmentToLoad.equals("edit_profile")) {
-                setFragment(new EditProfileFragment());
-            }else if(fragmentToLoad.equals("createaccount_setting")){
+            if(fragmentToLoad.equals("createaccount_setting")){
                 setFragment(new CreateAccountFragment());
             }else if(fragmentToLoad.equals("verify_code")){
                 setFragment(new VerificationCodeFragment());
@@ -54,6 +49,5 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();
     }
-
 
 }

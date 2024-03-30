@@ -1,5 +1,6 @@
 package com.example.Backend.Entity;
 
+import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,15 +18,17 @@ import java.util.Date;
 public class Post {
 
     @Id
-    private String idPost;
+    private String id;
 
     private ObjectId userId;
 
-    private String imagePost;
+    private List<String> imagePost;
 
     private String description;
 
     private String location;
 
     private Date createAt;
+
+    private List<User> like;
 }

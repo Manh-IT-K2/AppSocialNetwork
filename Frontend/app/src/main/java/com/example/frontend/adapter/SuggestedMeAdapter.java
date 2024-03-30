@@ -1,9 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Follows.RequestCreateFollows;
+import com.example.frontend.request.Follows.RequestUpdateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.response.Follows.GetQuantityResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
-import com.google.gson.Gson;
+import com.example.frontend.viewModel.User.UserViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,15 +33,18 @@ import java.util.List;
 public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.ViewHolder> {
 
     public static Context mContext;
-    public List<UserResponse> userResponseList;
+    public List<GetAllUserByFollowsResponse> userResponseList;
     public static FollowsViewModel followsViewModel;
     private LifecycleOwner lifecycleOwner;
+    public static UserViewModel userViewModel;
 
-    public SuggestedMeAdapter(Context mContext, List<UserResponse> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner) {
+    public SuggestedMeAdapter(Context mContext, List<GetAllUserByFollowsResponse> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner,
+                              UserViewModel userViewModel) {
         this.mContext = mContext;
         this.userResponseList = userResponseList;
         this.followsViewModel = followsViewModel;
         this.lifecycleOwner = lifecycleOwner;
+        this.userViewModel = userViewModel;
     }
 
     @NonNull
@@ -53,7 +56,7 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SuggestedMeAdapter.ViewHolder holder, int position) {
-        UserResponse userResponse = userResponseList.get(position);
+        GetAllUserByFollowsResponse userResponse = userResponseList.get(position);
         // Set thông tin bài đăng vào các view
         holder.idNameUser.setText(userResponse.getUsername());
         holder.nameUser.setText(userResponse.getName());
@@ -93,16 +96,14 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
             btnFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RequestCreateFollows requestCreateFollows = new RequestCreateFollows(idFollows,"65e8a525714ccc3a3caa7f77",formattedDate);
+                    RequestCreateFollows requestCreateFollows = new RequestCreateFollows(userId,idFollows,formattedDate);
                     followsViewModel.createFollows(requestCreateFollows).observe(lifecycleOwner, new Observer<ApiResponse<String>>() {
                         @Override
                         public void onChanged(ApiResponse<String> response) {
-                            Gson gson = new Gson();
-                            String json = gson.toJson(response);
                             if(response.getStatus() && response.getMessage().equals("Success")){
-                                setTextBtn(btnFollow,"Đã theo dõi");
-                            } else {
-
+                                setTextBtn(btnFollow,"Following");
+                                handleGetQuantityFollows(userId,"following");
+                                handleGetQuantityFollows(idFollows,"follower");
                             }
                         }
                     });
@@ -122,6 +123,35 @@ public class SuggestedMeAdapter extends RecyclerView.Adapter<SuggestedMeAdapter.
                 // For Android versions from API 16 and above
                 btnFollow.setBackground(drawable);
             }
+        }
+
+        private void handleGetQuantityFollows(String idFollows,String type){
+            followsViewModel.getQuantityFollows(idFollows).observe(lifecycleOwner, new Observer<ApiResponse<GetQuantityResponse>>() {
+                @Override
+                public void onChanged(ApiResponse<GetQuantityResponse> response) {
+                    if(response.getMessage().equals("Success") && response.getStatus()){
+                        GetQuantityResponse getQuantityResponse = response.getData();
+                        // update follower của người được theo dõi
+                        if(type.equals("follower")){
+                            int countFollower = getQuantityResponse.getQuantityFollower() + 1;
+                            RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
+                                    getQuantityResponse.getId(), countFollower,getQuantityResponse.getQuantityFollowing()
+                            );
+                            handleUpdateFollow(requestUpdateFollowsByFollower);
+                        } // update thông tin của người dùng hiện tại ( tăng số người đang theo dõi)
+                        else if (type.equals("following")) {
+                            int countFollowing = getQuantityResponse.getQuantityFollowing() + 1;
+                            RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
+                                    getQuantityResponse.getId(), getQuantityResponse.getQuantityFollower(),countFollowing
+                            );
+                            handleUpdateFollow(requestUpdateFollowsByFollower);
+                        }
+                    }
+                }
+            });
+        }
+        private void handleUpdateFollow(RequestUpdateFollows requestUpdateFollows){
+            followsViewModel.updateFollows(requestUpdateFollows);
         }
     }
 }
