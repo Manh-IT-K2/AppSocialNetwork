@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +20,17 @@
             android:text="Hello"
             android:id="@+id/time_msg"/>
     </LinearLayout>
+    <!-- TextView để hiển thị tên người gửi tin nhắn -->
+            <TextView
+                android:id="@+id/user_name_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
     <LinearLayout
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/background_editext_comment"
@@ -31,6 +40,7 @@
         android:layout_marginEnd="80dp"
         android:id="@+id/left_chat_layout"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,6 +49,16 @@
             android:text="Hello"
             android:id="@+id/left_chat_textview"/>
     </LinearLayout>
+    <!-- TextView để hiển thị tên người gửi tin nhắn -->
+    <TextView
+        android:id="@+id/user_name_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,6 +69,7 @@
         android:padding="8dp"
         android:layout_marginStart="80dp"
         android:id="@+id/right_chat_layout">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
