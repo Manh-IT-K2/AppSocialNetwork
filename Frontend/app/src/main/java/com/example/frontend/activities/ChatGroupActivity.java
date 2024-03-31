@@ -25,6 +25,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
+import com.example.frontend.viewModel.User.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ public class ChatGroupActivity extends AppCompatActivity {
     private RelativeLayout groupAvatarImageView;
     private String groupId; // Thêm biến để lưu trữ id của nhóm chat
     private String currentUserId; // Thêm biến để lưu trữ ID của người dùng hiện tại
+    private String message;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +62,6 @@ public class ChatGroupActivity extends AppCompatActivity {
         // Thiết lập hình ảnh đại diện của nhóm
         groupAvatarImageView = findViewById(R.id.profile_pic_layout);
 
-
-
-
-
-
         recyclerView = findViewById(R.id.chat_recycler_view);
         inputMessage = findViewById(R.id.chat_message_input);
         btnSend = findViewById(R.id.message_send_btn);
@@ -71,22 +69,28 @@ public class ChatGroupActivity extends AppCompatActivity {
         groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
         adapter = new GroupChatAdapter(this, new ArrayList<>(), currentUserId);
+
+
         recyclerView.setAdapter(adapter);
 
         // Gửi tin nhắn khi nhấn nút gửi
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("id_curentUser", currentUserId);
-                String message = inputMessage.getText().toString();
+                Log.d("chatgroup_content", groupId+currentUserId+message);
+                message = inputMessage.getText().toString();
                 RequestChatGroup request = new RequestChatGroup(groupId, currentUserId, message);
+
                 groupChatViewModel.sendMessage(groupId, request).observe(ChatGroupActivity.this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
                     @Override
                     public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
                         if (response != null && response.isSuccess()) {
                             // Xử lý phản hồi khi gửi tin nhắn thành công
                             GroupChatWithMessagesResponse chatWithMessagesResponse = response.getData();
+
                             if (chatWithMessagesResponse != null) {
                                 // Thêm tin nhắn mới vào RecyclerView
                                 adapter.addMessage(chatWithMessagesResponse);
@@ -113,6 +117,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
         loadChatHistory();
     }
+
 
     private void loadChatHistory() {
         groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
