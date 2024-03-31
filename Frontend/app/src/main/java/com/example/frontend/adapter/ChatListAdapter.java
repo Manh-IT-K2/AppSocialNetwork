@@ -3,6 +3,7 @@ package com.example.frontend.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.ChatActivity;
+import com.example.frontend.activities.ChatGroupActivity;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
 
@@ -116,9 +118,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, ChatActivity.class);
+                    Intent intent = new Intent(context, ChatGroupActivity.class);
                     intent.putExtra("groupChatId", groupChat.getId());
+                    intent.putExtra("groupChatName", groupChat.getGroupName());
                     context.startActivity(intent);
+                    Log.d("dulieu_itemgroupchat", groupChat.getId()+"  "+groupChat.getGroupName());
                 }
             });
         }
