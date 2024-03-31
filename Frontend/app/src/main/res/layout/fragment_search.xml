@@ -43,7 +43,7 @@
         android:id="@+id/fragment_Search_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/cardSearch" />
+        android:layout_below="@+id/cardSearch"/>
 
 
 </RelativeLayout>

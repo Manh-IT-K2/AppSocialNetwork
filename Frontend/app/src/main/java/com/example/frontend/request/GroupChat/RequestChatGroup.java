@@ -1,12 +1,8 @@
 package com.example.frontend.request.GroupChat;
-
 public class RequestChatGroup {
     private String groupId;
     private String senderId;
     private String content;
-
-    public RequestChatGroup() {
-    }
 
     public RequestChatGroup(String groupId, String senderId, String content) {
         this.groupId = groupId;

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.example.frontend.R;
@@ -34,6 +35,7 @@ public class FollowingFragment extends Fragment {
     private FollowingAdapter followingAdapter;
     private UserViewModel userViewModel;
     public FollowsViewModel followsViewModel;
+    public LinearLayout linearLayout;
     ProgressBar progressBar;
 
     public FollowingFragment() {
@@ -52,6 +54,7 @@ public class FollowingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_following, container, false);
         progressBar = view.findViewById(R.id.progressBar);
         list_following = view.findViewById(R.id.list_following);
+        linearLayout = view.findViewById(R.id.noDataFollowing);
         list_following.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         // init call api suggest
@@ -72,8 +75,14 @@ public class FollowingFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     list_following.setVisibility(View.VISIBLE);
                     userResponseList = response.getData();
-                    followingAdapter = new FollowingAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner(),userViewModel);
-                    list_following.setAdapter(followingAdapter);
+                    if (userResponseList.size() > 0){
+                        followingAdapter = new FollowingAdapter(getContext(), userResponseList,followsViewModel,getViewLifecycleOwner(),userViewModel);
+                        list_following.setAdapter(followingAdapter);
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        list_following.setVisibility(View.GONE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi
                 }

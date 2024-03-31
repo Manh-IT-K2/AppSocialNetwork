@@ -2,9 +2,16 @@ package com.example.frontend.repository;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.frontend.request.GroupChat.RequestAddMemberToGroupChat;
+import com.example.frontend.request.GroupChat.RequestChatGroup;
+import com.example.frontend.request.GroupChat.RequestCreateGroupChat;
+import com.example.frontend.request.GroupChat.RequestRemoveMemberFromGroupChat;
+import com.example.frontend.request.GroupChat.RequestRenameGroupChat;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.service.GroupChatService;
 import com.example.frontend.utils.CallApi;
@@ -46,4 +53,160 @@ public class GroupChatRepository {
 
         return mutableLiveData;
     }
+
+    public LiveData<ApiResponse<GroupChatResponse>> createGroupChat(RequestCreateGroupChat request) {
+        MutableLiveData<ApiResponse<GroupChatResponse>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.createGroupChat(request).enqueue(new Callback<ApiResponse<GroupChatResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<GroupChatResponse>> call, Response<ApiResponse<GroupChatResponse>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<GroupChatResponse>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to create group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<GroupChatWithMessagesResponse>> getMessagesByGroupChatId(String groupChatId) {
+        MutableLiveData<ApiResponse<GroupChatWithMessagesResponse>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.getMessagesByGroupChatId(groupChatId).enqueue(new Callback<ApiResponse<GroupChatWithMessagesResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Response<ApiResponse<GroupChatWithMessagesResponse>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to get messages for group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<GroupChatWithMessagesResponse>> sendMessage(String groupChatId, RequestChatGroup request) {
+        MutableLiveData<ApiResponse<GroupChatWithMessagesResponse>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.sendMessage(groupChatId, request).enqueue(new Callback<ApiResponse<GroupChatWithMessagesResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Response<ApiResponse<GroupChatWithMessagesResponse>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to send message to group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<String>> addMemberToGroupChat(String groupChatId, RequestAddMemberToGroupChat request) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.addMemberToGroupChat(groupChatId, request).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to add member to group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<String>> removeMemberFromGroupChat(String groupChatId, RequestRemoveMemberFromGroupChat request) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.removeMemberFromGroupChat(groupChatId, request).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to remove member from group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<String>> renameGroupChat(String groupChatId, RequestRenameGroupChat request) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.renameGroupChat(groupChatId, request).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to rename group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public LiveData<ApiResponse<String>> deleteGroupChat(String groupChatId) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.deleteGroupChat(groupChatId).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else {
+                    Log.e("GroupChatRepository", "Phản hồi HTTP không thành công: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to delete group chat: " + t.getMessage(), t);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+
 }

@@ -4,13 +4,19 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +33,7 @@ import com.example.frontend.viewModel.User.UserViewModel;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Fragment_searchUser extends Fragment {
@@ -37,9 +44,11 @@ public class Fragment_searchUser extends Fragment {
     ProgressBar progressBar;
     Button btnSearch;
     TextView search_noResult;
+    Toolbar toolbar_profile;
     private List<UserResponse> userList = new ArrayList<>();
     private List<UserResponse> user_searchList;
     Fragment_searchHistory fragment_searchHistory;
+    private SearchUserAdapter searchUserAdapter;
 
     public Fragment_searchUser() {
         // Required empty public constructor
@@ -47,6 +56,7 @@ public class Fragment_searchUser extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
     }
 
@@ -54,8 +64,8 @@ public class Fragment_searchUser extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Khởi tạo search Query ViewModel
-
         searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_user, container, false);
     }
@@ -70,6 +80,9 @@ public class Fragment_searchUser extends Fragment {
         recyclerView_User = view.findViewById(R.id.recyclerViewUser);
         btnSearch = view.findViewById(R.id.btnSearch);
         search_noResult = view.findViewById(R.id.search_noResults);
+
+        toolbar_profile = getActivity().findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar_profile);
 
         if (searchQueryViewModel.getSearchQuery() != null) {
             resultList();
@@ -143,10 +156,10 @@ public class Fragment_searchUser extends Fragment {
                     // Đang ở Fragment_searchUser
                     // Chi hien thi toi da 5 phan tu trong user_searchList
                     if (user_searchList.size() >= 5) {
-                        SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList.subList(0, 4));
+                        searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList.subList(0, 4));
                         recyclerView_User.setAdapter(searchUserAdapter);
                     } else {
-                        SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
+                        searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
                         recyclerView_User.setAdapter(searchUserAdapter);
                     }
                     btnSearch.setVisibility(View.VISIBLE);
@@ -154,10 +167,13 @@ public class Fragment_searchUser extends Fragment {
                 } else {
                     // Đang ở Fragment_performSearch
                     // Hiển thị toàn bộ user_searchList
-                    SearchUserAdapter searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
+                    searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
                     recyclerView_User.setAdapter(searchUserAdapter);
                     btnSearch.setVisibility(View.GONE);
                 }
+
+                clickUserToProfile();
+
             }
 
 
@@ -169,6 +185,42 @@ public class Fragment_searchUser extends Fragment {
                     .replace(R.id.fragment_Search_Container, fragment_searchHistory)
                     .commit();
         }
+    }
+
+    private void clickUserToProfile() {
+        searchUserAdapter.setOnItemClickListener(new SearchUserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                Bundle args = new Bundle();
+                args.putString("userID", user_searchList.get(position).getId());
+
+                ProfileFragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(args);
+
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_layout_main, profileFragment).addToBackStack("search_fragment").commit();
+
+                // Thêm nút Back vào ActionBar
+                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                }
+
+
+            }
+        });
+    }
+
+    // Xử lý sự kiện khi người dùng ấn nút Back
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Thực hiện việc quay lại Fragment trước đó
+            getActivity().onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

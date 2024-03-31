@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/black">
+    <item
+        android:id="@+id/menu_Followers"
+        android:title="Post"
+        android:enabled="true"
+        android:icon="@drawable/icons8_grid">
+    </item>
+    <item
+        android:id="@+id/menu_Following"
+        android:title="Watch"
+        android:enabled="true"
+        android:icon="@drawable/icons8_watch">
+    </item>
+    <item
+        android:id="@+id/menu_Subscriptions"
+        android:title="Of You"
+        android:enabled="true"
+        android:icon="@drawable/icons8_user">
+    </item>
+</menu>
