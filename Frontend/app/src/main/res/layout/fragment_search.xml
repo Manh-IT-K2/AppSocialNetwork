@@ -3,22 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".fragments.SearchFragment">
-
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:id="@+id/search_toolbar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content">-->
-
-<!--        <androidx.appcompat.widget.SearchView-->
-<!--            android:id="@+id/searchView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@color/blackLite"-->
-<!--            app:iconifiedByDefault="false"-->
-<!--            app:queryHint="@string/searchbar_hint" />-->
-<!--    </androidx.appcompat.widget.Toolbar>-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardSearch"

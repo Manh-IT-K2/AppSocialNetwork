@@ -84,9 +84,15 @@ public class Fragment_searchUser extends Fragment {
         toolbar_profile = getActivity().findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar_profile);
 
-        if (searchQueryViewModel.getSearchQuery() != null) {
-            resultList();
-        }
+//        if (searchQueryViewModel.getSearchQuery() != null) {
+//            resultList();
+//        }
+
+//        Fragment currentFragment = getChildFragmentManager().findFragmentById(R.id.fragment_Search_Container);
+//        if(currentFragment instanceof Fragment_performSearch) {
+//            resultList();
+//        }
+        resultList();
     }
 
     // Lấy dữ liệu allUsers và kết quả tìm kiếm user thong qua ham searchUser
@@ -193,35 +199,16 @@ public class Fragment_searchUser extends Fragment {
             public void onItemClick(int position) {
 
                 Bundle args = new Bundle();
-                args.putString("userID", user_searchList.get(position).getId());
+                args.putString("userId", user_searchList.get(position).getId());
 
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileFragment.setArguments(args);
+                Fragment_search_ClickAccount clickAccount = new Fragment_search_ClickAccount();
+                clickAccount.setArguments(args);
 
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_layout_main, profileFragment).addToBackStack("search_fragment").commit();
-
-                // Thêm nút Back vào ActionBar
-                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-                if (actionBar != null) {
-                    actionBar.setDisplayHomeAsUpEnabled(true);
-                }
-
+                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
 
             }
         });
+
     }
-
-    // Xử lý sự kiện khi người dùng ấn nút Back
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            // Thực hiện việc quay lại Fragment trước đó
-            getActivity().onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }
