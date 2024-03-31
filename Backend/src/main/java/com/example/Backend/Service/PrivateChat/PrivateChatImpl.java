@@ -1,30 +1,23 @@
 package com.example.Backend.Service.PrivateChat;
 
-import com.example.Backend.Entity.GroupChat;
 import com.example.Backend.Entity.Message;
 import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
-import com.example.Backend.Request.User.RequestCreateAccount;
-import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -154,6 +147,32 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
 
         return responses;
     }
+
+    @Override
+    public PrivateChatWithMessagesResponse getMessagesByPrivate(String creatorId, String recipientId) throws Exception {
+
+        // Tìm private chat giữa hai người dùng
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("creatorId").is(creatorId).and("recipientId").is(recipientId),
+                Criteria.where("creatorId").is(recipientId).and("recipientId").is(creatorId)
+        );
+        Query query = new Query(criteria);
+        PrivateChat privateChat = mongoTemplate.findOne(query, PrivateChat.class);
+
+        if (privateChat != null) {
+            // Lấy tất cả các tin nhắn của private chat này
+            List<MessageWithSenderInfo> messages = getMessageList(privateChat);
+
+            // Tạo đối tượng response và đặt danh sách tin nhắn
+            PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
+            response.setMessages(messages);
+
+            return response;
+        } else {
+            throw new Exception("Private chat not found for creatorId: " + creatorId + " and recipientId: " + recipientId);
+        }
+    }
+
 
 
     private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {

@@ -1,14 +1,8 @@
 package com.example.frontend.service;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-
 import com.example.frontend.request.PrivateChat.RequestPrivateChat;
-import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
-import com.example.frontend.response.User.UserResponse;
 
 import java.util.List;
 
@@ -24,4 +18,7 @@ public interface PrivateChatService {
 
     @POST("private_chat/send_mess")
     Call<ApiResponse<PrivateChatWithMessagesResponse>>SendMessage(@Body RequestPrivateChat request);
+
+    @GET("private_chat/get_mess_private")
+    Call<ApiResponse<PrivateChatWithMessagesResponse>>getMessagesByPrivate(@Query("creatorId") String creatorId,@Query("recipientId") String recipientId);
 }
