@@ -1,5 +1,6 @@
 package com.example.Backend.Service.PrivateChat;
 
+import com.example.Backend.Entity.PrivateChat;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
@@ -15,6 +16,7 @@ public interface PrivateChatService {
     PrivateChatWithMessagesResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception;
     List<PrivateChatWithMessagesResponse> getListChat(String id);
     PrivateChatWithMessagesResponse getMessagesByPrivate(String creatorId,String recipientId) throws Exception;
+    PrivateChat UpdateLastMessage(String IdPrivateChat) throws Exception;
 
 
 }

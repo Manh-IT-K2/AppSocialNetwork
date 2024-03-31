@@ -42,12 +42,13 @@ public class PrivateChatController {
     @GetMapping("/get_list_mess")
     public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {
         List<PrivateChatWithMessagesResponse> list = privateChatService.getListChat(id);
+        pusherConfig.triggerEvent("Lastmessage", "update", privateChatService.getListChat(id));
         return new ApiResponse<>(true, "OK", list);
     }
     @GetMapping("/get_mess_private")
     public ApiResponse<PrivateChatWithMessagesResponse> getLMessPrivate(@RequestParam String creatorId, @RequestParam String recipientId) throws Exception {
         PrivateChatWithMessagesResponse response = privateChatService.getMessagesByPrivate(creatorId,recipientId);
-        pusherConfig.triggerEvent("getHisMess", "GetData", response);
+    //    pusherConfig.triggerEvent("getHisMess", "GetData", response);
         return new ApiResponse<>(true, "OK", response);
     }
 

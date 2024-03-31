@@ -94,6 +94,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 Glide.with(context)
                         .load(Uri.parse(privateChat.getRecipient().getAvatarImg()))
                         .into(img_user);
+            }else {
+                Glide.with(context)
+                        .load(R.drawable.baseline_account_circle_24)
+                        .into(img_user);
             }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

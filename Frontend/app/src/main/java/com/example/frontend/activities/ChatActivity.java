@@ -79,6 +79,10 @@ public class ChatActivity extends AppCompatActivity {
             Glide.with(getApplicationContext())
                     .load(Uri.parse(recipientAvatar))
                     .into(imgAvatar);
+        }else {
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.baseline_account_circle_24) // Ảnh mặc định trong thư mục drawable
+                    .into(imgAvatar);
         }
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         btn_back_main_chat.setOnClickListener(new View.OnClickListener() {
@@ -104,14 +108,12 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onChanged(ApiResponse<PrivateChatWithMessagesResponse> response) {
                 if (response != null && response.isSuccess()) {
-
                     PrivateChatWithMessagesResponse privateChatResponse = response.getData();
                     List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
                     if (messages != null && !messages.isEmpty()) {
                         adapter.setListMessage(messages);
                     }
                 } else {
-                    // Xử lý khi không thể lấy được tin nhắn ban đầu
                     String errorMessage = "Failed to load initial messages";
                     if (response != null && response.getMessage() != null) {
                         errorMessage += ": " + response.getMessage();
@@ -163,4 +165,5 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
 }

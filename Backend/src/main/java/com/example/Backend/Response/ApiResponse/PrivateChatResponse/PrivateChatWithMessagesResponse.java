@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -17,5 +18,6 @@ import java.util.List;
 public class PrivateChatWithMessagesResponse {
     private User recipient;
     private String lastMessage;
+    private Date lastMessageCreatedAt;
     private List<MessageWithSenderInfo> messages;
 }

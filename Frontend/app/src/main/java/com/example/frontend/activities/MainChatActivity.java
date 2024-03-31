@@ -1,10 +1,13 @@
 package com.example.frontend.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -16,11 +19,16 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.ChatListAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.MainChatViewModel;
 import com.example.frontend.viewModel.Message.MessageViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +46,8 @@ public class MainChatActivity extends AppCompatActivity {
     private MainChatViewModel mainChatViewModel;
     private ImageButton img_back;
     private TextView username;
+
+    private Pusher pusher;
     private UserViewModel userViewModel;
 
 
@@ -79,12 +89,36 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện nút back
+
         img_back = findViewById(R.id.back_btn);
-        // Khởi tạo và lắng nghe dữ liệu từ MessageViewModel
+
+
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         messageViewModel.getListChat(userId).observe(this, chatList -> {
-            adapter.setChatList(chatList);
+            Log.d("ChatList", "Received chat list: " + chatList);
+            pusher = PusherClient.init();
+            pusher.connect();
+            pusher.subscribe("Lastmessage")
+                    .bind("update", (channelName, eventName, data) -> {
+                        // Xử lý dữ liệu nhận được từ sự kiện
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        Log.d("pushertest1", new Gson().toJson(data));
+                        try {
+                            PrivateChatResponse privateChatResponse = new Gson().fromJson(data, PrivateChatResponse.class);
+                            // Sử dụng Handler để hiển thị Toast trên luồng giao diện chính
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setChatList(chatList);
+
+                                }
+                            });
+                            Log.d("pushertest2", new Gson().toJson(privateChatResponse));
+                        } catch (Exception e) {
+                            Log.d("trycatch", new Gson().toJson(e));
+                        }
+                    });
         });
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,5 +126,26 @@ public class MainChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+
+        messageViewModel.getListChat(userId).observe(this, chatList -> {
+            adapter.setChatList(chatList);
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+
+        // Hủy đăng ký lắng nghe khi không cần thiết
+        messageViewModel.getListChat(userId).removeObservers(this);
     }
 }
