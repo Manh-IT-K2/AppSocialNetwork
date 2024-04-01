@@ -40,7 +40,7 @@ public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         if(post_searchList.get(position).getImagePost() != null)
             Glide.with(context)
-                    .load(Uri.parse(post_searchList.get(position).getImagePost()))
+                    .load(Uri.parse(post_searchList.get(position).getImagePost().get(0)))
                     .into(holder.imgSearchPost);
     }
 

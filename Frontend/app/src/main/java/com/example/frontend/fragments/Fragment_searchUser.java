@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +27,15 @@ import android.widget.TextView;
 import com.example.frontend.R;
 import com.example.frontend.adapter.SearchUserAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Search.SearchHistoryResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreference_SearchHistory;
 import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +48,15 @@ public class Fragment_searchUser extends Fragment {
     SearchQuery_ViewModel searchQueryViewModel;
     RecyclerView recyclerView_User;
     ProgressBar progressBar;
-    Button btnSearch;
     TextView search_noResult;
     Toolbar toolbar_profile;
     private List<UserResponse> userList = new ArrayList<>();
     private List<UserResponse> user_searchList;
     Fragment_searchHistory fragment_searchHistory;
     private SearchUserAdapter searchUserAdapter;
+    private SharedPreference_SearchHistory sharedPreferences;
+    private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
+    private Gson gson;
 
     public Fragment_searchUser() {
         // Required empty public constructor
@@ -73,25 +81,19 @@ public class Fragment_searchUser extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        gson = new Gson();
+        sharedPreferences = new SharedPreference_SearchHistory(getActivity());
+        getSearchHistoryListFromSharedPreference();
+
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
         progressBar = view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         recyclerView_User = view.findViewById(R.id.recyclerViewUser);
-        btnSearch = view.findViewById(R.id.btnSearch);
         search_noResult = view.findViewById(R.id.search_noResults);
-
         toolbar_profile = getActivity().findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar_profile);
 
-//        if (searchQueryViewModel.getSearchQuery() != null) {
-//            resultList();
-//        }
-
-//        Fragment currentFragment = getChildFragmentManager().findFragmentById(R.id.fragment_Search_Container);
-//        if(currentFragment instanceof Fragment_performSearch) {
-//            resultList();
-//        }
         resultList();
     }
 
@@ -144,15 +146,16 @@ public class Fragment_searchUser extends Fragment {
                     user_searchList.add(userList.get(i));
                 }
             }
+            Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_Search_Container);
 
             if (user_searchList.isEmpty() && !userList.isEmpty()) {
-                search_noResult.setText(R.string.noResults_wereFound);
+                if (currentFragment instanceof Fragment_searchUser)
+                    search_noResult.setText("");
+                else
+                    search_noResult.setText(R.string.noResults_wereFound);
                 recyclerView_User.setVisibility(View.GONE);
-                btnSearch.setVisibility(View.GONE);
-
             } else {
                 search_noResult.setText("");
-                Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_Search_Container);
 
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                 recyclerView_User.setLayoutManager(layoutManager);
@@ -168,14 +171,12 @@ public class Fragment_searchUser extends Fragment {
                         searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
                         recyclerView_User.setAdapter(searchUserAdapter);
                     }
-                    btnSearch.setVisibility(View.VISIBLE);
 
                 } else {
                     // Đang ở Fragment_performSearch
                     // Hiển thị toàn bộ user_searchList
                     searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
                     recyclerView_User.setAdapter(searchUserAdapter);
-                    btnSearch.setVisibility(View.GONE);
                 }
 
                 clickUserToProfile();
@@ -198,6 +199,11 @@ public class Fragment_searchUser extends Fragment {
             @Override
             public void onItemClick(int position) {
 
+                // Khi nhan tim kiem -> put data vao Shared preferences
+                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(user_searchList.get(position).getUsername(), user_searchList.get(position).getAvatarImg(), true, user_searchList.get(position).getId(), new java.util.Date());
+                // Luu vao shared preference
+                saveToSearchHistory(searchHistoryResponse, user_searchList.get(position).getUsername());
+
                 Bundle args = new Bundle();
                 args.putString("userId", user_searchList.get(position).getId());
 
@@ -205,10 +211,47 @@ public class Fragment_searchUser extends Fragment {
                 clickAccount.setArguments(args);
 
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
+                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack("perform_search").commit();
 
             }
         });
+    }
 
+    private void getSearchHistoryListFromSharedPreference() {
+        String jsonHistory = sharedPreferences.read_SearchHistoryList();
+        Type type = new TypeToken<List<SearchHistoryResponse>>() {}.getType();
+        searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
+
+        if (searchHistoryResponseArrayList == null) {
+            searchHistoryResponseArrayList = new ArrayList<>();
+        }
+    }
+
+    private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
+        // convert object to String by Gson
+        String jsonHistory = gson.toJson(searchHistoryList);
+
+        // save to shared preference
+        sharedPreferences.save_SearchHistoryList(jsonHistory);
+    }
+
+    private void saveToSearchHistory(SearchHistoryResponse searchHistoryResponse, String query) {
+        if (searchHistoryResponseArrayList.isEmpty())
+            searchHistoryResponseArrayList.add(searchHistoryResponse);
+        else {
+            // Xoa object trong shared preference co text trung voi query
+            int i = 0;
+            while (i < searchHistoryResponseArrayList.size()) {
+                if (searchHistoryResponseArrayList.get(i).getText().equals(query) && searchHistoryResponseArrayList.get(i).getAccount() == searchHistoryResponse.getAccount()) {
+                    searchHistoryResponseArrayList.remove(searchHistoryResponseArrayList.get(i));
+                    break;
+                }
+                i++;
+            }
+            searchHistoryResponseArrayList.add(0, searchHistoryResponse);
+        }
+
+        // Luu vao shared preference
+        saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
     }
 }

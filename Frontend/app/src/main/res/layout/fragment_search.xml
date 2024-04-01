@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".fragments.SearchFragment">
+    tools:context=".fragments.SearchFragment"
+    android:id="@+id/fragment_search">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardSearch"
@@ -28,8 +29,17 @@
     <FrameLayout
         android:id="@+id/fragment_Search_Container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/cardSearch"/>
 
-
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Search"
+        android:textColor="@color/blue1"
+        android:textSize="15dp"
+        android:layout_below="@id/fragment_Search_Container"
+        android:layout_centerInParent="true" />
 </RelativeLayout>

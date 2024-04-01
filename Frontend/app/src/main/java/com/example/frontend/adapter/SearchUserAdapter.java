@@ -52,10 +52,11 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
 
     public void onBindViewHolder(@NonNull SearchUserAdapter.MyHolder holder, int position) {
         holder.userName.setText(user_searchList.get(position).getUsername());
-        if(user_searchList.get(position).getAvatarImg() != null)
-            Glide.with(context)
-                    .load(Uri.parse(user_searchList.get(position).getAvatarImg()))
-                    .into(holder.avatar);
+        if (user_searchList.get(position).getAvatarImg() != null)
+            if (user_searchList.get(position).getAvatarImg() != "")
+                Glide.with(context)
+                        .load(Uri.parse(user_searchList.get(position).getAvatarImg()))
+                        .into(holder.avatar);
 
     }
 

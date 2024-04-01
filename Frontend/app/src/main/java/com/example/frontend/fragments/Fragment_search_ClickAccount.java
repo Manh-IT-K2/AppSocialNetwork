@@ -77,19 +77,19 @@ public class Fragment_search_ClickAccount extends Fragment {
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Kiểm tra nếu có fragment trước đó trong back stack
-        boolean hasPreviousFragment = getFragmentManager().getBackStackEntryCount() > 0;
-
-        // Kiểm tra xem ActionBar có null hay không
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            // Hiển thị nút "Back" trên ActionBar
-            actionBar.setDisplayHomeAsUpEnabled(hasPreviousFragment);
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        // Kiểm tra nếu có fragment trước đó trong back stack
+//        boolean hasPreviousFragment = getFragmentManager().getBackStackEntryCount() > 0;
+//
+//        // Kiểm tra xem ActionBar có null hay không
+//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        if (actionBar != null) {
+//            // Hiển thị nút "Back" trên ActionBar
+//            actionBar.setDisplayHomeAsUpEnabled(hasPreviousFragment);
+//        }
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

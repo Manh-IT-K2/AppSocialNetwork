@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -116,18 +117,42 @@ public class Fragment_searchHistory extends Fragment {
 
     private void clickOneSearchHistoryToSearch(int position) {
 
-        // Set text o vi tri position vào ViewModel để Fragment_searchUser có thể lấy được text
-        searchQueryViewModel.setSearchQuery(searchHistoryResponseArrayList.get(position).getText());
+        // Nếu lịch sử là text
+        if (searchHistoryResponseArrayList.get(position).getAccount() == false) {
+            // Set text o vi tri position vào ViewModel để Fragment_searchUser có thể lấy được text
+            searchQueryViewModel.setSearchQuery(searchHistoryResponseArrayList.get(position).getText());
 
-        // Set search query to searchView of SearchFragment
-        searchView.setQuery(searchHistoryResponseArrayList.get(position).getText(), true);
-        searchView.clearFocus();
+            // Chuyen sang fragment perform search
+            Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_Search_Container, fragment_performSearch)
+                    .commit();
 
-        // Chuyen sang fragment perform search
-        Fragment_performSearch fragment_performSearch = new Fragment_performSearch();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_Search_Container, fragment_performSearch)
-                .commit();
+            // Set search query to searchView of SearchFragment
+            searchView.setQuery(searchHistoryResponseArrayList.get(position).getText(), true);
+            searchView.clearFocus();
+        }
+
+        // Nếu lịch sử là tài khoản
+        else {
+
+            Bundle args = new Bundle();
+            args.putString("userId", searchHistoryResponseArrayList.get(position).getId());
+
+            Fragment_search_ClickAccount clickAccount = new Fragment_search_ClickAccount();
+            clickAccount.setArguments(args);
+
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack("history").commit();
+
+            // Xoa account trong shared preference trùng với account ở vị trí position trong arraylist
+            SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse();
+            searchHistoryResponse = searchHistoryResponseArrayList.get(position);
+            searchHistoryResponseArrayList.remove(searchHistoryResponseArrayList.get(position));
+            searchHistoryResponseArrayList.add(0, searchHistoryResponse);
+            // Luu vao shared preference
+            saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+        }
     }
 
     private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
