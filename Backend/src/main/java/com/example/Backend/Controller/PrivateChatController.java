@@ -48,7 +48,7 @@ public class PrivateChatController {
     @GetMapping("/get_mess_private")
     public ApiResponse<PrivateChatWithMessagesResponse> getLMessPrivate(@RequestParam String creatorId, @RequestParam String recipientId) throws Exception {
         PrivateChatWithMessagesResponse response = privateChatService.getMessagesByPrivate(creatorId,recipientId);
-    //    pusherConfig.triggerEvent("getHisMess", "GetData", response);
+        //    pusherConfig.triggerEvent("getHisMess", "GetData", response);
         return new ApiResponse<>(true, "OK", response);
     }
 

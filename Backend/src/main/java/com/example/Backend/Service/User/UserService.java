@@ -31,4 +31,7 @@ public interface UserService {
     ApiResponse<GroupChat> addMemberToGroupChat(String groupId, String memberId);
     ApiResponse<GroupChat> removeMemberFromGroupChat(String groupId, String memberId);
 
+    ApiResponse<List<User>> findUser_privatechat(String u);
+
+
 }

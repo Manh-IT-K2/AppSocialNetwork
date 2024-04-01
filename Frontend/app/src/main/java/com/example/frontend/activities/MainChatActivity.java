@@ -6,8 +6,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -17,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.ChatListAdapter;
+import com.example.frontend.adapter.SeachPrivateChatAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
@@ -30,16 +35,13 @@ import com.google.gson.Gson;
 import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainChatActivity extends AppCompatActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main_chat);
-//    }
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView,searchRecyclerView;
     private ChatListAdapter adapter;
+    private SeachPrivateChatAdapter searchAdapter;
     private MessageViewModel messageViewModel;
     private MainChatViewModel mainChatViewModel;
     private ImageButton img_back;
@@ -49,6 +51,11 @@ public class MainChatActivity extends AppCompatActivity {
     private UserViewModel userViewModel;
     private ImageButton moreOptionsBtn;
 
+    private EditText searchUser_txt;
+
+    RelativeLayout layoutSearch,toolbar;
+
+    Button cancelSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +63,19 @@ public class MainChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_chat);
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
 
-        // Khởi tạo RecyclerView và Adapter cho cuộc trò chuyện riêng lẻ
+
         recyclerView = findViewById(R.id.user_recycler_view);
         adapter = new ChatListAdapter(new ArrayList<>(), new ArrayList<>(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Khởi tạo ViewModel cho cuộc trò chuyện riêng lẻ
+        searchAdapter = new SeachPrivateChatAdapter(new ArrayList<>(), this);
+        searchRecyclerView = findViewById(R.id.search_recycler_view);
+        searchRecyclerView.setAdapter(searchAdapter);
+        searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         messageViewModel.getListChat(userId).observe(this, chatList -> {
             adapter.setChatList(chatList);
@@ -74,8 +87,14 @@ public class MainChatActivity extends AppCompatActivity {
             adapter.setGroupChatList(groupChatList);
         });
 
-        // Lấy thông tin người dùng và hiển thị tên người dùng
+
         username = findViewById(R.id.userchat);
+        searchUser_txt = findViewById(R.id.seach_username_input);
+        toolbar = findViewById(R.id.toolbar);
+        layoutSearch = findViewById(R.id.layout_search);
+        cancelSearchBtn = findViewById(R.id.cancel_search_btn);
+        cancelSearchBtn.setVisibility(View.GONE);
+        //
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         userViewModel.getDetailUserById(userId).observe(this, new Observer<ApiResponse<UserResponse>>() {
             @Override
@@ -90,8 +109,6 @@ public class MainChatActivity extends AppCompatActivity {
 
 
         img_back = findViewById(R.id.back_btn);
-
-
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         messageViewModel.getListChat(userId).observe(this, chatList -> {
             Log.d("ChatList", "Received chat list: " + chatList);
@@ -125,8 +142,48 @@ public class MainChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+        searchUser_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                layoutSearch.setVisibility(View.VISIBLE);
+                cancelSearchBtn.setVisibility(View.VISIBLE);
+                String keyword = searchUser_txt.getText().toString();
+                userViewModel = new ViewModelProvider(MainChatActivity.this).get(UserViewModel.class);
+                userViewModel.findUser_privatechat(keyword).observe(MainChatActivity.this, new Observer<ApiResponse<List<UserResponse>>>() {
+                    @Override
+                    public void onChanged(ApiResponse<List<UserResponse>> response) {
+                        if (response != null) {
+                            List<UserResponse> userResponse = null;
+                            if (response.getStatus()) {
+                                userResponse = response.getData();
+                                searchRecyclerView.setVisibility(View.VISIBLE);
+                                searchAdapter.setListUser(userResponse);
+                            } else {
+                                searchRecyclerView.setVisibility(View.GONE);
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Có lỗi xảy ra. Vui lòng thử lại sau.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
 
 
+        cancelSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbar.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+                layoutSearch.setVisibility(View.GONE);
+                cancelSearchBtn.setVisibility(View.GONE);
+                searchRecyclerView.setVisibility(View.GONE);
+                searchUser_txt.setText(null);
+
+            }
+        });
         moreOptionsBtn = findViewById(R.id.more_options_btn);
         moreOptionsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,8 +195,6 @@ public class MainChatActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
 
     }
 

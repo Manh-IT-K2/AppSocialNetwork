@@ -351,4 +351,23 @@ public class UserRepository {
 
         return mutableLiveData;
     }
+    public MutableLiveData<ApiResponse<List<UserResponse>>> findUser_privatechat(String keyword) {
+        MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();
+        userService.findUser_privatechat(keyword).enqueue(new Callback<ApiResponse<List<UserResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<UserResponse>>> call, Response<ApiResponse<List<UserResponse>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<UserResponse>> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<List<UserResponse>>(false, "Request failed:" , null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<List<UserResponse>>(false, "Request failed:" , null));
+            }
+        });
+        return mutableLiveData;
+    }
 }
