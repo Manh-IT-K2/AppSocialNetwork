@@ -26,8 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend"
         tools:targetApi="34">
-
-
+        <activity
+            android:name=".activities.Function_chatgroup_activity"
+            android:exported="false" />
         <activity
             android:name=".activities.FollowsActivity"
             android:exported="false" />
@@ -60,7 +61,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.ChatGroupActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activities.StoryActivity"
             android:exported="false" />

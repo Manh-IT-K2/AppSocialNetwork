@@ -5,6 +5,7 @@ public class GetAllUserByFollowsResponse {
     String username;
     String avatarImg;
     String name;
+    private boolean isSelected;
 
     public GetAllUserByFollowsResponse(String id, String username, String avatarImg, String name) {
         this.id = id;
@@ -12,7 +13,13 @@ public class GetAllUserByFollowsResponse {
         this.avatarImg = avatarImg;
         this.name = name;
     }
+    public boolean isSelected() {
+        return isSelected;
+    }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
     public String getId() {
         return id;
     }

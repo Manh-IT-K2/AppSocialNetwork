@@ -1,5 +1,6 @@
 package com.example.frontend.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.frontend.R;
 import com.example.frontend.adapter.ChatListAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
-import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.PusherClient;
@@ -31,7 +30,6 @@ import com.google.gson.Gson;
 import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainChatActivity extends AppCompatActivity {
 
@@ -49,6 +47,7 @@ public class MainChatActivity extends AppCompatActivity {
 
     private Pusher pusher;
     private UserViewModel userViewModel;
+    private ImageButton moreOptionsBtn;
 
 
     @Override
@@ -128,8 +127,22 @@ public class MainChatActivity extends AppCompatActivity {
         });
 
 
+        moreOptionsBtn = findViewById(R.id.more_options_btn);
+        moreOptionsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Tạo Intent để chuyển sang Fragment_MoreFunctionForChat
+                Intent intent = new Intent(MainChatActivity.this, Function_chatgroup_activity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
