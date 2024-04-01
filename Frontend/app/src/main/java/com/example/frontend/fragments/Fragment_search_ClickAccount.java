@@ -3,6 +3,7 @@ package com.example.frontend.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,15 +30,23 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.frontend.R;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
+import com.example.frontend.adapter.SuggestedMeAdapter;
+import com.example.frontend.request.Follows.RequestCreateFollows;
+import com.example.frontend.request.Follows.RequestUpdateFollows;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Follows.GetQuantityResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +65,10 @@ public class Fragment_search_ClickAccount extends Fragment {
     CircleImageView profileImage;
     TextView nameTV;
     Toolbar toolbar;
+    public static FollowsViewModel followsViewModel;
     private List<Uri> selectedFiles;
+    private List<GetAllUserByFollowsResponse> userResponseList = new ArrayList<>();
+
 
     @Override
     public void onResume() {
@@ -109,6 +121,8 @@ public class Fragment_search_ClickAccount extends Fragment {
         nameTV = view.findViewById(R.id.nameTV);
         toolbar = view.findViewById(R.id.toolbar);
 
+        followsViewModel = new ViewModelProvider(this).get(FollowsViewModel.class);
+
         // Thiết lập Toolbar là ActionBar của activity
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
@@ -122,13 +136,8 @@ public class Fragment_search_ClickAccount extends Fragment {
         if (bundle != null) {
             if (bundle.getString("userId") != null) {
                 userId = bundle.getString("userId", "");
-                qrcodeBtn.setVisibility(View.INVISIBLE);
-                messageBtn.setVisibility(View.INVISIBLE);
-                //menuSetting.setVisibility(View.INVISIBLE);
-                followBtn.setVisibility(View.INVISIBLE);
             }
         }
-        Log.e("userId", userId);
 
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
@@ -145,9 +154,47 @@ public class Fragment_search_ClickAccount extends Fragment {
             }
         });
 
+        userViewModel.getAllUsersByFollows(SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<GetAllUserByFollowsResponse>>>() {
+            @Override
+            public void onChanged(ApiResponse<List<GetAllUserByFollowsResponse>> response) {
+                Gson gson = new Gson();
+                String json = gson.toJson(response);
+                if (response.getData().size() > 0) {
+                    userResponseList = response.getData();
+                } else {
+                    // Xử lý khi không có dữ liệu hoặc có lỗi
+                }
+            }
+        });
+
+        // Nếu người dùng hiện tại đã được follow
+        if (!check_user_Followed()) {
+            setTextBtn(followBtn, "Following");
+        }
+        System.out.println(userResponseList.size());
+
         followBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Nếu người dùng hiện tại chưa được follow
+                if (check_user_Followed()) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                    Date currentDate = new Date();
+                    String formattedDate = dateFormat.format(currentDate);
+
+                    RequestCreateFollows requestCreateFollows = new RequestCreateFollows(SharedPreferenceLocal.read(getContext(), "userId"), userId, formattedDate);
+                    followsViewModel.createFollows(requestCreateFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
+                        @Override
+                        public void onChanged(ApiResponse<String> response) {
+                            if (response.getStatus() && response.getMessage().equals("Success")) {
+                                setTextBtn(followBtn, "Following");
+                                handleGetQuantityFollows(SharedPreferenceLocal.read(getContext(), "userId"), "following");
+                                handleGetQuantityFollows(userId, "follower");
+                            }
+                        }
+                    });
+                }
 
             }
         });
@@ -159,6 +206,7 @@ public class Fragment_search_ClickAccount extends Fragment {
                 // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
                 intent.putExtra("fragment_to_load", "openFollows");
                 intent.putExtra("userName", username.getText().toString());
+                intent.putExtra("userId", userId);
                 // Bắt đầu activity với Intent đã tạo
                 startActivity(intent);
             }
@@ -170,6 +218,7 @@ public class Fragment_search_ClickAccount extends Fragment {
                 // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
                 intent.putExtra("fragment_to_load", "openFollowing");
                 intent.putExtra("userName", username.getText().toString());
+                intent.putExtra("userId", userId);
                 // Bắt đầu activity với Intent đã tạo
                 startActivity(intent);
             }
@@ -215,6 +264,66 @@ public class Fragment_search_ClickAccount extends Fragment {
         });
         return view;
     }
+
+    // Kiểm tra người dùng hiện tại đã được follow chưa
+    private boolean check_user_Followed() {
+        int i = 0;
+        while(i < userResponseList.size()) {
+            if (userId.equals(userResponseList.get(i).getId())) {
+                System.out.println(userResponseList.get(i).getId());
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
+
+    public void setTextBtn(Button btnFollow, String text){
+        btnFollow.setText(text);
+        // Get the reference to the Drawable you want to assign
+        Drawable drawable = getContext().getResources().getDrawable(R.drawable.custom_buttom_selected_follows);
+
+        // Assign Drawable to Button
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            // For Android versions below API 16
+            btnFollow.setBackgroundDrawable(drawable);
+        } else {
+            // For Android versions from API 16 and above
+            btnFollow.setBackground(drawable);
+        }
+    }
+
+    private void handleGetQuantityFollows(String idFollows,String type){
+        followsViewModel.getQuantityFollows(idFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<GetQuantityResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<GetQuantityResponse> response) {
+                if(response.getMessage().equals("Success") && response.getStatus()){
+                    GetQuantityResponse getQuantityResponse = response.getData();
+                    // update follower của người được theo dõi
+                    if(type.equals("follower")){
+                        int countFollower = getQuantityResponse.getQuantityFollower() + 1;
+                        RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
+                                getQuantityResponse.getId(), countFollower,getQuantityResponse.getQuantityFollowing()
+                        );
+                        handleUpdateFollow(requestUpdateFollowsByFollower);
+                    } // update thông tin của người dùng hiện tại ( tăng số người đang theo dõi)
+                    else if (type.equals("following")) {
+                        int countFollowing = getQuantityResponse.getQuantityFollowing() + 1;
+                        RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
+                                getQuantityResponse.getId(), getQuantityResponse.getQuantityFollower(),countFollowing
+                        );
+                        handleUpdateFollow(requestUpdateFollowsByFollower);
+                    }
+                }
+            }
+        });
+    }
+
+    private void handleUpdateFollow(RequestUpdateFollows requestUpdateFollows){
+        followsViewModel.updateFollows(requestUpdateFollows);
+    }
+
+
 
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

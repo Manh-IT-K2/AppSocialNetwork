@@ -37,6 +37,7 @@ public class FollowingFragment extends Fragment {
     public FollowsViewModel followsViewModel;
     public LinearLayout linearLayout;
     ProgressBar progressBar;
+    String userId;
 
     public FollowingFragment() {
         // Required empty public constructor
@@ -64,7 +65,12 @@ public class FollowingFragment extends Fragment {
         // Hiển thị ProgressBar
         progressBar.setVisibility(View.VISIBLE);
         list_following.setVisibility(View.GONE);
-        String userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
+        // Nhận dữ liệu email từ Bundle
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            userId = bundle.getString("userId", "");
+        }
+        else userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
         followsViewModel.getUserFollowingById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
             @Override
             public void onChanged(ApiResponse<List<UserResponse>> response) {

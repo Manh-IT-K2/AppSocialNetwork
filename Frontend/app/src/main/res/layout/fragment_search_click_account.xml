@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ProfileFragment">
+    tools:context=".fragments.Fragment_search_ClickAccount">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -76,25 +76,13 @@
                         app:civ_border_color="#76D1FA"
                         app:civ_border_width="1dp" />
 
-                    <ImageButton
-                        android:id="@+id/edit_profileImage"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_alignEnd="@id/profileImage"
-                        android:layout_alignBottom="@id/profileImage"
-                        android:background="@drawable/ic_circle"
-                        android:elevation="3dp"
-                        android:src="@drawable/ic_add"
-                        android:translationX="-15dp"
-                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
                 </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/countLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_weight="10"
-                    >
+                    android:layout_weight="10">
                     <LinearLayout
                         android:id="@+id/openFollowing"
                         android:layout_width="wrap_content"
@@ -220,7 +208,7 @@
                 android:id="@+id/followBtn"
                 android:layout_width="100dp"
                 android:layout_height="35dp"
-                android:background="@drawable/custom_button_profile"
+                android:background="@drawable/custom_button_background"
                 app:backgroundTint="@color/blue1"
                 android:textColor="#FFFFFF"
                 android:textSize="10sp"
