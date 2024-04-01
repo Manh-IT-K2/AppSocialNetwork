@@ -4,7 +4,6 @@ import com.example.Backend.Config.PusherConfig;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.PrivateChat.PrivateChatService;
@@ -43,7 +42,14 @@ public class PrivateChatController {
     @GetMapping("/get_list_mess")
     public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {
         List<PrivateChatWithMessagesResponse> list = privateChatService.getListChat(id);
+        pusherConfig.triggerEvent("Lastmessage", "update", privateChatService.getListChat(id));
         return new ApiResponse<>(true, "OK", list);
+    }
+    @GetMapping("/get_mess_private")
+    public ApiResponse<PrivateChatWithMessagesResponse> getLMessPrivate(@RequestParam String creatorId, @RequestParam String recipientId) throws Exception {
+        PrivateChatWithMessagesResponse response = privateChatService.getMessagesByPrivate(creatorId,recipientId);
+    //    pusherConfig.triggerEvent("getHisMess", "GetData", response);
+        return new ApiResponse<>(true, "OK", response);
     }
 
 

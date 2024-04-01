@@ -23,5 +23,9 @@ public class MessageViewModel extends ViewModel {
         return messageRepository.SendMessage(requestPrivateChat);
     }
 
+    public MutableLiveData<ApiResponse<PrivateChatWithMessagesResponse>> getMessagesByPrivate( String creatorId, String recipientId){
+        return messageRepository.getMessagesByPrivate(creatorId,recipientId);
+    }
+
 
 }
