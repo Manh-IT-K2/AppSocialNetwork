@@ -61,22 +61,21 @@
             android:textColor="@color/white"
             android:padding="10dp"
             android:elevation="4dp"
-            android:layout_toLeftOf="@id/search_user_btn"
+            android:layout_toLeftOf="@id/cancel_search_btn"
             android:id="@+id/seach_username_input"
             />
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/icon_search"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"
             app:tint="@color/blue1"
+            android:text="Cancel"
             android:padding="4dp"
             android:layout_margin="10dp"
-            android:id="@+id/search_user_btn"/>
-
-
+            android:id="@+id/cancel_search_btn"/>
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -86,5 +85,17 @@
         android:padding="10dp"
         android:id="@+id/user_recycler_view"
         />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_user_layout"
+        android:padding="10dp"
+        android:visibility="gone" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_search">
+    </RelativeLayout>
 
 </RelativeLayout>

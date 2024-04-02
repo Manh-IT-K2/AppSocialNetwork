@@ -44,4 +44,6 @@ public interface  UserService {
     Call<ApiResponse<UserResponse>> updateUser(@Body RequestUpdateUser request);
     @GET("user/getListUserName")
     Call<ApiResponse<List<String>>> getListUserName();
+    @GET("user/getUser_privateChat")
+    Call<ApiResponse<List<UserResponse>>> findUser_privatechat(@Query("u") String keyword);
 }

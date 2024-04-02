@@ -86,4 +86,9 @@ public class UserController {
         ApiResponse<List<String>> apiResponse = userService.getListUserName();
         return new ResponseEntity<ApiResponse<List<String>>>(apiResponse, HttpStatus.OK);
     }
+    @GetMapping("/getUser_privateChat")
+    public ResponseEntity<ApiResponse<List<User>>> getUser_privatechat(@RequestParam String u) throws Exception {
+        ApiResponse<List<User>> apiResponse = userService.findUser_privatechat(u);
+        return new ResponseEntity<ApiResponse<List<User>>>(apiResponse, HttpStatus.OK);
+    }
 }

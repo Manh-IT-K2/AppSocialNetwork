@@ -61,7 +61,7 @@ public class PrivateChatImpl implements PrivateChatService {
         }
     }
 
-//    @Override
+    //    @Override
 //    public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
 //        Criteria criteria = Criteria.where("privateChatId").is(id);
 //
@@ -75,40 +75,119 @@ public class PrivateChatImpl implements PrivateChatService {
 //        return (PrivateChatWithMessagesResponse) result.getMappedResults();
 //
 //    }
-@Override
-public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
-    Criteria criteria = Criteria.where("privateChatId").is(id);
+    @Override
+    public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) throws Exception {
+        Criteria criteria = Criteria.where("privateChatId").is(id);
 
-    Aggregation aggregation = Aggregation.newAggregation(
-            Aggregation.match(criteria),
-            Aggregation.lookup("users", "senderId", "_id", "sender"),
-            Aggregation.unwind("sender"),
-            Aggregation.project()
-                    .and("id").as("id")
-                    .and("content").as("content")
-                    .and("createdAt").as("createdAt")
-                    .and("urlFile").as("urlFile")
-    );
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.lookup("users", "senderId", "_id", "sender"),
+                Aggregation.unwind("sender"),
+                Aggregation.project()
+                        .and("id").as("id")
+                        .and("content").as("content")
+                        .and("createdAt").as("createdAt")
+                        .and("urlFile").as("urlFile")
+        );
 
-    AggregationResults<PrivateChatWithMessagesResponse> result = mongoTemplate.aggregate(aggregation, "messages", PrivateChatWithMessagesResponse.class);
-    List<PrivateChatWithMessagesResponse> mappedResults = result.getMappedResults();
-    if (!mappedResults.isEmpty()) {
-        return mappedResults.get(0);
-    } else {
-        throw new Exception("Private chat not found for id: " + id);
+        AggregationResults<PrivateChatWithMessagesResponse> result = mongoTemplate.aggregate(aggregation, "messages", PrivateChatWithMessagesResponse.class);
+        List<PrivateChatWithMessagesResponse> mappedResults = result.getMappedResults();
+        if (!mappedResults.isEmpty()) {
+            return mappedResults.get(0);
+        } else {
+            throw new Exception("Private chat not found for id: " + id);
+        }
     }
-}
+
+    @Override
+    public List<PrivateChatWithMessagesResponse> getListChat(String id) {
+        List<PrivateChatWithMessagesResponse> responses = new ArrayList<>();
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("creatorId").is(id),
+                Criteria.where("recipientId").is(id)
+        );
+        Query query = new Query(criteria);
+        List<PrivateChat> privateChats = mongoTemplate.find(query, PrivateChat.class);
+        for (PrivateChat chat : privateChats) {
+            String recipientId = chat.getCreatorId().equals(id) ? chat.getRecipientId() : chat.getCreatorId();
+            PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
+            User recipient = userService.findUserById(recipientId);
+            response.setRecipient(recipient);
+            List<MessageWithSenderInfo> messages = getMessageList(chat);
+            if (!messages.isEmpty()) {
+                MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);
+                String lastMessageContent = lastMessage != null ? lastMessage.getContent() : null;
+                Date lastMessageCreatedAt = lastMessage != null ? lastMessage.getCreatedAt() : null;
+                response.setLastMessage(lastMessageContent);
+                response.setLastMessageCreatedAt(lastMessageCreatedAt);
+            }
+            responses.add(response);
+        }
+        responses.sort(Comparator.comparing(PrivateChatWithMessagesResponse::getLastMessageCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+
+        return responses;
+    }
+    @Override
+    public PrivateChatWithMessagesResponse getMessagesByPrivate(String creatorId, String recipientId) throws Exception {
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("creatorId").is(creatorId).and("recipientId").is(recipientId),
+                Criteria.where("creatorId").is(recipientId).and("recipientId").is(creatorId)
+        );
+        Query query = new Query(criteria);
+        PrivateChat privateChat = mongoTemplate.findOne(query, PrivateChat.class);
+
+        PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
+
+        // Nếu cuộc trò chuyện đã được tạo, lấy danh sách tin nhắn và đặt nó vào response
+        if (privateChat != null) {
+            List<MessageWithSenderInfo> messages = getMessageList(privateChat);
+            response.setMessages(messages);
+        }
+        return response;
+    }
+
+    @Override
+    public PrivateChat UpdateLastMessage(String IdPrivateChat) throws Exception {
+
+        return null;
+    }
+    private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
+        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
+        List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
+        for (Message message : messages) {
+            MessageWithSenderInfo messageWithSenderInfo = new MessageWithSenderInfo();
+            messageWithSenderInfo.setContent(message.getContent());
+            messageWithSenderInfo.setId(message.getId());
+            messageWithSenderInfo.setPrivateChatId(message.getPrivateChatId());
+            messageWithSenderInfo.setCreatedAt(message.getCreatedAt());
+            messageWithSenderInfo.setUrlFile(message.getUrlFile());
+            messageWithSenderInfo.setGroupChatId(message.getGroupChatId());
+            messageWithSenderInfo.setSender(userService.findUserById(message.getSenderId()));
+            messageWithSenderInfos.add(messageWithSenderInfo);
+        }
+        return messageWithSenderInfos;
+    }
+
 
     @Override
     public PrivateChatWithMessagesResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception {
         String creatorId = requestChatPrtivate.getCreatorId();
         String recipientId = requestChatPrtivate.getRecipientId();
         Criteria criteria = new Criteria().orOperator(
-            Criteria.where("creatorId").is(creatorId).and("recipientId").is(recipientId),
-            Criteria.where("creatorId").is(recipientId).and("recipientId").is(creatorId)
-    );
+                Criteria.where("creatorId").is(creatorId).and("recipientId").is(recipientId),
+                Criteria.where("creatorId").is(recipientId).and("recipientId").is(creatorId)
+        );
         Query query = new Query(criteria);
         PrivateChat privateChat = mongoTemplate.findOne(query, PrivateChat.class);
+
+        if (privateChat == null) {
+            PrivateChat newPrivateChat = new PrivateChat();
+            newPrivateChat.setCreatorId(creatorId);
+            newPrivateChat.setRecipientId(recipientId);
+            mongoTemplate.save(newPrivateChat);
+            privateChat = newPrivateChat;
+        }
+
         Message newMessage = new Message();
         newMessage.setSenderId(requestChatPrtivate.getCreatorId());
         newMessage.setContent(requestChatPrtivate.getLastMessageSent());
@@ -122,78 +201,6 @@ public PrivateChatWithMessagesResponse getMessagesByPrivateChatId(String id) thr
         PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
         response.setMessages(messages);
         return response;
-
-}
-@Override
-public List<PrivateChatWithMessagesResponse> getListChat(String id) {
-    List<PrivateChatWithMessagesResponse> responses = new ArrayList<>();
-    Criteria criteria = new Criteria().orOperator(
-            Criteria.where("creatorId").is(id),
-            Criteria.where("recipientId").is(id)
-    );
-    Query query = new Query(criteria);
-    List<PrivateChat> privateChats = mongoTemplate.find(query, PrivateChat.class);
-    for (PrivateChat chat : privateChats) {
-        String recipientId = chat.getCreatorId().equals(id) ? chat.getRecipientId() : chat.getCreatorId();
-        PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
-        User recipient = userService.findUserById(recipientId);
-        response.setRecipient(recipient);
-        List<MessageWithSenderInfo> messages = getMessageList(chat);
-        if (!messages.isEmpty()) {
-            MessageWithSenderInfo lastMessage = messages.get(messages.size() - 1);
-            String lastMessageContent = lastMessage != null ? lastMessage.getContent() : null;
-            Date lastMessageCreatedAt = lastMessage != null ? lastMessage.getCreatedAt() : null;
-            response.setLastMessage(lastMessageContent);
-            response.setLastMessageCreatedAt(lastMessageCreatedAt);
-        }
-        responses.add(response);
-    }
-    responses.sort(Comparator.comparing(PrivateChatWithMessagesResponse::getLastMessageCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
-
-    return responses;
-}
-    @Override
-    public PrivateChatWithMessagesResponse getMessagesByPrivate(String creatorId, String recipientId) throws Exception {
-        Criteria criteria = new Criteria().orOperator(
-                Criteria.where("creatorId").is(creatorId).and("recipientId").is(recipientId),
-                Criteria.where("creatorId").is(recipientId).and("recipientId").is(creatorId)
-        );
-        Query query = new Query(criteria);
-        PrivateChat privateChat = mongoTemplate.findOne(query, PrivateChat.class);
-
-        if (privateChat != null) {
-            List<MessageWithSenderInfo> messages = getMessageList(privateChat);
-            PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
-            response.setMessages(messages);
-
-            return response;
-        } else {
-            throw new Exception("Private chat not found for creatorId: " + creatorId + " and recipientId: " + recipientId);
-        }
-    }
-
-    @Override
-    public PrivateChat UpdateLastMessage(String IdPrivateChat) throws Exception {
-
-       return null;
-    }
-
-
-    private List<MessageWithSenderInfo> getMessageList(PrivateChat privateChat) {
-            List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("privateChatId").is(privateChat.getId())), Message.class);
-            List<MessageWithSenderInfo> messageWithSenderInfos = new ArrayList<>();
-        for (Message message : messages) {
-            MessageWithSenderInfo messageWithSenderInfo = new MessageWithSenderInfo();
-            messageWithSenderInfo.setContent(message.getContent());
-            messageWithSenderInfo.setId(message.getId());
-            messageWithSenderInfo.setPrivateChatId(message.getPrivateChatId());
-            messageWithSenderInfo.setCreatedAt(message.getCreatedAt());
-            messageWithSenderInfo.setUrlFile(message.getUrlFile());
-            messageWithSenderInfo.setGroupChatId(message.getGroupChatId());
-            messageWithSenderInfo.setSender(userService.findUserById(message.getSenderId()));
-            messageWithSenderInfos.add(messageWithSenderInfo);
-        }
-        return messageWithSenderInfos;
     }
 
 }
