@@ -1,66 +1,98 @@
 package com.example.frontend.fragments;
-
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
 import com.example.frontend.R;
+import com.example.frontend.adapter.ViewMemberAdapter;
+import com.example.frontend.repository.UserRepository;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewMembers_GroupChat#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ViewMembers_GroupChat extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ViewMembers_GroupChat() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ViewMembers_GroupChat.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ViewMembers_GroupChat newInstance(String param1, String param2) {
-        ViewMembers_GroupChat fragment = new ViewMembers_GroupChat();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private UserRepository userRepository;
+    private String groupId;
+    private String groupName;
+    private TextView edtGroupName;
+    private ListView listViewFriends;
+    private ImageButton btnBack;
+    private ViewMemberAdapter memberListAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userRepository = new UserRepository();
+
+        // Nhận groupChatId và groupChatName từ Intent
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            groupId = getArguments().getString("groupChatId");
+            groupName = getArguments().getString("groupChatName");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_members__group_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_members__group_chat, container, false);
+
+        // Khởi tạo views từ layout
+        edtGroupName = view.findViewById(R.id.edtGroupName);
+        listViewFriends = view.findViewById(R.id.listViewFriends);
+
+        // Hiển thị groupName trên TextView edtGroupName
+        if (groupName != null) {
+            edtGroupName.setText(groupName);
+        }
+
+        // Khởi tạo adapter và đặt cho ListView
+        memberListAdapter = new ViewMemberAdapter(getContext(), new ArrayList<>());
+        listViewFriends.setAdapter(memberListAdapter);
+
+        // Lấy danh sách thành viên từ Intent và hiển thị lên ListView
+        ArrayList<String> memberIdList = getArguments().getStringArrayList("memberList");
+        Log.d("ds_id", memberIdList.get(0));
+        if (memberIdList != null) {
+            for (String memberId : memberIdList) {
+                getUserDetails(memberId);
+            }
+        }
+// Xử lý sự kiện khi nút back được nhấn
+        btnBack = view.findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Tắt Fragment hiện tại
+                getActivity().onBackPressed();
+            }
+        });
+        return view;
+    }
+
+    // Lấy thông tin chi tiết của người dùng từ UserRepository và cập nhật vào adapter
+    private void getUserDetails(String userId) {
+        MutableLiveData<ApiResponse<UserResponse>> userLiveData = userRepository.getDetailUserById(userId);
+        userLiveData.observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
+                if (userResponseApiResponse != null && userResponseApiResponse.getData() != null) {
+                    UserResponse user = userResponseApiResponse.getData();
+                    memberListAdapter.add(user);
+                    Log.d("user_of_group", user.getName());
+                } else {
+                    // Xử lý khi không nhận được thông tin người dùng
+                }
+            }
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.example.frontend.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.adapter.GroupChatAdapter;
+import com.example.frontend.fragments.ViewMembers_GroupChat;
 import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -134,7 +137,6 @@ public class ChatGroupActivity extends AppCompatActivity {
 
 
 
-        Log.d("ktra", currentUserId);
         btn_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +185,8 @@ public class ChatGroupActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.menu_view_members) {
-
+                    // Gọi phương thức hiển thị danh sách thành viên
+                    showGroupMembers();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_add_member) {
@@ -257,5 +260,27 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
     }
+    private void showGroupMembers() {
+        Intent intent = new Intent(ChatGroupActivity.this, ViewMembers_GroupChat.class);
+        intent.putExtra("groupChatId", groupId);
+        intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
+
+        // Tạo một danh sách chứa id của các thành viên
+        ArrayList<String> memberIdList = new ArrayList<>();
+        for (UserResponse member : Infor_GroupChat.getMembers()) {
+            memberIdList.add(member.getId());
+        }
+
+        // Truyền danh sách id qua Intent
+        intent.putStringArrayListExtra("memberIdList", memberIdList);
+        startActivity(intent);
+    }
+
+
+
+
+
+
+
 
 }
