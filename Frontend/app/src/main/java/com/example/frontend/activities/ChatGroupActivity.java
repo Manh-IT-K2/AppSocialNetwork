@@ -1,5 +1,6 @@
 package com.example.frontend.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ public class ChatGroupActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private GroupChatAdapter adapter;
     private EditText inputMessage;
-    private ImageButton btnSend,btn_Menu;
+    private ImageButton btnSend,btn_Menu,btn_back;
     private GroupChatViewModel groupChatViewModel;
     private TextView groupNameTextView;
     private RelativeLayout groupAvatarImageView;
@@ -55,7 +57,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_group);
 
 
-        String currentUserId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+        currentUserId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         // Lấy id của nhóm chat từ Intent
         groupId = getIntent().getStringExtra("groupChatId");
         String groupName = getIntent().getStringExtra("groupChatName");
@@ -70,6 +72,8 @@ public class ChatGroupActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.chat_recycler_view);
         inputMessage = findViewById(R.id.chat_message_input);
         btnSend = findViewById(R.id.message_send_btn);
+        btn_back=findViewById(R.id.back_btn);
+        btn_Menu=findViewById(R.id.menu_btn);
 
         groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -80,6 +84,13 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         // Gửi tin nhắn khi nhấn nút gửi
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,30 +132,28 @@ public class ChatGroupActivity extends AppCompatActivity {
         // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
         loadChatHistory();
 
-        btn_Menu=findViewById(R.id.menu_btn);
+
+
+        Log.d("ktra", currentUserId);
         btn_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Tải thông tin nhóm trước khi hiển thị menu
-                loadGroupChatInfo();
-            }
-        });
-    }
-    private void loadGroupChatInfo() {
-        groupChatViewModel.getGroupChatById(groupId).observe(ChatGroupActivity.this, new Observer<GroupChatResponse>() {
-            @Override
-            public void onChanged(GroupChatResponse response) {
-                if (response != null) {
-                    // Xử lý khi nhận được phản hồi thành công
-                    Infor_GroupChat = response;
-                    // Đảm bảo rằng dữ liệu đã được tải
-                    isInforGroupChatLoaded = true;
-                    // Hiển thị menu sau khi thông tin nhóm đã được tải
-                    showPopupMenu(btn_Menu);
-                } else {
-                    // Xử lý khi nhận được thông báo lỗi
-                    Toast.makeText(ChatGroupActivity.this, "Failed to load group chat info", Toast.LENGTH_SHORT).show();
-                }
+                groupChatViewModel.getGroupChatById(groupId).observe(ChatGroupActivity.this, new Observer<GroupChatResponse>() {
+                    @Override
+                    public void onChanged(GroupChatResponse response) {
+                        if (response != null) {
+                            // Xử lý khi nhận được phản hồi thành công
+                            Infor_GroupChat = response;
+//                            Log.d("ktra1", Infor_GroupChat.getCreator().toString());
+                            // Đảm bảo rằng dữ liệu đã được tải
+                            isInforGroupChatLoaded = true;
+                        } else {
+                            // Xử lý khi nhận được thông báo lỗi
+                            Toast.makeText(ChatGroupActivity.this, "Failed to load group chat info", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                showPopupMenu(v);
             }
         });
     }
@@ -160,7 +169,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         popupMenu.getMenuInflater().inflate(R.menu.menu_group_chat, popupMenu.getMenu());
 
         // Kiểm tra xem currentUserId có phải là người tạo nhóm hay không
-        if (currentUserId.equals(Infor_GroupChat.getCreator().getId())) {
+        if (currentUserId.equals(Infor_GroupChat.getCreatorId())) {
             // Hiển thị tất cả các mục menu nếu là người tạo nhóm
         } else {
             // Ẩn mục menu "Xóa thành viên" và "Giải tán nhóm" nếu không phải là người tạo nhóm
@@ -169,31 +178,40 @@ public class ChatGroupActivity extends AppCompatActivity {
         }
 
         // Thiết lập sự kiện cho mỗi mục menu
-//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.menu_view_members:
-//                        // Xử lý khi nhấn vào "Xem thành viên"
-//                        return true;
-//                    case R.id.menu_add_member:
-//                        // Xử lý khi nhấn vào "Thêm thành viên"
-//                        return true;
-//                    case R.id.menu_remove_member:
-//                        // Xử lý khi nhấn vào "Xóa thành viên"
-//                        return true;
-//                    case R.id.menu_disband_group:
-//                        // Xử lý khi nhấn vào "Giải tán nhóm"
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//            }
-//        });
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.menu_view_members) {
+
+                    return true;
+                }
+                if (item.getItemId() == R.id.menu_add_member) {
+
+                    return true;
+                }
+                if (item.getItemId() == R.id.menu_remove_member) {
+
+                    return true;
+                }
+                if (item.getItemId() == R.id.menu_disband_group) {
+                    // Gọi hàm xử lý giải tán nhóm
+                    handleDisbandGroup();
+                    // Quay lại MainActivityChat mới
+                    Intent intent = new Intent(ChatGroupActivity.this, MainChatActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         // Hiển thị menu popup
         popupMenu.show();
+
     }
+
 
 
     private void loadChatHistory() {
@@ -219,4 +237,25 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
     }
+    private void handleDisbandGroup() {
+        groupChatViewModel.deleteGroupChat(groupId).observe(this, new Observer<ApiResponse<String>>() {
+            @Override
+            public void onChanged(ApiResponse<String> response) {
+                if (response != null && response.isSuccess()) {
+                    // Xử lý khi giải tán nhóm thành công
+                    Toast.makeText(ChatGroupActivity.this, "Group disbanded successfully", Toast.LENGTH_SHORT).show();
+                    // Kết thúc hoạt động và quay lại màn hình trước đó
+                    finish();
+                } else {
+                    // Xử lý khi không thể giải tán nhóm
+                    String errorMessage = "Failed to disband group";
+                    if (response != null && response.getMessage() != null) {
+                        errorMessage += ": " + response.getMessage();
+                    }
+                    Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 }

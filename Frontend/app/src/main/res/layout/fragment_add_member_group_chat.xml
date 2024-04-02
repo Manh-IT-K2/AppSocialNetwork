@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".fragments.AddMemberGroupChat"
+android:padding="16dp">
+
+<!-- Button back -->
+<ImageButton
+    android:id="@+id/btnBack"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:src="@drawable/ic_back" />
+<!-- EditText nhập tên nhóm -->
+<TextView
+    android:id="@+id/edtGroupName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/btnBack"
+    android:layout_marginLeft="25dp"
+    android:layout_marginTop="-20dp"
+    android:hint="Tên nhóm" />
+<!-- Button Tạo nhóm chat -->
+<Button
+    android:id="@+id/btnCreateGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="30dp"
+
+    android:drawableRight="@drawable/icon_add"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:text="Thêm thành viên" />
+<ListView
+    android:id="@+id/listViewFriends"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/btnCreateGroup"
+    android:layout_marginTop="16dp" />
+
+
+</RelativeLayout>

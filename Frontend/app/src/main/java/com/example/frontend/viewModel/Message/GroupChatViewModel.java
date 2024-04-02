@@ -49,8 +49,10 @@ public class GroupChatViewModel extends ViewModel {
     public LiveData<List<GroupChatWithMessagesResponse>> getListChat(String userId) {
         return groupChatRepository.getListChat(userId);
     }
+
     public LiveData<GroupChatResponse> getGroupChatById(String groupChatId) {
         return groupChatRepository.getGroupChatById(groupChatId);
     }
+
 
 }

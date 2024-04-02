@@ -7,16 +7,16 @@ import java.util.List;
 public class GroupChatResponse {
     private String id;
     private String groupName;
-    private UserResponse creator;
+    private String creatorId; // Thay đổi từ creator thành creatorId
     private List<UserResponse> members;
 
     public GroupChatResponse() {
     }
 
-    public GroupChatResponse(String id, String groupName, UserResponse creator, List<UserResponse> members) {
+    public GroupChatResponse(String id, String groupName, String creatorId, List<UserResponse> members) {
         this.id = id;
         this.groupName = groupName;
-        this.creator = creator;
+        this.creatorId = creatorId; // Thay đổi creator thành creatorId
         this.members = members;
     }
 
@@ -36,12 +36,12 @@ public class GroupChatResponse {
         this.groupName = groupName;
     }
 
-    public UserResponse getCreator() {
-        return creator;
+    public String getCreatorId() { // Thay đổi getCreator thành getCreatorId
+        return creatorId;
     }
 
-    public void setCreator(UserResponse creator) {
-        this.creator = creator;
+    public void setCreatorId(String creatorId) { // Thay đổi setCreator thành setCreatorId
+        this.creatorId = creatorId;
     }
 
     public List<UserResponse> getMembers() {
@@ -51,4 +51,16 @@ public class GroupChatResponse {
     public void setMembers(List<UserResponse> members) {
         this.members = members;
     }
+    @Override
+    public String toString() {
+        return "GroupChatResponse{" +
+                "id='" + id + '\'' +
+                ", groupName='" + groupName + '\'' +
+                ", creator='" + creatorId + '\'' +
+                ", members=" + members +
+                '}';
+    }
 }
+
+
+
