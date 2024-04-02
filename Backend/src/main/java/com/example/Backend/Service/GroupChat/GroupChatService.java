@@ -17,4 +17,5 @@ public interface GroupChatService {
     ApiResponse<String> deleteGroupChat(RequestDeleteGroupChat requestDeleteGroupChat) throws Exception;
     void updateLastMessage(String groupChatId, String lastMessage);
     List<GroupChatWithMessagesResponse> getListChatGroup(String userId);
+    GroupChatResponse getGroupChatById(String id);
 }

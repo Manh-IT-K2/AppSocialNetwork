@@ -3,10 +3,12 @@ package com.example.frontend.activities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.GroupChatAdapter;
 import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
@@ -35,7 +38,7 @@ public class ChatGroupActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private GroupChatAdapter adapter;
     private EditText inputMessage;
-    private ImageButton btnSend;
+    private ImageButton btnSend,btn_Menu;
     private GroupChatViewModel groupChatViewModel;
     private TextView groupNameTextView;
     private RelativeLayout groupAvatarImageView;
@@ -43,6 +46,8 @@ public class ChatGroupActivity extends AppCompatActivity {
     private String currentUserId; // Thêm biến để lưu trữ ID của người dùng hiện tại
     private String message;
 
+    private GroupChatResponse Infor_GroupChat;
+    private boolean isInforGroupChatLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +72,6 @@ public class ChatGroupActivity extends AppCompatActivity {
         btnSend = findViewById(R.id.message_send_btn);
 
         groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
@@ -116,6 +120,79 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
         loadChatHistory();
+
+        btn_Menu=findViewById(R.id.menu_btn);
+        btn_Menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Tải thông tin nhóm trước khi hiển thị menu
+                loadGroupChatInfo();
+            }
+        });
+    }
+    private void loadGroupChatInfo() {
+        groupChatViewModel.getGroupChatById(groupId).observe(ChatGroupActivity.this, new Observer<GroupChatResponse>() {
+            @Override
+            public void onChanged(GroupChatResponse response) {
+                if (response != null) {
+                    // Xử lý khi nhận được phản hồi thành công
+                    Infor_GroupChat = response;
+                    // Đảm bảo rằng dữ liệu đã được tải
+                    isInforGroupChatLoaded = true;
+                    // Hiển thị menu sau khi thông tin nhóm đã được tải
+                    showPopupMenu(btn_Menu);
+                } else {
+                    // Xử lý khi nhận được thông báo lỗi
+                    Toast.makeText(ChatGroupActivity.this, "Failed to load group chat info", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    private void showPopupMenu(View v) {
+        // Kiểm tra xem dữ liệu nhóm chat đã được tải chưa
+        if (!isInforGroupChatLoaded) {
+            // Nếu chưa, không hiển thị menu
+            Toast.makeText(ChatGroupActivity.this, "Group chat info is loading. Please try again later.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_group_chat, popupMenu.getMenu());
+
+        // Kiểm tra xem currentUserId có phải là người tạo nhóm hay không
+        if (currentUserId.equals(Infor_GroupChat.getCreator().getId())) {
+            // Hiển thị tất cả các mục menu nếu là người tạo nhóm
+        } else {
+            // Ẩn mục menu "Xóa thành viên" và "Giải tán nhóm" nếu không phải là người tạo nhóm
+            popupMenu.getMenu().findItem(R.id.menu_remove_member).setVisible(false);
+            popupMenu.getMenu().findItem(R.id.menu_disband_group).setVisible(false);
+        }
+
+        // Thiết lập sự kiện cho mỗi mục menu
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.menu_view_members:
+//                        // Xử lý khi nhấn vào "Xem thành viên"
+//                        return true;
+//                    case R.id.menu_add_member:
+//                        // Xử lý khi nhấn vào "Thêm thành viên"
+//                        return true;
+//                    case R.id.menu_remove_member:
+//                        // Xử lý khi nhấn vào "Xóa thành viên"
+//                        return true;
+//                    case R.id.menu_disband_group:
+//                        // Xử lý khi nhấn vào "Giải tán nhóm"
+//                        return true;
+//                    default:
+//                        return false;
+//                }
+//            }
+//        });
+
+        // Hiển thị menu popup
+        popupMenu.show();
     }
 
 

@@ -199,5 +199,19 @@ public class GroupChatServiceImpl implements GroupChatService {
 
         return groupChatsWithMessages;
     }
+    @Override
+    public GroupChatResponse getGroupChatById(String id) {
+        GroupChat groupChat = mongoTemplate.findById(id, GroupChat.class);
+        if (groupChat == null) {
+            return null; // hoặc có thể trả về một giá trị mặc định hoặc báo lỗi tùy vào yêu cầu của bạn
+        }
+
+        GroupChatResponse groupChatResponse = new GroupChatResponse();
+        groupChatResponse.setId(groupChat.getId());
+        groupChatResponse.setCreatorId(groupChat.getCreatorId());
+        groupChatResponse.setGroupName(groupChat.getGroupName());
+        groupChatResponse.setMembers(userService.findUsersByIds(groupChat.getMemberIds()));
+        return groupChatResponse;
+    }
 
 }

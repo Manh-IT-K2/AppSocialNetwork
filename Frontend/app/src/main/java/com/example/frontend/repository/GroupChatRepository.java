@@ -207,6 +207,30 @@ public class GroupChatRepository {
 
         return mutableLiveData;
     }
+    public LiveData<GroupChatResponse> getGroupChatById(String groupChatId) {
+        MutableLiveData<GroupChatResponse> mutableLiveData = new MutableLiveData<>();
+
+        groupChatService.getGroupChatById(groupChatId).enqueue(new Callback<GroupChatResponse>() {
+            @Override
+            public void onResponse(Call<GroupChatResponse> call, Response<GroupChatResponse> response) {
+                if (response.isSuccessful()) {
+                    GroupChatResponse groupChatResponse = response.body();
+                    mutableLiveData.setValue(groupChatResponse);
+                } else {
+                    Log.e("GroupChatRepository", "HTTP response not successful: " + response.code());
+                    // Xử lý khi phản hồi HTTP không thành công
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GroupChatResponse> call, Throwable t) {
+                Log.e("GroupChatRepository", "Failed to get group chat by id: " + t.getMessage(), t);
+                // Xử lý khi gặp lỗi
+            }
+        });
+
+        return mutableLiveData;
+    }
 
 
 }

@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_view_members"
+        android:title="View Members" />
+    <item
+        android:id="@+id/menu_add_member"
+        android:title="Add Member" />
+    <item
+        android:id="@+id/menu_remove_member"
+        android:title="Remove Member" />
+    <item
+        android:id="@+id/menu_disband_group"
+        android:title="Disband Group" />
+</menu>
