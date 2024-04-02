@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ProfileFragment">
+    tools:context=".fragments.ProfileFragment"
+    android:orientation="vertical">
    <LinearLayout
        android:orientation="vertical"
        android:layout_width="match_parent"
@@ -78,7 +79,6 @@
             </LinearLayout>
         </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
-
         <LinearLayout
            android:id="@+id/linear_1"
             android:layout_width="match_parent"
@@ -143,7 +143,6 @@
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimary" />
                         <TextView
-
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="following"
@@ -169,7 +168,6 @@
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimary" />
                         <TextView
-
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="follower"
@@ -194,7 +192,6 @@
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimary" />
                         <TextView
-
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="post"
@@ -203,12 +200,8 @@
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimary" />
                     </LinearLayout>
-
-
-
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -283,22 +276,93 @@
                     android:textSize="10sp"
                     android:text="Log out"/>
        </LinearLayout>
-
-       <View
-           android:id="@+id/view2"
-           android:layout_width="match_parent"
-           android:layout_height="1dp"
-           android:layout_marginTop="14dp"
-           android:background="#575656" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@+id/view" >
-
-    </androidx.recyclerview.widget.RecyclerView>
    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_avtUser"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                tools:srcCompat="@drawable/img_user"
+                app:strokeColor="@color/blue1"
+                app:strokeWidth="2dp"
+                android:padding="3dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                app:shapeAppearanceOverlay="@style/circle_image"/>
+            <TextView
+                android:id="@+id/txt_nameUserStory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:text="Why ?"
+                android:textSize="13dp">
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:gravity="center">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_avtUser1"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                tools:srcCompat="@drawable/img_user"
+                app:strokeColor="@color/blue1"
+                app:strokeWidth="2dp"
+                android:padding="3dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                app:shapeAppearanceOverlay="@style/circle_image"/>
+            <TextView
+                android:id="@+id/txt_nameUserStory1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:text="So ?"
+                android:textSize="13dp">
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
+    <!-- MEDIA -->
+    <LinearLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/media_menu"
+            app:itemIconSize="25dp"
+            app:labelVisibilityMode="unlabeled"
+            android:background="@color/zxing_transparent">
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
+    </LinearLayout>
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#575656" />
+    <FrameLayout
+        android:id="@+id/fragment_layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 </LinearLayout>
