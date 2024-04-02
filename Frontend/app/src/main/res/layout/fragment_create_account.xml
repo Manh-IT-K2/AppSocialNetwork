@@ -1,103 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".fragments.CreateAccountFragment">
-
-        <TextView
-            android:id="@+id/titleTV"
+    android:layout_height="match_parent"
+    tools:context=".fragments.CreateAccountFragment"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@color/colorPrimaryDark">
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="35sp"
-            android:text="Create \nAccount"
-            android:textColor="@color/blue1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="60dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"/>
-
+            android:src="@drawable/create_account"/>
         <LinearLayout
             android:id="@+id/ll1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/titleTV"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/sendOTPBtn"
-            android:layout_margin="10dp">
-
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp">
             <EditText
                 android:id="@+id/nameET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:background="@drawable/text_box"
                 android:hint="Name"
                 android:textColor="@color/white"
-                android:textColorHint="#77FFFF99"
-                android:padding="18dp"
-                android:textSize="20dp" />
+                android:textColorHint="#a0a0a0"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="15dp"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/emailET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="15dp"
                 android:background="@drawable/text_box"
                 android:textColor="@color/white"
-                android:textColorHint="#77FFFF99"
+                android:textColorHint="#a0a0a0"
                 android:hint="Email"
-                android:padding="18dp"
-                android:textSize="20dp" />
+                android:textSize="18sp"
+                tools:ignore="Autofill" />
 
             <EditText
                 android:id="@+id/passwordET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="15dp"
                 android:background="@drawable/text_box"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:textColorHint="#77FFFF99"
-                android:padding="18dp"
-                android:textSize="20dp" />
+                android:textColorHint="#a0a0a0"
+                android:textSize="18sp"
+                tools:ignore="Autofill" />
 
             <EditText
                 android:id="@+id/confirmPassET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="15dp"
                 android:background="@drawable/text_box"
-                android:hint="Confirm Password"
+                android:hint="Confirm password"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:textColorHint="#77FFFF99"
-                android:padding="18dp"
-                android:textSize="20dp" />
+                android:textColorHint="#a0a0a0"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/otpET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="15dp"
                 android:background="@drawable/text_box"
                 android:hint="OTP"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:textColorHint="#77FFFF99"
-                android:padding="18dp"
-                android:textSize="20dp"/>
+                android:textColorHint="#a0a0a0"
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
@@ -105,58 +111,47 @@
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/ll1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:visibility="invisible"
             android:layout_marginTop="10dp" />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
         <Button
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
             android:id="@+id/sendOTPBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Send OTP"
-            android:backgroundTint="@color/blue1"
-            android:textColor="#fff"
-            android:textSize="25sp"
-            app:layout_constraintTop_toBottomOf="@+id/ll1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/signUpBtn"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="60dp"/>
-
-        <Button
-            android:id="@+id/signUpBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Sign up"
-            android:backgroundTint="@color/blue1"
-            android:textColor="#fff"
-            android:textSize="25sp"
-            app:layout_constraintTop_toBottomOf="@+id/ll1"
-            app:layout_constraintStart_toEndOf="@+id/sendOTPBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="60dp" />
-
-        <TextView
-            android:id="@+id/loginTV"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back to Login"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue1"
-            app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="50dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            android:layout_height="40dp"
+            android:text="Send OTP"
+            android:background="@drawable/custom_btn_send_otp"
+            app:backgroundTint="@null"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            tools:ignore="ButtonStyle" />
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/signUpBtn"
+            android:layout_marginEnd="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Sign up"
+            app:backgroundTint="@null"
+            android:background="@drawable/custom_btn_login"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            tools:ignore="ButtonStyle" />
+    </LinearLayout>
+    <TextView
+        android:layout_marginTop="30dp"
+        android:id="@+id/loginTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back to login"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue1"/>
+</LinearLayout>
