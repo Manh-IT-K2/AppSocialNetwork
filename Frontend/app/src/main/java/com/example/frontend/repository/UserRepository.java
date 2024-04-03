@@ -248,10 +248,9 @@ public class UserRepository {
         if (request == null) {
             // Xử lý khi request là null
             Log.e("changePW", "Request is null");
+            mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request is null", null));
             return mutableLiveData;
         }
-
-        Log.d("log1", request.getEmail());
 
         userService.changePW(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
@@ -261,9 +260,8 @@ public class UserRepository {
                     mutableLiveData.setValue(apiResponse);
                 } else {
                     // Xử lý khi phản hồi không thành công
-                    Log.d("changePW", "Request failed: " + response.code());
-                    // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
-                    mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+                    String errorMessage = "Request failed with code: " + response.code();
+                    mutableLiveData.setValue(new ApiResponse<UserResponse>(false, errorMessage, null));
                 }
             }
 
@@ -271,13 +269,14 @@ public class UserRepository {
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 // Xử lý khi gọi API thất bại
                 Log.e("changePW", "Request failed", t);
-                // Gửi ApiResponse với trạng thái lỗi và thông báo lỗi
-                mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed:" , null));
+                mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed: " + t.getMessage(), null));
             }
         });
 
         return mutableLiveData;
     }
+
+
 
     public MutableLiveData<ApiResponse<List<UserResponse>>> getRequestTrackingUser() {
         MutableLiveData<ApiResponse<List<UserResponse>>> mutableLiveData = new MutableLiveData<>();

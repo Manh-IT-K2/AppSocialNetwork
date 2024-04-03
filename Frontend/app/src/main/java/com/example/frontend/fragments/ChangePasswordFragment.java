@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.example.frontend.R;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.viewModel.User.UserViewModel;
 
 
@@ -55,6 +58,7 @@ public class ChangePasswordFragment extends Fragment {
         if (bundle != null) {
             email = bundle.getString("email", "");
         }
+        userViewModel= new UserViewModel();
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,22 +66,31 @@ public class ChangePasswordFragment extends Fragment {
                 String confirm = confirmpass.getText().toString();
                 if (new_p.isEmpty() || confirm.isEmpty()) {
                     Toast.makeText(getContext(), "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                }else if(!new_p.equals(confirm)){
+                } else if (!new_p.equals(confirm)) {
                     Toast.makeText(getContext(), "Cofirm mật khẩu không đúng", Toast.LENGTH_SHORT).show();
-                }else {
-                    userViewModel.changePW(new RequestChangePW(email, new_p));
-//                    // Tạo một Bundle để đóng gói dữ liệu email
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("email", email);
-//                    // Tạo Fragment mới và gắn Bundle vào đó
-//                    LoginFragment login = new LoginFragment();
-//                    login.setArguments(bundle);
-                    // Chuyển sang fragment login
-                    ((FragmentReplacerActivity) requireActivity()).setFragment(new LoginFragment());
+                } else {
+                    if (userViewModel != null) {
+                        userViewModel.changePW(new RequestChangePW(new_p, email)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                            @Override
+                            public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
+                                if (userResponseApiResponse.isStatus()) {
+                                    // Thành công
+                                    Toast.makeText(getContext(), "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                                    // Chuyển sang fragment login
+                                    ((FragmentReplacerActivity) requireActivity()).setFragment(new LoginFragment());
+                                } else {
+                                    // Thất bại
+                                    Toast.makeText(getContext(), "Xảy ra lỗi, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "UserViewModel chưa được khởi tạo", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
             }
         });
+
         return view;
     }
 }
