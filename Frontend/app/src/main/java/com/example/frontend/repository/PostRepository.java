@@ -39,9 +39,6 @@ public class PostRepository {
                     mutableLiveData.setValue(apiResponse);
                     Log.d("create","success");
                 } else {
-                    // Xử lý khi phản hồi không thành công
-                    // Ví dụ: Lấy mã lỗi HTTP và thông báo lỗi
-                    Log.d("create","err");
                     int errorCode = response.code();
                     Log.d("create",String.valueOf(errorCode));
                     String errorMessage = "Error occurred with code: " + errorCode;
@@ -49,11 +46,8 @@ public class PostRepository {
                     mutableLiveData.setValue(errorResponse);
                 }
             }
-
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
-                Log.d("create","failure");
                 String errorMessage = "Failed to create post: " + t.getMessage();
                 ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
                 mutableLiveData.setValue(errorResponse);
@@ -73,14 +67,11 @@ public class PostRepository {
                     String json = gson.toJson(apiResponse);
                     mutableLiveData.setValue(apiResponse);
                 } else {
-                    // Xử lý khi phản hồi không thành công
                     mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Failed to get data from server", null));
                 }
             }
-
             @Override
             public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
                 mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error: " + t.getMessage(), null));
             }
         });
@@ -97,19 +88,15 @@ public class PostRepository {
                     ApiResponse<PostResponse> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
                     Gson gson = new Gson();
-                    String dataaaa = gson.toJson(apiResponse);
-                    Log.d("add",dataaaa);
+                    String data = gson.toJson(apiResponse);
+                    Log.d("add",data);
                 } else {
-
-                    Log.d("create", "errr");
-
+                    mutableLiveData.setValue(new ApiResponse<>(false,"Failed add like", null));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
-                Log.e("giiii",t.getMessage());
-                mutableLiveData.setValue(new ApiResponse<PostResponse>(false, "Error: " + t.getMessage(), null));
+                mutableLiveData.setValue(new ApiResponse<PostResponse>(false, "Error add like: " + t.getMessage(), null));
             }
         });
         return mutableLiveData;

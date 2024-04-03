@@ -2,9 +2,8 @@ package com.example.Backend.Service.Comment;
 
 import com.example.Backend.Entity.Comment;
 import com.example.Backend.Entity.model.User;
-import com.example.Backend.Request.Comment.AddComment;
-import com.example.Backend.Request.Comment.DeleteComment;
-import com.google.gson.Gson;
+import com.example.Backend.Request.Comment.RequestCreateComment;
+import com.example.Backend.Request.Comment.RequestDeleteComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,8 +18,10 @@ import java.util.List;
 public class CommentImpl implements CommentService {
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    // create comment
     @Override
-    public Comment addComment(AddComment addComment) throws Exception {
+    public Comment createComment(RequestCreateComment addComment) throws Exception {
         Query query = new Query(Criteria.where("_id").is(addComment.getIdUser()));
         User user = mongoTemplate.findOne(query, User.class, "users");
 
@@ -44,7 +45,6 @@ public class CommentImpl implements CommentService {
                 if(commentQuery.getReplyComment() == null) {
                     commentQuery.setReplyComment(new ArrayList<>());
                 }
-
                 comment.setId(comment.generateId());
                 commentQuery.getReplyComment().add(comment);
                 return mongoTemplate.save(commentQuery, "comments");
@@ -53,8 +53,9 @@ public class CommentImpl implements CommentService {
         return mongoTemplate.save(comment, "comments");
     }
 
+    // delete comment
     @Override
-    public void deleteComment(DeleteComment deleteComment) throws Exception {
+    public void deleteComment(RequestDeleteComment deleteComment) throws Exception {
         Query query = new Query(Criteria.where("_id").is(deleteComment.getIdComment()));
         Comment comment = mongoTemplate.findOne(query, Comment.class, "comments");
 
@@ -68,6 +69,7 @@ public class CommentImpl implements CommentService {
         }
     }
 
+    // get lít comment by post
     @Override
     public List<Comment> getListCommentByIdPost(String id) throws Exception {
         Query query = new Query(Criteria.where("idPost").is(id));

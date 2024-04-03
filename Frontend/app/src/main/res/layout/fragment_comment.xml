@@ -34,13 +34,15 @@
     <TextView
         android:id="@+id/textView9"
         android:layout_width="match_parent"
-        android:layout_height="0.1dp"
+        android:layout_height="0.5dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/btn_drag_comment" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="3dp"
+        android:id="@+id/list_comment"
         android:layout_width="match_parent"
-        android:layout_height="450dp" />
+        android:layout_height="400dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,16 +59,15 @@
             tools:ignore="Suspicious0dp" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_iconComment"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="50dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="horizontal">
-
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_user"
@@ -78,7 +79,7 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <EditText
-                android:id="@+id/editTextText"
+                android:id="@+id/edt_contentComment"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="10dp"
@@ -89,13 +90,15 @@
                 android:textColor="@color/grey"
                 android:textSize="13sp"
                 android:textStyle="italic" />
+
             <ImageView
+                android:id="@+id/btn_createComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
                 android:src="@drawable/icon_gradient_send" />
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/btn_sendGifComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
