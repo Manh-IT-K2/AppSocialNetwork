@@ -2,10 +2,9 @@ package com.example.Backend.Service.Post;
 
 import com.example.Backend.Entity.Post;
 import com.example.Backend.Entity.model.User;
-import com.example.Backend.Request.Post.RequestPost;
+import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,7 +30,7 @@ public class PostIml implements PostService{
 
     // create post
     @Override
-    public void createPost(RequestPost requestPost, String userId) throws Exception {
+    public void createPost(RequestCreatePost requestPost, String userId) throws Exception {
         Post post = new Post();
         ObjectId objectId = new ObjectId(userId);
         post.setUserId(objectId);

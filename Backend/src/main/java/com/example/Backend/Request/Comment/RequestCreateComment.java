@@ -1,4 +1,5 @@
 package com.example.Backend.Request.Comment;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +9,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteComment {
+public class RequestCreateComment {
     String idPost;
-    String idComment;
+    String idUser;
+    String content;
     Boolean isReplyComment;
-    String idReplyComment;
+    String idComment;
+    String idUserReply;
 }

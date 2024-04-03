@@ -180,16 +180,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             linear_layout_drag_Post = itemView.findViewById(R.id.linear_layout_drag_Post);
             txt_liked = itemView.findViewById(R.id.txt_liked);
 
-            //
+            // action click btn_comment display screen comment
             btn_comment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Hiển thị màn hình comment bằng cách sử dụng một Dialog
-                    CommentFragment dialog = new CommentFragment(mContext);
+                    int position = getAdapterPosition();
+                    RequestPostByUserId post = listPost.get(position);
+                    String idPost = post.getIdPost();
+                    CommentFragment dialog = new CommentFragment(mContext, idPost);
                     dialog.show();
                 }
             });
 
+            // action click like post
             btn_like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

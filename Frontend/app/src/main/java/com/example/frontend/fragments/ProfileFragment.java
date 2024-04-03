@@ -101,9 +101,6 @@ public class ProfileFragment extends Fragment {
         } else userId = SharedPreferenceLocal.read(getContext(),"userId");
         Log.e("iddau", userId);
 
-        }
-        else userId = SharedPreferenceLocal.read(getContext(),"userId");
-
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
