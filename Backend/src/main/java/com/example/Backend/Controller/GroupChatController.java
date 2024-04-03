@@ -1,5 +1,6 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.Config.PusherConfig;
 import com.example.Backend.Request.GroupChat.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatResponse;
@@ -18,6 +19,11 @@ public class GroupChatController {
 
     @Autowired
     private GroupChatService groupChatService;
+    private PusherConfig pusherConfig;
+    @Autowired
+    public GroupChatController(PusherConfig pusherService) {
+        this.pusherConfig = pusherService;
+    }
 
     @PostMapping("/create")
     public ApiResponse<GroupChatResponse> createGroupChat(@RequestBody RequestCreateGroupChat request) {
@@ -28,6 +34,8 @@ public class GroupChatController {
     @GetMapping("/{groupChatId}/messages")
     public ApiResponse<GroupChatWithMessagesResponse> getMessagesByGroupChatId(@PathVariable String groupChatId) throws Exception {
         GroupChatWithMessagesResponse response = groupChatService.getMessagesByGroupChatId(groupChatId);
+        // Gửi sự kiện lên Pusher
+//        pusherConfig.triggerEvent("GroupChat", "message_sent", response);
         return new ApiResponse<>(true, "", response);
     }
 
@@ -35,6 +43,8 @@ public class GroupChatController {
     public ApiResponse<GroupChatWithMessagesResponse> sendMessage(@PathVariable String groupChatId, @RequestBody RequestChatGroup request) throws Exception {
         request.setGroupId(groupChatId);
         GroupChatWithMessagesResponse response = groupChatService.sendMessage(request);
+        // Gửi sự kiện lên Pusher
+//        pusherConfig.triggerEvent("GroupChat", "send_chatgroup", response);
         return new ApiResponse<>(true, "Message sent successfully", response);
     }
     @PostMapping("/{groupChatId}/add_member")
@@ -80,6 +90,7 @@ public class GroupChatController {
     @GetMapping("/{groupChatId}")
     public ResponseEntity<GroupChatResponse> getGroupChatById(@PathVariable String groupChatId) {
         GroupChatResponse response = groupChatService.getGroupChatById(groupChatId);
+//        pusherConfig.triggerEvent("GroupChat", "send_chatgroup", response);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {

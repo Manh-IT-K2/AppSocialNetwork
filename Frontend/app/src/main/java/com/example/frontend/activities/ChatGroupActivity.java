@@ -29,11 +29,17 @@ import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.MessageWithSenderInfo;
+import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.firebase.firestore.auth.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +59,7 @@ public class ChatGroupActivity extends AppCompatActivity {
 
     private GroupChatResponse Infor_GroupChat;
     private boolean isInforGroupChatLoaded = false;
+    private Pusher pusher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +121,31 @@ public class ChatGroupActivity extends AppCompatActivity {
                                 adapter.addMessage(chatWithMessagesResponse);
                                 // Cuộn đến tin nhắn mới nhất
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+
+                                pusher = PusherClient.init();
+                                pusher.connect();
+                                pusher.subscribe("GroupChat")
+                                        .bind("send_chatgroup", (channelName, eventName, data) -> {
+                                            try {
+                                                Gson gson = new GsonBuilder()
+                                                        .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+                                                        .create();
+                                                String jsonData = data.toString();
+                                                GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
+                                                List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
+                                                Toast.makeText(ChatGroupActivity.this, messages.get(0).getContent(), Toast.LENGTH_SHORT).show();
+                                                if (messages != null && !messages.isEmpty()) {
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            adapter.setMessages(messages);
+                                                        }
+                                                    });
+                                                }
+                                            } catch (Exception e) {
+                                                Log.d("trycatch", new Gson().toJson(e));
+                                            }
+                                        });
                             }
                             // Xóa nội dung tin nhắn sau khi gửi
                             inputMessage.setText("");
