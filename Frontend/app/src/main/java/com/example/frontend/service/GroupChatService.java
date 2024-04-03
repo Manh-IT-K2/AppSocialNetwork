@@ -35,5 +35,6 @@ public interface GroupChatService {
     Call<ApiResponse<String>> deleteGroupChat(@Path("groupChatId") String groupChatId);
     @GET("/api/group_chat/list_chat/{userId}")
     Call<List<GroupChatWithMessagesResponse>> getListChat(@Path("userId") String userId);
-
+    @GET("/api/group_chat/{groupChatId}")
+    Call<GroupChatResponse> getGroupChatById(@Path("groupChatId") String groupChatId);
 }

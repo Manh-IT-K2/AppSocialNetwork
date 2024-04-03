@@ -312,4 +312,21 @@ public class UserImpl implements UserService {
             return new ApiResponse<>(false, "Group chat not found", null);
         }
     }
+    @Override
+    public ApiResponse<List<User>> findUser_privatechat(String u) {
+        // Tạo một mẫu regex cho tìm kiếm gần đúng
+        String regexPattern = ".*" + u + ".*";
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("username").regex(regexPattern, "i"),
+                Criteria.where("name").regex(regexPattern, "i")
+        );
+        Query query = new Query(criteria); // "i" để không phân biệt chữ hoa chữ thường
+
+        List<User> matchedUsers = mongoTemplate.find(query, User.class);
+        if (!matchedUsers.isEmpty()) {
+            return new ApiResponse<List<User>>(true, "Users found", matchedUsers);
+        } else {
+            return new ApiResponse<>(false, "Users not found", null);
+        }
+    }
 }

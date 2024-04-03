@@ -77,5 +77,14 @@ public class GroupChatController {
         // Trả về danh sách các cuộc trò chuyện nhóm kèm theo thông tin tin nhắn gần đây nhất
         return new ResponseEntity<>(groupChats, HttpStatus.OK);
     }
+    @GetMapping("/{groupChatId}")
+    public ResponseEntity<GroupChatResponse> getGroupChatById(@PathVariable String groupChatId) {
+        GroupChatResponse response = groupChatService.getGroupChatById(groupChatId);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
 
 }

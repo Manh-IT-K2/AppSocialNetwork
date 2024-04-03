@@ -3,20 +3,20 @@
     android:background="@color/black">
     <item
         android:id="@+id/menu_Followers"
-        android:title="Post"
         android:enabled="true"
-        android:icon="@drawable/icons8_grid">
+        android:title="Posts"
+        android:icon="@drawable/icon_grid">
     </item>
     <item
         android:id="@+id/menu_Following"
-        android:title="Watch"
         android:enabled="true"
-        android:icon="@drawable/icons8_watch">
+        android:title="Watch"
+        android:icon="@drawable/icon_reels">
     </item>
     <item
         android:id="@+id/menu_Subscriptions"
-        android:title="Of You"
         android:enabled="true"
-        android:icon="@drawable/icons8_user">
+        android:title="You liked"
+        android:icon="@drawable/icons_square">
     </item>
 </menu>

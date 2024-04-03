@@ -108,16 +108,17 @@ public class ProfileFragment extends Fragment {
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // Nhận dữ liệu email từ Bundle
-        Bundle bundle = getArguments();
-        if (bundle.getString("userId") != null){
-            userId = bundle.getString("userId", "");
-            qrcodeBtn.setVisibility(View.INVISIBLE);
-            logoutBtn.setVisibility(View.INVISIBLE);
-            menuSetting.setVisibility(View.INVISIBLE);
-            editprofileBtn.setVisibility(View.INVISIBLE);
-        } else if (bundle.getString("userIdLiked") != null) {
-            userId = bundle.getString("userIdLiked");
-        } else userId = SharedPreferenceLocal.read(getContext(),"userId");
+//        Bundle bundle = getArguments();
+//        if (bundle.getString("userId") != null){
+//            userId = bundle.getString("userId", "");
+//            qrcodeBtn.setVisibility(View.INVISIBLE);
+//            logoutBtn.setVisibility(View.INVISIBLE);
+//            menuSetting.setVisibility(View.INVISIBLE);
+//            editprofileBtn.setVisibility(View.INVISIBLE);
+//        } else if (bundle.getString("userIdLiked") != null) {
+//            userId = bundle.getString("userIdLiked");
+//        } else userId = SharedPreferenceLocal.read(getContext(),"userId");
+        userId = SharedPreferenceLocal.read(getContext(),"userId");
         Log.e("iddau", userId);
 
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
@@ -198,8 +199,13 @@ public class ProfileFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("username", usernameValue);
                 SettingFragment settingFragment = new SettingFragment();
-                settingFragment.setArguments(bundle); // Thiết lập arguments cho SettingFragment
+                settingFragment.setArguments(bundle);
+
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+
+                // Sử dụng animation slide_in_left khi thay đổi Fragment
+                transaction.setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_in_left);
+
                 transaction.replace(R.id.fragment_layout_main, settingFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();

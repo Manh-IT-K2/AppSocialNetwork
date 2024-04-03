@@ -61,4 +61,7 @@ public class UserViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<UserResponse>> changePass(RequestChangePass request) {
         return userRepository.changePass(request);
     }
+    public MutableLiveData<ApiResponse<List<UserResponse>>>findUser_privatechat(String keyword) {
+        return userRepository.findUser_privatechat(keyword);
+    }
 }
