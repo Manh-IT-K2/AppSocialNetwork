@@ -1,11 +1,8 @@
 package com.example.Backend.Controller;
 
-import com.example.Backend.Request.Post.RequestPost;
-import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Request.Story.RequestStory;
 import com.example.Backend.Request.Story.RequestStoryByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.example.Backend.Service.Post.PostService;
 import com.example.Backend.Service.Story.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

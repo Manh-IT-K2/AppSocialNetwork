@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 Log.d("check1", json);
-                if (response.getData().size() > 0) {
+                if (response.getData() != null) {
                     storyList = response.getData();
                     storyAdapter = new StoryAdapter(getContext(), storyList);
                     recyclerViewStory.setAdapter(storyAdapter);
@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 Log.d("check", json);
-                if (response.getData().size() > 0) {
+                if (response.getData() != null) {
                     postList = response.getData();
                     postAdapter = new PostAdapter(getContext(), postList, (LifecycleOwner) getContext());
                     recyclerViewPost.setAdapter(postAdapter);
@@ -101,6 +101,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
        imgMessage.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {

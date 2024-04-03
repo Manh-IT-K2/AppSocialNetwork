@@ -1,7 +1,7 @@
 package com.example.Backend.Controller;
 
 import com.example.Backend.Entity.Post;
-import com.example.Backend.Request.Post.RequestPost;
+import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Service.Post.PostService;
@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,7 +21,7 @@ public class PostController {
 
     // createPost
     @PostMapping("/createPost")
-    public ResponseEntity<ApiResponse<String>> createPost(@RequestBody RequestPost requestPost, @RequestParam String userId) throws Exception{
+    public ResponseEntity<ApiResponse<String>> createPost(@RequestBody RequestCreatePost requestPost, @RequestParam String userId) throws Exception{
         postService.createPost(requestPost,userId);
         ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Đăng bài thành công !","");
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
