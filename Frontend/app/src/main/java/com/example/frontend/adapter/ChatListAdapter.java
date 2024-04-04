@@ -122,7 +122,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, ChatGroupActivity.class);
+                    Intent intent = new Intent(context,ChatGroupActivity.class);
                     intent.putExtra("groupChatId", groupChat.getId());
                     intent.putExtra("groupChatName", groupChat.getGroupName());
                     context.startActivity(intent);

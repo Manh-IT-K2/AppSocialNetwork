@@ -25,17 +25,22 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.ChatListAdapter;
 import com.example.frontend.adapter.SeachPrivateChatAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.Message.GroupChatViewModel;
 import com.example.frontend.viewModel.Message.MainChatViewModel;
 import com.example.frontend.viewModel.Message.MessageViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.pusher.client.Pusher;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,19 +60,22 @@ public class MainChatActivity extends AppCompatActivity {
 
     private EditText searchUser_txt;
 
+
     RelativeLayout layoutSearch,toolbar;
 
     Button cancelSearchBtn;
+    private List<GroupChatWithMessagesResponse> groupChatList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
-
+        // Khởi tạo groupChatList
+        //groupChatList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.user_recycler_view);
-        adapter = new ChatListAdapter(new ArrayList<>(), new ArrayList<>(), this);
+        adapter = new ChatListAdapter(new ArrayList<>(), groupChatList, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -138,6 +146,9 @@ public class MainChatActivity extends AppCompatActivity {
                         }
                     });
         });
+
+
+
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,6 +264,21 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
+        // Đăng ký lắng nghe sự kiện tin nhắn mới từ Pusher khi Activity được resume
+                pusher = PusherClient.init();
+        pusher.connect();
+        pusher.subscribe("ListGroupChat")
+                .bind("lastmess", (channelName, eventName, data) -> {
+                    // Xử lý dữ liệu tin nhắn mới nhận được từ Pusher
+                    Log.d("Pusher", "Received new message: " + data);
+                    try {
+                        // Xử lý dữ liệu tin nhắn mới
+                        processNewMessage(data);
+                    } catch (Exception e) {
+                        Log.e("Pusher", "Error processing new message: " + e.getMessage());
+                    }
+                });
+
     }
 
     @Override
@@ -263,7 +289,12 @@ public class MainChatActivity extends AppCompatActivity {
         messageViewModel.getListChat(userId).observe(this, chatList -> {
             adapter.setChatList(chatList);
         });
+        mainChatViewModel.getListChat(userId).observe(this, groupChatList -> {
+            adapter.setGroupChatList(groupChatList);
+        });
+
     }
+
 
     @Override
     protected void onPause() {
@@ -272,5 +303,51 @@ public class MainChatActivity extends AppCompatActivity {
 
         // Hủy đăng ký lắng nghe khi không cần thiết
         messageViewModel.getListChat(userId).removeObservers(this);
+        mainChatViewModel.getListChat(userId).removeObservers(this);
+
     }
+
+    private void processNewMessage(Object data) {
+        try {
+            // Chuyển đổi dữ liệu JSON thành danh sách các cuộc trò chuyện nhóm mới
+            Type listType = new TypeToken<List<GroupChatWithMessagesResponse>>(){}.getType();
+            List<GroupChatWithMessagesResponse> newGroupChats = new Gson().fromJson(new JsonParser().parse(data.toString()), listType);
+
+            // Cập nhật dữ liệu mới trên main thread
+            runOnUiThread(() -> {
+                // Duyệt qua danh sách các cuộc trò chuyện nhóm mới từ Pusher
+                for (GroupChatWithMessagesResponse newGroupChat : newGroupChats) {
+                    boolean isExisting = false;
+                    // Duyệt qua danh sách các cuộc trò chuyện nhóm hiện tại
+                    for (int i = 0; i < groupChatList.size(); i++) {
+                        GroupChatWithMessagesResponse groupChat = groupChatList.get(i);
+                        // Kiểm tra xem cuộc trò chuyện nhóm đã tồn tại trong danh sách hay chưa
+                        if (groupChat.getId().equals(newGroupChat.getId())) {
+                            // Nếu đã tồn tại, cập nhật tin nhắn mới nhất
+                            groupChat.setLastMessage(newGroupChat.getLastMessage());
+                            // Di chuyển cuộc trò chuyện nhóm lên đầu danh sách
+                            groupChatList.remove(i);
+                            Log.d("GroupChatPosition", "Group chat position: " + i);
+                            groupChatList.add(0, groupChat);
+                            Log.d("ds", groupChatList.get(0).getLastMessage());
+                            isExisting = true;
+                            break;
+                        }
+                    }
+                    // Nếu cuộc trò chuyện nhóm chưa tồn tại trong danh sách, thêm mới vào đầu danh sách
+                    if (!isExisting) {
+                        groupChatList.add(0, newGroupChat);
+                    }
+                }
+                // Cập nhật giao diện người dùng sau khi xử lý dữ liệu mới
+                adapter.setGroupChatList(groupChatList);
+            });
+
+        } catch (Exception e) {
+            Log.e("processNewMessage", "Failed to process new message: " + e.getMessage(), e);
+        }
+    }
+
+
+
 }
