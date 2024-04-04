@@ -24,6 +24,7 @@ import com.example.frontend.activities.MainActivity;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
 
 
@@ -56,7 +57,8 @@ public class Function_change_password extends Fragment {
         back_settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment profile = new ProfileFragment();
+
+                Fragment profile = new SettingFragment();
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_layout_main, profile);
@@ -68,10 +70,12 @@ public class Function_change_password extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = getArguments();
-                String usernameValue="";
-                if (bundle != null) {
-                    usernameValue  = bundle.getString("username");
-                }
+//                String usernameValue="";
+//                if (bundle != null) {
+//                    usernameValue  = bundle.getString("username");
+//                }
+                String id = SharedPreferenceLocal.read(getContext(), "userId");
+
                 String current = currentpass.getText().toString();
                 String new_p = newpass.getText().toString();
                 String confirm = confirmpass.getText().toString();
@@ -86,7 +90,7 @@ public class Function_change_password extends Fragment {
                     changed_mess.setText("");
                 }
                  else {
-                    userViewModel.changePass(new RequestChangePass( usernameValue, current, new_p)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                    userViewModel.changePass(new RequestChangePass( id, current, new_p)).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
                         @Override
                         public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
                             if (userResponseApiResponse.isStatus() == false) {

@@ -167,7 +167,7 @@ public class UserImpl implements UserService {
     @Override
     public ApiResponse<User> changePassword(RequestChangePasword requestChangePass) throws Exception {
         // Tạo query để tìm người dùng dựa trên email
-        Query query = new Query(Criteria.where("username").is(requestChangePass.getUsername()));
+        Query query = new Query(Criteria.where("id").is(requestChangePass.getId()));
         // Tìm người dùng trong cơ sở dữ liệu
         User user = mongoTemplate.findOne(query, User.class, "users");
         boolean matches = BCrypt.checkpw(requestChangePass.getCurrentpass(), user.getPassword());
