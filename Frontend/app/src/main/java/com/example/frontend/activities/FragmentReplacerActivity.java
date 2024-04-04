@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
+import com.example.frontend.fragments.Fragment_search_ClickAccount;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
 import com.example.frontend.fragments.VerificationCodeFragment;
@@ -34,6 +35,8 @@ public class FragmentReplacerActivity extends AppCompatActivity {
                 setFragment(new LoginFragment());
             }else if(fragmentToLoad.equals("function_change_pass")){
                 setFragment(new Function_change_password());
+            }else if(fragmentToLoad.equals("Profile_recipetn")){
+                setFragment(new Fragment_search_ClickAccount());
             }
         } else {
             setFragment(new LoginFragment());
