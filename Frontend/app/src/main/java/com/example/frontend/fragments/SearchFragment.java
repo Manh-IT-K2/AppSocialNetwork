@@ -7,12 +7,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
@@ -33,6 +36,7 @@ public class SearchFragment extends Fragment {
     Fragment_searchUser fragment_searchUser;
     Fragment_performSearch fragment_performSearch;
     Fragment_searchHistory fragment_searchHistory;
+    Button btnSearch;
     private SearchQuery_ViewModel searchQueryViewModel;
     private SearchView searchView;
 
@@ -66,32 +70,13 @@ public class SearchFragment extends Fragment {
 
 
         searchView = view.findViewById(R.id.searchView);
-
+        btnSearch = view.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
         // Nhập nội dung tìm kiếm và bắt đầu tìm kiếm theo tên user
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                getSearchHistoryListFromSharedPreference();
-
-                // Khi nhan tim kiem -> put data vao Shared preferences
-                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, new java.util.Date());
-                // Luu vao shared preference
-                saveToSearchHistory(searchHistoryResponse, query);
-
-                // Không hiện con trỏ nhấp nháy trong searchview
-                searchView.clearFocus();
-
-                // Set query vào ViewModel để Fragment_searchUser có thể lấy được query
-                searchQueryViewModel.setSearchQuery(query);
-
-                // Chuyển sang fragment_performSearch
-                fragment_performSearch = new Fragment_performSearch();
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_Search_Container, fragment_performSearch)
-                        .addToBackStack(null) // Optional: Add to back stack for navigation
-                        .commit();
-
+                startSearch(query);
                 return true;
             }
 
@@ -111,8 +96,18 @@ public class SearchFragment extends Fragment {
                             .commit();
                 }
                 else fragment_searchUser.resultList();
+                if(!newText.equals(""))
+                    btnSearch.setVisibility(View.VISIBLE);
+                else btnSearch.setVisibility(View.GONE);
 
                 return false;
+            }
+        });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSearch(searchQueryViewModel.getSearchQuery());
             }
         });
 
@@ -154,6 +149,28 @@ public class SearchFragment extends Fragment {
 
         // Luu vao shared preference
         saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+    }
+
+    public void startSearch(String query) {
+        getSearchHistoryListFromSharedPreference();
+
+        // Khi nhan tim kiem -> put data vao Shared preferences
+        SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, null, new java.util.Date());
+        // Luu vao shared preference
+        saveToSearchHistory(searchHistoryResponse, query);
+
+        // Không hiện con trỏ nhấp nháy trong searchview
+        searchView.clearFocus();
+
+        // Set query vào ViewModel để Fragment_searchUser có thể lấy được query
+        searchQueryViewModel.setSearchQuery(query);
+
+        // Chuyển sang fragment_performSearch
+        fragment_performSearch = new Fragment_performSearch();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_Search_Container, fragment_performSearch, "perform_search")
+                .addToBackStack("perform_search") // Optional: Add to back stack for navigation
+                .commit();
     }
 
 }

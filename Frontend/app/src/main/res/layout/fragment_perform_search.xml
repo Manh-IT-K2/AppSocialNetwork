@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.Fragment_performSearch">
+    tools:context=".fragments.Fragment_performSearch"
+    android:tag="fragment_perform_search">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/search_tab_layout"

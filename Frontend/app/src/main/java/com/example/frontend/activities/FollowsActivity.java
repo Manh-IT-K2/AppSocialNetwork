@@ -69,6 +69,9 @@ public class FollowsActivity extends AppCompatActivity {
                 selectedFragment = new SubscriptionsFragment();
             }
             if(selectedFragment != null){
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("userId", getIntent().getStringExtra("userId"));
+                selectedFragment.setArguments(bundle1);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,selectedFragment).commit();
             }
             return true;

@@ -42,6 +42,7 @@ public class FollowersFragment extends Fragment implements FollowerAdapter.ViewH
     public FollowsViewModel followsViewModel;
     public LinearLayout linearLayout;
     ProgressBar progressBar;
+    String userId;
 
     public FollowersFragment() {
         // Required empty public constructor
@@ -66,7 +67,14 @@ public class FollowersFragment extends Fragment implements FollowerAdapter.ViewH
 
         // Hiển thị ProgressBar
         progressBar.setVisibility(View.VISIBLE);
-        String userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
+
+        // Nhận dữ liệu email từ Bundle
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getString("userId") != null)
+                userId = bundle.getString("userId", "");
+        }
+        else userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
         followsViewModel.getUserFollowerById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
             @Override
             public void onChanged(ApiResponse<List<UserResponse>> response) {

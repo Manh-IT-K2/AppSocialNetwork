@@ -8,12 +8,14 @@ public class SearchHistoryResponse {
     private String text;
     private String avatar;
     private Boolean account;
+    private String id;
     private Date dateTime;
 
-    public SearchHistoryResponse(String text, String avatar, Boolean account, Date dateTime) {
+    public SearchHistoryResponse(String text, String avatar, Boolean account, String id, Date dateTime) {
         this.text = text;
         this.avatar = avatar;
         this.account = account;
+        this.id = id;
         this.dateTime = dateTime;
     }
 
@@ -49,5 +51,13 @@ public class SearchHistoryResponse {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
