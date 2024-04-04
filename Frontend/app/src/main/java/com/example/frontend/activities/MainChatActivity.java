@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -153,15 +155,73 @@ public class MainChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+//        searchUser_txt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                toolbar.setVisibility(View.GONE);
+//                recyclerView.setVisibility(View.GONE);
+//                layoutSearch.setVisibility(View.VISIBLE);
+//                cancelSearchBtn.setVisibility(View.VISIBLE);
+//                String keyword = searchUser_txt.getText().toString();
+//                userViewModel = new ViewModelProvider(MainChatActivity.this).get(UserViewModel.class);
+//                userViewModel.findUser_privatechat(keyword).observe(MainChatActivity.this, new Observer<ApiResponse<List<UserResponse>>>() {
+//                    @Override
+//                    public void onChanged(ApiResponse<List<UserResponse>> response) {
+//                        if (response != null) {
+//                            List<UserResponse> userResponse = null;
+//                            if (response.getStatus()) {
+//                                userResponse = response.getData();
+//                                searchRecyclerView.setVisibility(View.VISIBLE);
+//                                searchAdapter.setListUser(userResponse);
+//                            } else {
+//                                searchRecyclerView.setVisibility(View.GONE);
+//                            }
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Có lỗi xảy ra. Vui lòng thử lại sau.", Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                });
+//            }
+//        });
+        // Lắng nghe sự kiện click trên searchUser_txt
         searchUser_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Hiển thị layout tìm kiếm và các yếu tố liên quan
                 toolbar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
                 layoutSearch.setVisibility(View.VISIBLE);
                 cancelSearchBtn.setVisibility(View.VISIBLE);
-                String keyword = searchUser_txt.getText().toString();
-                userViewModel = new ViewModelProvider(MainChatActivity.this).get(UserViewModel.class);
+            }
+        });
+
+// Sử dụng TextWatcher để lắng nghe sự kiện thay đổi văn bản trong searchUser_txt
+        searchUser_txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Không cần thực hiện hành động trước khi văn bản thay đổi
+                toolbar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                layoutSearch.setVisibility(View.VISIBLE);
+                cancelSearchBtn.setVisibility(View.VISIBLE);
+                layoutSearch.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Không cần thực hiện hành động khi văn bản đang thay đổi
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Khi văn bản đã thay đổi, thực hiện chức năng tìm kiếm
+                String keyword = s.toString();
+                if(searchUser_txt==null){
+                    toolbar.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
+                    layoutSearch.setVisibility(View.GONE);
+
+                }
                 userViewModel.findUser_privatechat(keyword).observe(MainChatActivity.this, new Observer<ApiResponse<List<UserResponse>>>() {
                     @Override
                     public void onChanged(ApiResponse<List<UserResponse>> response) {
@@ -182,7 +242,6 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
-
         cancelSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,8 +250,6 @@ public class MainChatActivity extends AppCompatActivity {
                 layoutSearch.setVisibility(View.GONE);
                 cancelSearchBtn.setVisibility(View.GONE);
                 searchRecyclerView.setVisibility(View.GONE);
-                searchUser_txt.setText(null);
-
             }
         });
         moreOptionsBtn = findViewById(R.id.more_options_btn);
