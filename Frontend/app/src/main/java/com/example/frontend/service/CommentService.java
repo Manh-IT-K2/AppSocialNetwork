@@ -2,6 +2,7 @@ package com.example.frontend.service;
 
 import com.example.frontend.request.Comment.RequestCreateComment;
 import com.example.frontend.request.Comment.RequestDeleteComment;
+import com.example.frontend.request.Comment.RequestLikeComment;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 
@@ -26,4 +27,8 @@ public interface CommentService {
     // get list comment by pot
     @GET("comment/getListCommentByIdPost")
     Call<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(@Query("id") String id) ;
+
+    // like comment
+    @POST("comment/likeComment")
+    Call<ApiResponse<List<CommentResponse>>> likeComment(@Body RequestLikeComment likeComment);
 }

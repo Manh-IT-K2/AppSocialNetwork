@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestForgetPass {
-    String NewPass;
     String email;
+    String newPw;
 }
 

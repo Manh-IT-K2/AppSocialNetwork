@@ -4,7 +4,9 @@ import com.example.Backend.Entity.Comment;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Comment.RequestCreateComment;
 import com.example.Backend.Request.Comment.RequestDeleteComment;
+import com.example.Backend.Request.Comment.RequestLikeComment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentImpl implements CommentService {
@@ -73,6 +76,63 @@ public class CommentImpl implements CommentService {
     @Override
     public List<Comment> getListCommentByIdPost(String id) throws Exception {
         Query query = new Query(Criteria.where("idPost").is(id));
+        query.with(Sort.by(Sort.Direction.DESC, "createAt"));
         return mongoTemplate.find(query, Comment.class, "comments");
+    }
+
+    @Override
+    public void likeComment(RequestLikeComment likeComment) throws Exception {
+        Query query = new Query(Criteria.where("_id").is(likeComment.getIdUser()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        query = new Query(Criteria.where("_id").is(likeComment.getIdComment()));
+        Comment comment = mongoTemplate.findOne(query, Comment.class, "comments");
+
+        boolean userExists = false;
+        User userToRemove = null;
+
+        if(likeComment.getIsReplyComment()) { // add like for  replyComment
+            int index = -1;
+            for (int i = 0; i < Objects.requireNonNull(comment).getReplyComment().size(); i++) {
+                if (comment.getReplyComment().get(i).getId().equals(likeComment.getIdReplyComment())) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if(index != -1){
+                if(comment.getReplyComment().get(index).getLike() == null) comment.getReplyComment().get(index).setLike(new ArrayList<>());
+                for (User u : comment.getReplyComment().get(index).getLike()) {
+                    if (u.getId().equals(likeComment.getIdUser())) {
+                        userExists = true;
+                        userToRemove = u;
+                        break;
+                    }
+                }
+
+                if (userExists) {
+                    comment.getReplyComment().get(index).getLike().remove(userToRemove);
+                } else {
+                    comment.getReplyComment().get(index).getLike().add(user);
+                }
+                mongoTemplate.save(comment);
+            }
+        }else{
+            if(comment.getLike() == null)  comment.setLike(new ArrayList<>());
+            for (User u : comment.getLike()) {
+                if (u.getId().equals(likeComment.getIdUser())) {
+                    userExists = true;
+                    userToRemove = u;
+                    break;
+                }
+            }
+
+            if (userExists) {
+                comment.getLike().remove(userToRemove);
+            } else {
+                comment.getLike().add(user);
+            }
+            mongoTemplate.save(comment);
+        }
     }
 }

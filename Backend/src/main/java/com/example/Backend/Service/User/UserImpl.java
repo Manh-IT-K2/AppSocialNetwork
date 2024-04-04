@@ -153,7 +153,7 @@ public class UserImpl implements UserService {
             return new ApiResponse<>(false, "Không tìm thấy người dùng với Email này!", null);
         }
 
-        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPass(), BCrypt.gensalt()));
+        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPw(), BCrypt.gensalt()));
         mongoTemplate.save(user, "users");
         return new ApiResponse<>(true, "Đổi mật khẩu thành công!", user);
     }

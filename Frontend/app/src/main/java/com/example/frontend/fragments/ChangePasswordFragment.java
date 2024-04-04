@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class ChangePasswordFragment extends Fragment {
                                     ((FragmentReplacerActivity) requireActivity()).setFragment(new LoginFragment());
                                 } else {
                                     // Thất bại
-                                    Toast.makeText(getContext(), "Xảy ra lỗi, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), userResponseApiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

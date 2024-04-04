@@ -4,6 +4,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Service.User.UserService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<User>> loginAccount(@RequestBody RequestLogin requestLogin) throws Exception {
-        System.out.println(requestLogin.getEmail());
         ApiResponse<User> user = userService.loginAccount(requestLogin);
         return new ResponseEntity<ApiResponse<User>>(user, HttpStatus.OK);
     }

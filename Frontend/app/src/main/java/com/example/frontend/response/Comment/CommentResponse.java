@@ -19,19 +19,8 @@ public class CommentResponse {
     private String createAt;
 
     private UserResponse userReply;
-
-    public CommentResponse() {
-    }
-
-    public CommentResponse(String id, List<CommentResponse> replyComment, String idPost, UserResponse user, String content, String createAt, UserResponse userReply) {
-        this.id = id;
-        this.replyComment = replyComment;
-        this.idPost = idPost;
-        this.user = user;
-        this.content = content;
-        this.createAt = createAt;
-        this.userReply = userReply;
-    }
+    private List<UserResponse> like;
+    private boolean isLike;
 
     public String getId() {
         return id;
@@ -88,4 +77,36 @@ public class CommentResponse {
     public void setUserReply(UserResponse userReply) {
         this.userReply = userReply;
     }
+
+    public List<UserResponse> getLike() {
+        return like;
+    }
+
+    public void setLike(List<UserResponse> like) {
+        this.like = like;
+    }
+
+    public boolean isLike() {
+        return isLike;
+    }
+
+    public void setLike(boolean like) {
+        isLike = like;
+    }
+
+    public CommentResponse(String id, List<CommentResponse> replyComment, String idPost, UserResponse user, String content, String createAt, UserResponse userReply, List<UserResponse> like, boolean isLike) {
+        this.id = id;
+        this.replyComment = replyComment;
+        this.idPost = idPost;
+        this.user = user;
+        this.content = content;
+        this.createAt = createAt;
+        this.userReply = userReply;
+        this.like = like;
+        this.isLike = isLike;
+    }
+
+    public CommentResponse() {
+    }
+
 }

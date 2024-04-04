@@ -272,7 +272,6 @@ public class UserRepository {
                 mutableLiveData.setValue(new ApiResponse<UserResponse>(false, "Request failed: " + t.getMessage(), null));
             }
         });
-
         return mutableLiveData;
     }
 
