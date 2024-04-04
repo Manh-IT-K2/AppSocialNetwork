@@ -35,7 +35,7 @@ public class GroupChatController {
     public ApiResponse<GroupChatWithMessagesResponse> getMessagesByGroupChatId(@PathVariable String groupChatId) throws Exception {
         GroupChatWithMessagesResponse response = groupChatService.getMessagesByGroupChatId(groupChatId);
         // Gửi sự kiện lên Pusher
-//        pusherConfig.triggerEvent("GroupChat", "message_sent", response);
+        pusherConfig.triggerEvent("GroupChat_lastmess", "get_message", response.getMessages());
         return new ApiResponse<>(true, "", response);
     }
 
@@ -44,7 +44,7 @@ public class GroupChatController {
         request.setGroupId(groupChatId);
         GroupChatWithMessagesResponse response = groupChatService.sendMessage(request);
         // Gửi sự kiện lên Pusher
-//        pusherConfig.triggerEvent("GroupChat", "send_chatgroup", response);
+        pusherConfig.triggerEvent("GroupChat", "send_chatgroup", response.getMessages());
         return new ApiResponse<>(true, "Message sent successfully", response);
     }
     @PostMapping("/{groupChatId}/add_member")
@@ -83,7 +83,7 @@ public class GroupChatController {
     public ResponseEntity<List<GroupChatWithMessagesResponse>> getListChatGroup(@PathVariable String userId) {
         // Gọi phương thức getListChatGroup từ GroupChatService để lấy danh sách các cuộc trò chuyện nhóm mà người dùng đã tham gia
         List<GroupChatWithMessagesResponse> groupChats = groupChatService.getListChatGroup(userId);
-
+        pusherConfig.triggerEvent("ListGroupChat", "lastmess", groupChats);
         // Trả về danh sách các cuộc trò chuyện nhóm kèm theo thông tin tin nhắn gần đây nhất
         return new ResponseEntity<>(groupChats, HttpStatus.OK);
     }
