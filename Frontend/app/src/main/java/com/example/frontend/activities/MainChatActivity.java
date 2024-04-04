@@ -52,7 +52,7 @@ public class MainChatActivity extends AppCompatActivity {
     private ImageButton img_back;
     private TextView username;
 
-    private Pusher pusher;
+    private Pusher pusher,pushergroup;
     private UserViewModel userViewModel;
     private ImageButton moreOptionsBtn;
 
@@ -208,9 +208,9 @@ public class MainChatActivity extends AppCompatActivity {
         });
 
         // Đăng ký lắng nghe sự kiện tin nhắn mới từ Pusher khi Activity được resume
-                pusher = PusherClient.init();
-        pusher.connect();
-        pusher.subscribe("ListGroupChat")
+        pushergroup = PusherClient.init();
+        pushergroup.connect();
+        pushergroup.subscribe("ListGroupChat")
                 .bind("lastmess", (channelName, eventName, data) -> {
                     // Xử lý dữ liệu tin nhắn mới nhận được từ Pusher
                     Log.d("Pusher", "Received new message: " + data);
