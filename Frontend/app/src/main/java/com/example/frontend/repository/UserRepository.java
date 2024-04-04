@@ -217,7 +217,7 @@ public class UserRepository {
             return mutableLiveData;
         }
 
-        Log.d("log1", request.getUsername());
+        Log.d("log1", request.getId());
 
         userService.changePass(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
