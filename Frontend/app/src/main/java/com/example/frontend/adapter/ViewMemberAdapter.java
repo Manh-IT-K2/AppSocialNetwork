@@ -15,13 +15,16 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
     private Context mContext;
     private TextView textViewName,textViewSup;
     private List<UserResponse> mMembers;
-
     public ViewMemberAdapter(Context context, List<UserResponse> members) {
         super(context, 0, members);
         mContext = context;
         mMembers = members;
     }
-
+    public void setMembers(List<UserResponse> members) {
+        mMembers.clear(); // Xóa dữ liệu hiện tại
+        mMembers.addAll(members); // Thêm dữ liệu mới
+        notifyDataSetChanged(); // Cập nhật giao diện
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItem = convertView;
@@ -43,8 +46,5 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
         return listItem;
     }
 
-    public void add(UserResponse member) {
-        mMembers.add(member);
-        notifyDataSetChanged();
-    }
+
 }
