@@ -36,7 +36,7 @@ public class ViewMembers extends AppCompatActivity {
     private ListView listViewMembers;
     private ImageButton btnBack;
     private ViewMemberAdapter memberListAdapter;
-    private List<UserResponse> tam;
+    private List<UserResponse> tam=new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,38 +72,44 @@ public class ViewMembers extends AppCompatActivity {
         Log.d("MemberIdList", "Member IDs: " + memberIdList.toString());
 
         if (memberIdList != null) {
-            tam=new ArrayList<>();
             for (String memberId : memberIdList) {
+                Log.d("idT", memberId);
                 final String currentMemberId = memberId;
                 userViewModel.getDetailUserById(memberId).observe(this, new Observer<ApiResponse<UserResponse>>() {
                     @Override
                     public void onChanged(ApiResponse<UserResponse> response) {
                         if (response.getMessage().equals("Success") && response.getStatus() && memberIdList.contains(currentMemberId)) {
                             UserResponse userResponse = response.getData();
-                            tam.add(userResponse);
-                            Log.d("ttttt", userResponse.getId());
+                            if (userResponse != null) {
+
+                                tam.add(userResponse);
+                                Log.d("ttttt", tam.get(tam.size()-1).getName()+" "+userResponse.getName());
+                                // Nếu đã thêm tất cả các thành viên vào danh sách tam, cập nhật giao diện
+                                if (tam.size() == memberIdList.size()) {
+                                    memberListAdapter.setMembers(tam);
+                                }
+                            } else {
+                                Log.d("ttttt", "UserResponse is null for memberId: " + currentMemberId);
+                            }
+                        } else {
+                            Log.d("ttttt", "Failed to get UserResponse for memberId: " + currentMemberId);
                         }
                     }
                 });
             }
+            memberListAdapter.setMembers(tam);
+        } else {
+            Log.d("ttttt", "MemberIdList is null");
         }
+
         // Xử lý sự kiện khi nút back được nhấn
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Đóng Activity hiện tại
-//                finish();
+                finish();
             }
         });
     }
-    // Phương thức để xử lý UserResponse
-    private void upload(UserResponse userResponse) {
-        // Thêm userResponse vào adapter hoặc làm bất kỳ điều gì bạn cần ở đây
-        tam.add(userResponse);
-        // Ví dụ:
-        // memberListAdapter.add(userResponse);
-        for (UserResponse i: tam) {
-            Log.d("kkkk", i.getName());
-        }
-    }
+
 }

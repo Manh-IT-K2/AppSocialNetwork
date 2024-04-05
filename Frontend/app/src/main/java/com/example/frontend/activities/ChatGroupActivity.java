@@ -186,6 +186,9 @@ public class ChatGroupActivity extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
+
+
+
     }
     private void showPopupMenu(View v) {
         // Kiểm tra xem dữ liệu nhóm chat đã được tải chưa
@@ -284,6 +287,7 @@ public class ChatGroupActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     adapter.setMessages(messages);
+
                                     recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                                 }
                             });
