@@ -71,8 +71,7 @@ public class MainChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
-        // Khởi tạo groupChatList
-        //groupChatList = new ArrayList<>();
+
 
         recyclerView = findViewById(R.id.user_recycler_view);
         adapter = new ChatListAdapter(new ArrayList<>(), groupChatList, this);
@@ -307,8 +306,11 @@ public class MainChatActivity extends AppCompatActivity {
 
     }
 
+
     private void processNewMessage(Object data) {
+
         try {
+
             // Chuyển đổi dữ liệu JSON thành danh sách các cuộc trò chuyện nhóm mới
             Type listType = new TypeToken<List<GroupChatWithMessagesResponse>>(){}.getType();
             List<GroupChatWithMessagesResponse> newGroupChats = new Gson().fromJson(new JsonParser().parse(data.toString()), listType);
