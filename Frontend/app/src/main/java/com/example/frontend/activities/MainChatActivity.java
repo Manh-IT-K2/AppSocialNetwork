@@ -1,6 +1,9 @@
 package com.example.frontend.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +30,7 @@ import com.example.frontend.adapter.ChatListAdapter;
 import com.example.frontend.adapter.SeachPrivateChatAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.PrivateChat.PrivateChatResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.PusherClient;
@@ -60,7 +65,6 @@ public class MainChatActivity extends AppCompatActivity {
 
     private EditText searchUser_txt;
 
-
     RelativeLayout layoutSearch,toolbar;
 
     Button cancelSearchBtn;
@@ -74,6 +78,19 @@ public class MainChatActivity extends AppCompatActivity {
         // Khởi tạo groupChatList
         //groupChatList = new ArrayList<>();
 
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Xử lý tin nhắn mới nhận được
+                String newMessageData = intent.getStringExtra("new_message");
+                // Cập nhật giao diện với tin nhắn mới
+                updateUIWithNewMessage(newMessageData);
+            }
+        };
+
+        IntentFilter filter = new IntentFilter("NEW_MESSAGE_ACTION");
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+
         recyclerView = findViewById(R.id.user_recycler_view);
         adapter = new ChatListAdapter(new ArrayList<>(), groupChatList, this);
         recyclerView.setAdapter(adapter);
@@ -83,7 +100,6 @@ public class MainChatActivity extends AppCompatActivity {
         searchRecyclerView = findViewById(R.id.search_recycler_view);
         searchRecyclerView.setAdapter(searchAdapter);
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
 
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
@@ -104,6 +120,7 @@ public class MainChatActivity extends AppCompatActivity {
         layoutSearch = findViewById(R.id.layout_search);
         cancelSearchBtn = findViewById(R.id.cancel_search_btn);
         cancelSearchBtn.setVisibility(View.GONE);
+
         //
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         userViewModel.getDetailUserById(userId).observe(this, new Observer<ApiResponse<UserResponse>>() {
@@ -116,8 +133,6 @@ public class MainChatActivity extends AppCompatActivity {
                 }
             }
         });
-
-
         img_back = findViewById(R.id.back_btn);
         messageViewModel = new ViewModelProvider(this).get(MessageViewModel.class);
         messageViewModel.getListChat(userId).observe(this, chatList -> {
@@ -146,7 +161,6 @@ public class MainChatActivity extends AppCompatActivity {
                         }
                     });
         });
-
 
 
         img_back.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +230,7 @@ public class MainChatActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 // Khi văn bản đã thay đổi, thực hiện chức năng tìm kiếm
                 String keyword = s.toString();
-                if(searchUser_txt==null){
+                if (searchUser_txt == null) {
                     toolbar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
                     layoutSearch.setVisibility(View.GONE);
@@ -278,8 +292,9 @@ public class MainChatActivity extends AppCompatActivity {
                         Log.e("Pusher", "Error processing new message: " + e.getMessage());
                     }
                 });
-
     }
+
+
 
     @Override
     protected void onResume() {
@@ -287,8 +302,9 @@ public class MainChatActivity extends AppCompatActivity {
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
 
         messageViewModel.getListChat(userId).observe(this, chatList -> {
-            adapter.setChatList(chatList);
+           adapter.setChatList(chatList);
         });
+
         mainChatViewModel.getListChat(userId).observe(this, groupChatList -> {
             adapter.setGroupChatList(groupChatList);
         });
@@ -300,13 +316,13 @@ public class MainChatActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
-
         // Hủy đăng ký lắng nghe khi không cần thiết
-        messageViewModel.getListChat(userId).removeObservers(this);
+       messageViewModel.getListChat(userId).removeObservers(this);
+
+
         mainChatViewModel.getListChat(userId).removeObservers(this);
 
     }
-
     private void processNewMessage(Object data) {
         try {
             // Chuyển đổi dữ liệu JSON thành danh sách các cuộc trò chuyện nhóm mới
@@ -346,8 +362,18 @@ public class MainChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("processNewMessage", "Failed to process new message: " + e.getMessage(), e);
         }
+
+
+    }
+    private void updateUIWithNewMessage(String newMessageData) {
+        Gson gson = new Gson();
+        Type messageType = new TypeToken<List<MessageWithSenderInfo>>() {}.getType();
+        List<MessageWithSenderInfo> messages = gson.fromJson(newMessageData, messageType);
+        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+        messageViewModel.getListChat(userId).observe(this, chatList -> {
+            adapter.setChatList(chatList);
+        });
     }
 
-
-
 }
+

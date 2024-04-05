@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.ChatActivity;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.adapter.SuggestedMeAdapter;
@@ -67,7 +68,10 @@ public class Fragment_search_ClickAccount extends Fragment {
     Toolbar toolbar;
     public static FollowsViewModel followsViewModel;
     private List<Uri> selectedFiles;
+    private UserResponse userResponse;
     private List<GetAllUserByFollowsResponse> userResponseList = new ArrayList<>();
+
+
 
 
     @Override
@@ -77,7 +81,8 @@ public class Fragment_search_ClickAccount extends Fragment {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
-                    UserResponse userResponse = response.getData();
+                   // UserResponse
+                    userResponse = response.getData();
                     username.setText(userResponse.getUsername());
                     Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
                     nameTV.setText(userResponse.getName());
@@ -128,17 +133,15 @@ public class Fragment_search_ClickAccount extends Fragment {
         if (activity != null) {
             activity.setSupportActionBar(toolbar);
         }
-
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // Nhận dữ liệu email từ Bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
-            if (bundle.getString("userId") != null) {
+            if (bundle.getString("userId") != null  ) {
                 userId = bundle.getString("userId", "");
             }
         }
-
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
@@ -153,7 +156,6 @@ public class Fragment_search_ClickAccount extends Fragment {
                 }
             }
         });
-
         userViewModel.getAllUsersByFollows(SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<GetAllUserByFollowsResponse>>>() {
             @Override
             public void onChanged(ApiResponse<List<GetAllUserByFollowsResponse>> response) {
@@ -227,9 +229,15 @@ public class Fragment_search_ClickAccount extends Fragment {
         messageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.putExtra("recipientUserId", userResponse.getUsername());
+                intent.putExtra("recipientAvater", userResponse.getAvatarImg());
+                intent.putExtra("recipientID", userResponse.getId());
+               startActivity(intent);
 
             }
         });
+
 
 //        menuSetting.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -245,7 +253,6 @@ public class Fragment_search_ClickAccount extends Fragment {
 //                transaction.commit();
 //            }
 //        });
-
         qrcodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,7 +271,6 @@ public class Fragment_search_ClickAccount extends Fragment {
         });
         return view;
     }
-
     // Kiểm tra người dùng hiện tại đã được follow chưa
     private boolean check_user_Followed() {
         int i = 0;
@@ -277,7 +283,6 @@ public class Fragment_search_ClickAccount extends Fragment {
         }
         return false;
     }
-
     public void setTextBtn(Button btnFollow, String text){
         btnFollow.setText(text);
         // Get the reference to the Drawable you want to assign
@@ -318,7 +323,6 @@ public class Fragment_search_ClickAccount extends Fragment {
             }
         });
     }
-
     private void handleUpdateFollow(RequestUpdateFollows requestUpdateFollows){
         followsViewModel.updateFollows(requestUpdateFollows);
     }
@@ -395,13 +399,22 @@ public class Fragment_search_ClickAccount extends Fragment {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        // Xử lý sự kiện khi nút "Back" được nhấn
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Quay lại FragmentA khi nút "Back" được nhấn
-                requireActivity().getSupportFragmentManager().popBackStack();
+                // Biến để kiểm tra xem hành động nào đã được thực hiện
+                boolean actionExecuted = false;
+                // Thử popBackStack
+                try {
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                    actionExecuted = true; // Gán cờ là true nếu popBackStack thành công
+                } catch (IllegalStateException e) {
+                    // Xử lý ngoại lệ nếu popBackStack không thành công
+                    e.printStackTrace();
+                }
+                if (!actionExecuted || requireActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    requireActivity().finish();
+                }
             }
         });
     }

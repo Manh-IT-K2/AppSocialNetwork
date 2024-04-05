@@ -17,6 +17,8 @@ import com.example.frontend.utils.SharedPreferenceLocal;
 import com.pusher.client.channel.User;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,15 @@ public class PrivateChatAdapter extends RecyclerView.Adapter<PrivateChatAdapter.
         this.messages = messages;
         notifyDataSetChanged();
     }
+
+
+    public MessageWithSenderInfo getMessageAtPosition(int position) {
+        if (position >= 0 && position < messages.size()) {
+            return messages.get(position);
+        }
+        return null;
+    }
+
 
     @NonNull
     @Override
