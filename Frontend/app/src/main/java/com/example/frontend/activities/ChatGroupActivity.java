@@ -1,15 +1,12 @@
 package com.example.frontend.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,22 +18,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.adapter.GroupChatAdapter;
-import com.example.frontend.fragments.ViewMembers_GroupChat;
 import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
-import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
-import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.firebase.firestore.auth.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pusher.client.Pusher;
@@ -308,29 +300,6 @@ public class ChatGroupActivity extends AppCompatActivity {
         });
     }
 
-//    private void loadChatHistory() {
-//        groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-//            @Override
-//            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-//                if (response != null && response.isSuccess()) {
-//                    // Hiển thị lịch sử tin nhắn khi nhận được phản hồi thành công từ API
-//                    GroupChatWithMessagesResponse chatHistory = response.getData();
-//                    if (chatHistory != null) {
-//                        adapter.setMessages(chatHistory.getMessages());
-//                        // Cuộn đến tin nhắn mới nhất
-//                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-//                    }
-//                } else {
-//                    // Xử lý khi không thể tải lịch sử tin nhắn
-//                    String errorMessage = "Failed to load chat history";
-//                    if (response != null && response.getMessage() != null) {
-//                        errorMessage += ": " + response.getMessage();
-//                    }
-//                    Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
     private void handleDisbandGroup() {
         groupChatViewModel.deleteGroupChat(groupId).observe(this, new Observer<ApiResponse<String>>() {
             @Override
@@ -351,8 +320,9 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showGroupMembers() {
-        Intent intent = new Intent(ChatGroupActivity.this, ViewMembers_GroupChat.class);
+        Intent intent = new Intent(ChatGroupActivity.this, ViewMembers.class);
         intent.putExtra("groupChatId", groupId);
         intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
 
@@ -364,13 +334,9 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         // Truyền danh sách id qua Intent
         intent.putStringArrayListExtra("memberIdList", memberIdList);
+
         startActivity(intent);
     }
-
-
-
-
-
 
 
 

@@ -16,6 +16,10 @@ public class UserResponse {
     private String name;
     private boolean status;
 
+    public UserResponse() {
+
+    }
+
     public boolean isStatus() {
         return status;
     }

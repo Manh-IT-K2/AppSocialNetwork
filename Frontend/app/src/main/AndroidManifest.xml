@@ -28,6 +28,9 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="34">
         <activity
+            android:name=".activities.ViewMembers"
+            android:exported="false" />
+        <activity
             android:name=".activities.Function_chatgroup_activity"
             android:exported="false" />
         <activity
@@ -81,10 +84,11 @@
         <activity
             android:name=".activities.FragmentReplacerActivity"
             android:exported="false" />
+
         <service
-        android:name=".service.PusherNotificationService"
-        android:enabled="true"
-        android:exported="false" />
+            android:name=".service.PusherNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
