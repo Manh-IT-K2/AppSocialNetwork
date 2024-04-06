@@ -29,6 +29,7 @@ import com.example.frontend.adapter.SearchUserAdapter;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Search.SearchHistoryResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.utils.SharedPreference_SearchHistory;
 import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -105,15 +106,29 @@ public class Fragment_searchUser extends Fragment {
                 @Override
                 public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
                     userList = userResponses.getData();
+                    // Xóa tài khoản người dùng hiện tại trong userList
+                    removeAccountCurrent(SharedPreferenceLocal.read(getContext(), "userId"));
                     // Ẩn ProgressBar khi dữ liệu đã được cập nhật
                     progressBar.setVisibility(View.GONE);
-
                     // Bắt đầu tìm kiếm theo search query và hiển thị trên recyclerView
                     search_User(searchQueryViewModel.getSearchQuery());
                 }
             });
         }
+
+        // Bắt đầu tìm kiếm theo search query
         search_User(searchQueryViewModel.getSearchQuery());
+    }
+
+    private void removeAccountCurrent(String userId) {
+        int i = 0;
+        while (i < userList.size()) {
+            if (userId.equals(userList.get(i).getId())) {
+                userList.remove(userList.get(i));
+                break;
+            }
+            i++;
+        }
     }
 
 
@@ -200,7 +215,7 @@ public class Fragment_searchUser extends Fragment {
             public void onItemClick(int position) {
 
                 // Khi nhan tim kiem -> put data vao Shared preferences
-                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(user_searchList.get(position).getUsername(), user_searchList.get(position).getAvatarImg(), true, user_searchList.get(position).getId(), new java.util.Date());
+                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(user_searchList.get(position).getUsername(), user_searchList.get(position).getAvatarImg(), true, user_searchList.get(position).getId(), user_searchList.get(position).getName(), new java.util.Date());
                 // Luu vao shared preference
                 saveToSearchHistory(searchHistoryResponse, user_searchList.get(position).getUsername());
 

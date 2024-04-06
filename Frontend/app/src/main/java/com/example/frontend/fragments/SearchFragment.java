@@ -155,7 +155,7 @@ public class SearchFragment extends Fragment {
         getSearchHistoryListFromSharedPreference();
 
         // Khi nhan tim kiem -> put data vao Shared preferences
-        SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, null, new java.util.Date());
+        SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(query, null, false, null, null, new java.util.Date());
         // Luu vao shared preference
         saveToSearchHistory(searchHistoryResponse, query);
 

@@ -9,13 +9,15 @@ public class SearchHistoryResponse {
     private String avatar;
     private Boolean account;
     private String id;
+    private String name;
     private Date dateTime;
 
-    public SearchHistoryResponse(String text, String avatar, Boolean account, String id, Date dateTime) {
+    public SearchHistoryResponse(String text, String avatar, Boolean account, String id, String name, Date dateTime) {
         this.text = text;
         this.avatar = avatar;
         this.account = account;
         this.id = id;
+        this.name = name;
         this.dateTime = dateTime;
     }
 
@@ -55,6 +57,14 @@ public class SearchHistoryResponse {
 
     public String getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setId(String id) {

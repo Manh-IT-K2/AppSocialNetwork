@@ -16,9 +16,12 @@
 
         <TextView
             android:id="@+id/txt_Text"
-            android:layout_width="300dp"
+            android:layout_width="285dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:layout_centerVertical="true"
             android:textColor="@color/white"
             android:textSize="15dp"

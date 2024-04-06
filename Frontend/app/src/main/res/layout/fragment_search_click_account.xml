@@ -209,7 +209,7 @@
                 android:layout_width="100dp"
                 android:layout_height="35dp"
                 android:background="@drawable/custom_button_background"
-                app:backgroundTint="@color/blue1"
+                app:backgroundTint="@null"
                 android:textColor="#FFFFFF"
                 android:textSize="10sp"
                 android:layout_weight="1"

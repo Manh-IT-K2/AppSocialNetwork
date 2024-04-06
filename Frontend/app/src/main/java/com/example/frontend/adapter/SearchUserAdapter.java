@@ -52,6 +52,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
 
     public void onBindViewHolder(@NonNull SearchUserAdapter.MyHolder holder, int position) {
         holder.userName.setText(user_searchList.get(position).getUsername());
+        holder.name.setText(user_searchList.get(position).getName());
         if (user_searchList.get(position).getAvatarImg() != null)
             if (user_searchList.get(position).getAvatarImg() != "")
                 Glide.with(context)
@@ -68,11 +69,13 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
     public class MyHolder extends RecyclerView.ViewHolder {
 
         TextView userName;
+        TextView name;
         CircleImageView avatar;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.txt_UserName);
+            name = itemView.findViewById(R.id.txt_Name);
             avatar = itemView.findViewById(R.id.imgAvatar);
 
             itemView.setOnClickListener(new View.OnClickListener() {
