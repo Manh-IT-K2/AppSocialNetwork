@@ -81,7 +81,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        adapter = new GroupChatAdapter(this, new ArrayList<>(), currentUserId);
+        adapter = new GroupChatAdapter(this, new ArrayList<>(), currentUserId,this);
 
 
         recyclerView.setAdapter(adapter);
@@ -159,11 +159,6 @@ public class ChatGroupActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-
-
-
 
         btn_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
