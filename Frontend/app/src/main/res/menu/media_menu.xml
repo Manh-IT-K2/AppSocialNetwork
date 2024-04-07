@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/black">
     <item
-        android:id="@+id/menu_Followers"
+        android:id="@+id/menu_Posts"
         android:enabled="true"
         android:title="Posts"
         android:icon="@drawable/icon_grid">
     </item>
     <item
-        android:id="@+id/menu_Following"
+        android:id="@+id/menu_Watch"
         android:enabled="true"
         android:title="Watch"
         android:icon="@drawable/icon_reels">
     </item>
     <item
-        android:id="@+id/menu_Subscriptions"
+        android:id="@+id/menu_YouLiked"
         android:enabled="true"
         android:title="You liked"
         android:icon="@drawable/icons_square">

@@ -57,6 +57,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private PostViewModel postViewModel;
     private List<String> selectedFileChoseMore;
     private LinearLayout linear_layout_drag_createPost;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class CreatePostActivity extends AppCompatActivity {
         edt_description = findViewById(R.id.edt_description);
         linear_layout_drag_createPost = findViewById(R.id.linear_layout_drag_createPost);
 
-        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+        userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         selectedFileChoseMore = new ArrayList<>();
 
         if (checkDataIntent == 0) {
@@ -215,9 +216,9 @@ public class CreatePostActivity extends AppCompatActivity {
         String isoDateString = isoFormat.format(createAt);
 
         // Sử dụng danh sách các URL trong việc tạo yêu cầu đăng bài viết
-        RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, "65e8a525714ccc3a3caa7f77", description, "", isoDateString);
+        RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, userId, description, "", isoDateString);
 
-        postViewModel.createPost(requestCreatePost, "65e8a525714ccc3a3caa7f77");
+        postViewModel.createPost(requestCreatePost, userId);
 
         DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("posts");
         String postId = postsRef.push().getKey();
@@ -225,7 +226,7 @@ public class CreatePostActivity extends AppCompatActivity {
         // Tạo dữ liệu cho bài viết trong Realtime Database
         Map<String, Object> postData = new HashMap<>();
         postData.put("imageUrl", fileUrls); // Lưu danh sách URL vào Firebase
-        postData.put("userId", "65e8a525714ccc3a3caa7f77");
+        postData.put("userId", userId);
         postData.put("description", description);
         postData.put("createdAt", isoDateString);
 
