@@ -74,12 +74,17 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
                 .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
                 .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                 .into(holder.img_avtUser);
-        if (userResponse.getStatus().equals("0"))
-            holder.btnFollow.setVisibility(View.INVISIBLE);
-        else if (userResponse.getStatus().equals("1"))
-            setTextBtn(holder.btnFollow, "Following");
-        else if (userResponse.getStatus().equals("2"))
-            setTextBtn(holder.btnFollow, "Follow");
+        switch (userResponse.getStatus()) {
+            case "0":
+                holder.btnFollow.setVisibility(View.INVISIBLE);
+                break;
+            case "1":
+                setTextBtn(holder.btnFollow, "Following");
+                break;
+            case "2":
+                setTextBtn(holder.btnFollow, "Follow");
+                break;
+        }
     }
 
     public void setTextBtn(Button btnFollow, String text){

@@ -74,7 +74,7 @@ public class FollowingFragment extends Fragment {
         if (bundle != null) {
             if (bundle.getString("userId") != null) {
                 userId = bundle.getString("userId", "");
-                // Lấy danh sách following của user khác user đăng nhập
+                // Lấy danh sách following của user đã đăng nhập
                 followsViewModel.getUserFollowingById(SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
                     @Override
                     public void onChanged(ApiResponse<List<UserResponse>> response) {
@@ -107,16 +107,17 @@ public class FollowingFragment extends Fragment {
                 Log.d("following", json);
                 if (response.getMessage().equals("Success!") && response.getStatus()) {
                     list_following.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
                     userResponseList = response.getData();
                     if (userResponseList.size() > 0) {
                         if (userId.equals(SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId"))) {
                             // Nếu profile hiện tại là tài khoản đã đăng  nhập
                             transferDataInUserTrackingStatusList();
+                            progressBar.setVisibility(View.GONE);
                             followingAdapter = new FollowingAdapter(getContext(), followingList, followsViewModel, getViewLifecycleOwner(), userViewModel);
                             list_following.setAdapter(followingAdapter);
                         } else if (isFollowingLoaded) {
                             handleFollowingList();
+                            progressBar.setVisibility(View.GONE);
                             followingAdapter = new FollowingAdapter(getContext(), followingList, followsViewModel, getViewLifecycleOwner(), userViewModel);
                             list_following.setAdapter(followingAdapter);
                         }
