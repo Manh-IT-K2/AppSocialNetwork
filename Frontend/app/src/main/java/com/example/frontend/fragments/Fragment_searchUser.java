@@ -222,11 +222,11 @@ public class Fragment_searchUser extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("userId", user_searchList.get(position).getId());
 
-                Fragment_search_ClickAccount clickAccount = new Fragment_search_ClickAccount();
+                ProfileFragment clickAccount = new ProfileFragment();
                 clickAccount.setArguments(args);
 
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack("perform_search").commit();
+                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
 
             }
         });

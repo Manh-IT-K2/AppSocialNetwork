@@ -2,44 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_search"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".fragments.SearchFragment"
-    android:id="@+id/fragment_search">
+    tools:context=".fragments.SearchFragment">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardSearch"
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="5dp">
+        android:id="@+id/toolbar_search"
+        app:navigationIcon="@drawable/ic_back">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/blackLite"
-            app:iconifiedByDefault="false"
-            app:queryHint="@string/searchbar_hint"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="5dp">
 
-    </androidx.cardview.widget.CardView>
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blackLite"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search" />
+
+        </androidx.cardview.widget.CardView>
+    </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/fragment_Search_Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/cardSearch"/>
+        android:layout_below="@+id/toolbar_search" />
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_Search_Container"
+        android:layout_centerInParent="true"
         android:background="@android:color/transparent"
         android:text="Search"
         android:textColor="@color/blue1"
-        android:textSize="15dp"
-        android:layout_below="@id/fragment_Search_Container"
-        android:layout_centerInParent="true" />
+        android:textSize="15dp" />
 </RelativeLayout>

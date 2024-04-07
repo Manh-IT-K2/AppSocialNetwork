@@ -17,6 +17,7 @@
             android:elevation="2dp"
             app:contentInsetStart="0dp"
             app:contentInsetEnd="0dp"
+            app:navigationIcon="@drawable/ic_back"
             android:id="@+id/toolbar" >
             <LinearLayout
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
                     android:textStyle="bold"
                     android:layout_marginLeft="10dp"/>
                 <LinearLayout
+                    android:id="@+id/menu_downLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -55,6 +57,7 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/menuLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -239,8 +242,7 @@
            android:gravity="center"
            android:layout_marginTop="10dp"
            android:layout_marginLeft="10dp"
-           android:layout_marginRight="10dp"
-           >
+           android:layout_marginRight="10dp">
                 <Button
                     android:id="@+id/edit_profileBtn"
                     android:layout_width="100dp"
@@ -275,6 +277,49 @@
                     android:layout_weight="1"
                     android:textSize="10sp"
                     android:text="Log out"/>
+       </LinearLayout>
+       <LinearLayout
+           android:id="@+id/follow_QRCode_message_Layout"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_marginTop="10dp"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp">
+           <Button
+               android:id="@+id/followBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_background"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:textSize="10sp"
+               android:layout_weight="1"
+               android:text="Follow" />
+           <Button
+               android:id="@+id/QRCodeBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_profile"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:text="QR code"
+               android:textSize="10sp"
+               android:layout_weight="1"
+               android:layout_marginLeft="10dp"/>
+
+           <Button
+               android:id="@+id/messageBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_profile"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:layout_marginLeft="10dp"
+               android:layout_weight="1"
+               android:textSize="10sp"
+               android:text="Message"/>
        </LinearLayout>
    </LinearLayout>
     <LinearLayout

@@ -139,11 +139,11 @@ public class Fragment_searchHistory extends Fragment {
             Bundle args = new Bundle();
             args.putString("userId", searchHistoryResponseArrayList.get(position).getId());
 
-            Fragment_search_ClickAccount clickAccount = new Fragment_search_ClickAccount();
+            ProfileFragment clickAccount = new ProfileFragment();
             clickAccount.setArguments(args);
 
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack("history").commit();
+            fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
 
             // Xoa account trong shared preference trùng với account ở vị trí position trong arraylist
             SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse();

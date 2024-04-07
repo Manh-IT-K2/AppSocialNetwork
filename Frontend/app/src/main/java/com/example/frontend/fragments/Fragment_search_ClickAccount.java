@@ -78,7 +78,7 @@ public class Fragment_search_ClickAccount extends Fragment {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
-                   // UserResponse
+                    // UserResponse
                     userResponse = response.getData();
                     username.setText(userResponse.getUsername());
                     Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
@@ -135,7 +135,7 @@ public class Fragment_search_ClickAccount extends Fragment {
         // Nhận dữ liệu email từ Bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
-            if (bundle.getString("userId") != null  ) {
+            if (bundle.getString("userId") != null) {
                 userId = bundle.getString("userId", "");
             }
         }
@@ -158,7 +158,7 @@ public class Fragment_search_ClickAccount extends Fragment {
             public void onChanged(ApiResponse<List<UserResponse>> response) {
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
-                Log.d("follower",json);
+                Log.d("follower", json);
                 if (response.getMessage().equals("Success!") && response.getStatus()) {
                     userFollowingList = response.getData();
                     // Nếu người dùng hiện tại đã được follow
@@ -166,7 +166,7 @@ public class Fragment_search_ClickAccount extends Fragment {
                         setTextBtn(followBtn, "Following");
                     }
                 } else {
-                    Log.d("list follower","no");
+                    Log.d("list follower", "no");
                 }
             }
         });
@@ -193,7 +193,7 @@ public class Fragment_search_ClickAccount extends Fragment {
                     });
                 } else if (followBtn.getText().toString().equals("Following")) {
                     // Nếu người dùng hiện tại đã được follow
-                    openDialogFollowing(Gravity.BOTTOM,SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId"), userId);
+                    openDialogFollowing(Gravity.BOTTOM, SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId"), userId);
                 }
             }
         });
@@ -230,7 +230,7 @@ public class Fragment_search_ClickAccount extends Fragment {
                 intent.putExtra("recipientUserId", userResponse.getUsername());
                 intent.putExtra("recipientAvater", userResponse.getAvatarImg());
                 intent.putExtra("recipientID", userResponse.getId());
-               startActivity(intent);
+                startActivity(intent);
 
             }
         });
@@ -263,7 +263,7 @@ public class Fragment_search_ClickAccount extends Fragment {
     private boolean check_user_Followed() {
         int i = 0;
         String id = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
-        while(i < userFollowingList.size()) {
+        while (i < userFollowingList.size()) {
             if (id.equals(userFollowingList.get(i).getId())) {
                 return true;
             }
@@ -272,7 +272,7 @@ public class Fragment_search_ClickAccount extends Fragment {
         return false;
     }
 
-    public void setTextBtn(Button btnFollow, String text){
+    public void setTextBtn(Button btnFollow, String text) {
         btnFollow.setText(text);
         // Get the reference to the Drawable you want to assign
         Drawable drawable;
@@ -290,24 +290,24 @@ public class Fragment_search_ClickAccount extends Fragment {
         }
     }
 
-    private void handleGetQuantityFollows(String idFollows,String type){
+    private void handleGetQuantityFollows(String idFollows, String type) {
         followsViewModel.getQuantityFollows(idFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<GetQuantityResponse>>() {
             @Override
             public void onChanged(ApiResponse<GetQuantityResponse> response) {
-                if(response.getMessage().equals("Success") && response.getStatus()){
+                if (response.getMessage().equals("Success") && response.getStatus()) {
                     GetQuantityResponse getQuantityResponse = response.getData();
                     // update follower của người được theo dõi
-                    if(type.equals("follower")){
+                    if (type.equals("follower")) {
                         int countFollower = getQuantityResponse.getQuantityFollower() + 1;
                         RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
-                                getQuantityResponse.getId(), countFollower,getQuantityResponse.getQuantityFollowing()
+                                getQuantityResponse.getId(), countFollower, getQuantityResponse.getQuantityFollowing()
                         );
                         handleUpdateFollow(requestUpdateFollowsByFollower);
                     } // update thông tin của người dùng hiện tại ( tăng số người đang theo dõi)
                     else if (type.equals("following")) {
                         int countFollowing = getQuantityResponse.getQuantityFollowing() + 1;
                         RequestUpdateFollows requestUpdateFollowsByFollower = new RequestUpdateFollows(
-                                getQuantityResponse.getId(), getQuantityResponse.getQuantityFollower(),countFollowing
+                                getQuantityResponse.getId(), getQuantityResponse.getQuantityFollower(), countFollowing
                         );
                         handleUpdateFollow(requestUpdateFollowsByFollower);
                     }
@@ -315,25 +315,26 @@ public class Fragment_search_ClickAccount extends Fragment {
             }
         });
     }
-    private void handleUpdateFollow(RequestUpdateFollows requestUpdateFollows){
+
+    private void handleUpdateFollow(RequestUpdateFollows requestUpdateFollows) {
         followsViewModel.updateFollows(requestUpdateFollows);
     }
 
-    private void openDialogFollowing(int gravity,String userId,String userIdOther){
+    private void openDialogFollowing(int gravity, String userId, String userIdOther) {
 
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.activity_dialog_custom);
         Window window = dialog.getWindow();
         if (window == null) return;
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
         windowAttributes.gravity = gravity;
         window.setAttributes(windowAttributes);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        if (Gravity.BOTTOM == gravity){
+        if (Gravity.BOTTOM == gravity) {
             dialog.setCancelable(true);
         } else {
             dialog.setCancelable(false);
@@ -361,41 +362,42 @@ public class Fragment_search_ClickAccount extends Fragment {
         btnUnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteFollow(userId,userIdOther,dialog);
+                deleteFollow(userId, userIdOther, dialog);
             }
         });
         dialog.show();
     }
 
-    private void deleteFollow(String idFollower,String idFollowing,Dialog dialog){
-        followsViewModel.deleteFollows(idFollower,idFollowing).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
+    private void deleteFollow(String idFollower, String idFollowing, Dialog dialog) {
+        followsViewModel.deleteFollows(idFollower, idFollowing).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
             @Override
             public void onChanged(ApiResponse<String> response) {
-                if(response.getMessage().equals("Delete Success!") && response.getStatus()){
-                    handleUpdateQuantityFollows(idFollower,"following");
-                    handleUpdateQuantityFollows(idFollowing,"follower");
+                if (response.getMessage().equals("Delete Success!") && response.getStatus()) {
+                    handleUpdateQuantityFollows(idFollower, "following");
+                    handleUpdateQuantityFollows(idFollowing, "follower");
                     //followBtn.setText("Follow");
                     setTextBtn(followBtn, "Follow");
                     dialog.dismiss();
                 }
             }
-        });;
+        });
+        ;
     }
 
-    private void handleUpdateQuantityFollows(String idFollows, String type){
-        handleQuantityUpdate(idFollows, type, -1 );
+    private void handleUpdateQuantityFollows(String idFollows, String type) {
+        handleQuantityUpdate(idFollows, type, -1);
     }
 
     private void handleQuantityUpdate(String idFollows, String type, int quantityChange) {
         followsViewModel.getQuantityFollows(idFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<GetQuantityResponse>>() {
             @Override
             public void onChanged(ApiResponse<GetQuantityResponse> response) {
-                if(response.getMessage().equals("Success") && response.getStatus()){
+                if (response.getMessage().equals("Success") && response.getStatus()) {
                     GetQuantityResponse getQuantityResponse = response.getData();
                     int countFollower = getQuantityResponse.getQuantityFollower();
                     int countFollowing = getQuantityResponse.getQuantityFollowing();
 
-                    if(type.equals("follower")) {
+                    if (type.equals("follower")) {
                         countFollower += quantityChange;
                     } else if (type.equals("following")) {
                         countFollowing += quantityChange;
@@ -436,5 +438,6 @@ public class Fragment_search_ClickAccount extends Fragment {
                 }
             }
         });
+
     }
 }

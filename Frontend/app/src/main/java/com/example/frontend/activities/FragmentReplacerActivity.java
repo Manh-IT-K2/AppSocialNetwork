@@ -14,6 +14,7 @@ import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.Fragment_search_ClickAccount;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
+import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.fragments.VerificationCodeFragment;
 
 public class FragmentReplacerActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class FragmentReplacerActivity extends AppCompatActivity {
                     String recipientId = intent.getStringExtra("userId");
                     Bundle bundle = new Bundle();
                     bundle.putString("userId", recipientId);
-                    Fragment_search_ClickAccount fragment = new Fragment_search_ClickAccount();
+                    ProfileFragment fragment = new ProfileFragment();
                     fragment.setArguments(bundle);
                     setFragment(fragment);
                 }
