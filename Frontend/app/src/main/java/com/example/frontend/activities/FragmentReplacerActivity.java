@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
+import com.example.frontend.fragments.Fragment_search_ClickAccount;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
 import com.example.frontend.fragments.VerificationCodeFragment;
@@ -34,7 +36,18 @@ public class FragmentReplacerActivity extends AppCompatActivity {
                 setFragment(new LoginFragment());
             }else if(fragmentToLoad.equals("function_change_pass")){
                 setFragment(new Function_change_password());
+            }else if(fragmentToLoad.equals("Profile_recipetn")){
+                Intent intent = getIntent();
+                if (intent != null) {
+                    String recipientId = intent.getStringExtra("userId");
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userId", recipientId);
+                    Fragment_search_ClickAccount fragment = new Fragment_search_ClickAccount();
+                    fragment.setArguments(bundle);
+                    setFragment(fragment);
+                }
             }
+
         } else {
             setFragment(new LoginFragment());
         }

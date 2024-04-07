@@ -61,6 +61,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         }
         else {
             holder.userName.setText(searchHistoryResponseList.get(position).getText());
+            holder.name.setText(searchHistoryResponseList.get(position).getName());
             if(searchHistoryResponseList.get(position).getAvatar() != null)
                 Glide.with(context)
                         .load(Uri.parse(searchHistoryResponseList.get(position).getAvatar()))
@@ -81,6 +82,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     public class MyHolder extends RecyclerView.ViewHolder {
 
         TextView userName;
+        TextView name;
         CircleImageView avatar;
         TextView text;
         ImageButton imgButtonDelete;
@@ -88,6 +90,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         public MyHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             userName = itemView.findViewById(R.id.txt_UserName);
+            name = itemView.findViewById(R.id.txt_Name);
             avatar = itemView.findViewById(R.id.imgAvatar);
             text = itemView.findViewById(R.id.txt_Text);
             imgButtonDelete = itemView.findViewById(R.id.delete_item);

@@ -28,6 +28,7 @@ public class Comment {
 
     private Date createAt;
     private User userReply;
+    private List<User> like;
 
     public String generateId() {
         // Tạo một id ngẫu nhiên cho đối tượng Comment

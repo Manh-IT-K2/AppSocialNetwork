@@ -24,29 +24,32 @@ public class StoryRepository {
         storyService = CallApi.getRetrofitInstance().create(StoryService.class);
     }
 
-    // create post
+    // create story
     public void createStory(RequestCreateStory request, String userId) {
         MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
 
-        storyService.createStory(request,userId).enqueue(new Callback<ApiResponse<String>>() {
+        storyService.createStory(request, userId).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful()) {
                     ApiResponse<String> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
                 } else {
-                    // Xử lý khi phản hồi không thành công
+                    int errorCode = response.code();
+                    String errorMessage = "Error create story: " + errorCode;
+                    ApiResponse<String> errorResponse = new ApiResponse<>(false, "", errorMessage);
+                    mutableLiveData.setValue(errorResponse);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
+                mutableLiveData.setValue(new ApiResponse<>(false, "Failed create story: " + t.getMessage(), null));
             }
         });
     }
 
-    // get list post
+    // get list story by userId
     public MutableLiveData<ApiResponse<List<RequestStoryByUserId>>> getListStoryByUserId(String userId) {
         MutableLiveData<ApiResponse<List<RequestStoryByUserId>>> mutableLiveData = new MutableLiveData<>();
         storyService.getListStoryByUserId(userId).enqueue(new Callback<ApiResponse<List<RequestStoryByUserId>>>() {
@@ -59,14 +62,12 @@ public class StoryRepository {
                     Log.d("err", json);
                     mutableLiveData.setValue(apiResponse);
                 } else {
-                    // Xử lý khi phản hồi không thành công
                     mutableLiveData.setValue(new ApiResponse<List<RequestStoryByUserId>>(false, "Failed to get data from server", null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<RequestStoryByUserId>>> call, Throwable t) {
-                // Xử lý khi gọi API thất bại
                 mutableLiveData.setValue(new ApiResponse<List<RequestStoryByUserId>>(false, "Error: " + t.getMessage(), null));
             }
         });

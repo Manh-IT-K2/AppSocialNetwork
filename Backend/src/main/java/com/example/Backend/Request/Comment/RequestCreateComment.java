@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddComment {
+public class RequestCreateComment {
     String idPost;
     String idUser;
     String content;

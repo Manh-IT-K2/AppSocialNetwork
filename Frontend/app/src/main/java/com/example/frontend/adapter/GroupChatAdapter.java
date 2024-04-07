@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
@@ -35,17 +36,25 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     private Context context;
     private String currentUserId; // Assuming you have the current user's ID
 
-
-    public GroupChatAdapter(Context context, List<MessageWithSenderInfo> messages, String currentUserId) {
+    private String NameOtherUser, NameCurrentUser;
+    private LifecycleOwner lifecycleOwner;
+    public GroupChatAdapter(Context context, List<MessageWithSenderInfo> messages, String currentUserId, LifecycleOwner lifecycleOwner) {
         this.context = context;
         this.messages = messages;
         this.currentUserId = currentUserId;
+        this.lifecycleOwner = lifecycleOwner;
     }
     public void setMessages(List<MessageWithSenderInfo> messages) {
         this.messages = messages;
         notifyDataSetChanged();
     }
-
+    // Phương thức thêm tin nhắn mới vào danh sách
+    public void addNewMessage(MessageWithSenderInfo message) {
+        // Thêm tin nhắn mới vào danh sách tin nhắn của adapter
+        messages.add(message);
+        // Thông báo cho RecyclerView về sự thay đổi
+        notifyItemInserted(messages.size() - 1);
+    }
     public void addMessage(GroupChatWithMessagesResponse groupChatWithMessagesResponse) {
         // Lấy danh sách tin nhắn từ đối tượng GroupChatWithMessagesResponse
         List<MessageWithSenderInfo> newMessages = groupChatWithMessagesResponse.getMessages();
@@ -88,22 +97,41 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         User sender = message.getSender();
         // Lấy ID của người gửi
         String senderId = sender.getId();
-        // Lấy thông tin user từ senderId
 
-        //Lấy thông tin user hiện hành từ id currentUserId
+        UserViewModel userViewModel = new ViewModelProvider((ViewModelStoreOwner) lifecycleOwner).get(UserViewModel.class);
+        // Lấy thông tin user từ senderId
+        userViewModel.getDetailUserById(senderId).observe(lifecycleOwner, new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Success") && response.getStatus()) {
+                    UserResponse userResponse = response.getData();
+                    NameOtherUser = userResponse.getUsername();
+                }
+            }
+        });
+        // Lấy thông tin user hiện hành từ id currentUserId
+        userViewModel.getDetailUserById(currentUserId).observe(lifecycleOwner, new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Success") && response.getStatus()) {
+                    UserResponse userResponse = response.getData();
+                    NameCurrentUser = userResponse.getUsername();
+                }
+            }
+        });
 
         // Nếu tin nhắn được gửi bởi người dùng hiện tại
         if (senderId != null && senderId.equals(currentUserId)) {
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextView.setText(message.getContent());
-            holder.user_name_right.setText("Văn Hoàn"); // Hiển thị tên người gửi tin nhắn
+            holder.user_name_right.setText(NameCurrentUser); // Hiển thị tên người gửi tin nhắn
             holder.user_name_left.setText(""); // Ẩn tên người gửi tin nhắn bên trái
         } else { // Nếu tin nhắn được gửi bởi người dùng khác
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextView.setText(message.getContent());
-            holder.user_name_left.setText("Ha Long"); // Hiển thị tên người gửi tin nhắn bên trái
+            holder.user_name_left.setText(NameOtherUser); // Hiển thị tên người gửi tin nhắn bên trái
             holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
         }
 

@@ -150,12 +150,14 @@ public class UserImpl implements UserService {
         Query query = new Query(Criteria.where("email").is(requestForgetPass.getEmail()));
         User user = mongoTemplate.findOne(query, User.class, "users");
         if (user == null) {
-            return new ApiResponse<User>(false, "Không tìm thấy ngườ dùng với Email này!",null);
+            return new ApiResponse<>(false, "Không tìm thấy người dùng với Email này!", null);
         }
-        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPass(),BCrypt.gensalt()));
-        mongoTemplate.save(user,"users");
-        return new ApiResponse<>(true, "Đổi mật khẩu thành công!",null);
+
+        user.setPassword(BCrypt.hashpw(requestForgetPass.getNewPw(), BCrypt.gensalt()));
+        mongoTemplate.save(user, "users");
+        return new ApiResponse<>(true, "Đổi mật khẩu thành công!", user);
     }
+
     @Override
     public ApiResponse<List<User>> getAllUsers() {
         List<User> userList = mongoTemplate.findAll(User.class, "users");
@@ -165,7 +167,7 @@ public class UserImpl implements UserService {
     @Override
     public ApiResponse<User> changePassword(RequestChangePasword requestChangePass) throws Exception {
         // Tạo query để tìm người dùng dựa trên email
-        Query query = new Query(Criteria.where("username").is(requestChangePass.getUsername()));
+        Query query = new Query(Criteria.where("id").is(requestChangePass.getId()));
         // Tìm người dùng trong cơ sở dữ liệu
         User user = mongoTemplate.findOne(query, User.class, "users");
         boolean matches = BCrypt.checkpw(requestChangePass.getCurrentpass(), user.getPassword());

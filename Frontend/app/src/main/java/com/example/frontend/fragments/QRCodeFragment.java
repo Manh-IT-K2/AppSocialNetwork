@@ -68,6 +68,8 @@ public class QRCodeFragment extends Fragment {
     CircleImageView avatar;
     UserViewModel userViewModel;
 
+    String userId;
+
     public QRCodeFragment() { }
 
     @Override
@@ -81,13 +83,20 @@ public class QRCodeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_q_r_code, container, false);
 
+        userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getString("userId") != null)
+                userId = bundle.getString("userId", "");
+        }
+
         init(view);
 
         loadQRCode();
         clickListener();
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getDetailUserById(SharedPreferenceLocal.read(getContext(),"userId")).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+        userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
                 nameTv.setText(userResponseApiResponse.getData().getUsername());
@@ -98,7 +107,6 @@ public class QRCodeFragment extends Fragment {
     }
 
     private void loadQRCode() {
-        String userId = SharedPreferenceLocal.read(getContext(),"userId");
         Bitmap qrcodeBitmap = QRCode.generateQRCode(userId);
         imageIv.setImageBitmap(qrcodeBitmap);
     }

@@ -1,6 +1,5 @@
 package com.example.Backend.Request.Post;
 
-import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestPost {
+public class RequestCreatePost {
 
     private List<String> imagePost;
     private ObjectId userId;
