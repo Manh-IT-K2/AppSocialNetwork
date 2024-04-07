@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
@@ -14,15 +15,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,16 +38,20 @@ import com.example.frontend.activities.CreatePostActivity;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
+import com.example.frontend.adapter.PostAdapter;
+import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.Post.PostViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -66,6 +74,9 @@ public class ProfileFragment extends Fragment {
     CircleImageView profileImage;
     TextView nameTV;
     private List<Uri> selectedFiles;
+    Fragment selectedFragment = null;
+    FrameLayout fragment_layout_main;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     public void onResume() {
@@ -104,7 +115,10 @@ public class ProfileFragment extends Fragment {
         menuSetting = view.findViewById(R.id.menu_btn);
         profileImage = view.findViewById(R.id.profileImage);
         nameTV = view.findViewById(R.id.nameTV);
-
+        bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
+        fragment_layout_main = view.findViewById(R.id.fragment_layout_main);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
+        bottomNavigationView.setSelectedItemId(R.id.menu_Posts);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // Nhận dữ liệu email từ Bundle
@@ -135,7 +149,12 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        handleClickListener();
 
+        return view;
+    }
+
+    public void handleClickListener(){
         editprofileImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,9 +247,7 @@ public class ProfileFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-        return view;
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -289,5 +306,33 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });;
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            if (item.getItemId() == R.id.menu_Posts) {
+                selectedFragment = new PostProfileFragment();
+            } else if (item.getItemId() == R.id.menu_Watch) {
+                selectedFragment = new WatchProfileFragment();
+            }else if (item.getItemId() == R.id.menu_YouLiked) {
+                selectedFragment = new SubscriptionsFragment();
+            }
+            if(selectedFragment != null){
+                getChildFragmentManager().beginTransaction().replace(R.id.fragment_layout_main,selectedFragment).commit();
+            }
+            return true;
+        }
+    };
+    public void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction =  getChildFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+        if (fragment instanceof CreateAccountFragment) {
+            fragmentTransaction.addToBackStack(null);
+        }
+        fragmentTransaction.replace(fragment_layout_main.getId(), fragment);
+        fragmentTransaction.commit();
     }
 }
