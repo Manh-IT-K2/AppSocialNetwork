@@ -18,6 +18,7 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.ViewMemberAdapter;
 import com.example.frontend.repository.UserRepository;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -32,6 +33,7 @@ public class ViewMembers extends AppCompatActivity {
     UserViewModel userViewModel;
     private String groupId;
     private String groupName;
+    private String createrId;
     private TextView edtGroupName;
     private ListView listViewMembers;
     private ImageButton btnBack;
@@ -50,6 +52,7 @@ public class ViewMembers extends AppCompatActivity {
         if (extras != null) {
             groupId = extras.getString("groupChatId");
             groupName = extras.getString("groupChatName");
+            createrId = extras.getString("idcreater");
         }
 
         // Khởi tạo views từ layout
@@ -86,6 +89,12 @@ public class ViewMembers extends AppCompatActivity {
                                 Log.d("ttttt", tam.get(tam.size()-1).getName()+" "+userResponse.getName());
                                 // Nếu đã thêm tất cả các thành viên vào danh sách tam, cập nhật giao diện
                                 if (tam.size() == memberIdList.size()) {
+                                    // Loại bỏ các người dùng hiện hành khỏi ds thành viên
+                                    for (UserResponse user : tam) {
+                                        if (user.getId().equals(createrId)) {
+                                            tam.remove(user);
+                                        }
+                                    }
                                     memberListAdapter.setMembers(tam);
                                 }
                             } else {
