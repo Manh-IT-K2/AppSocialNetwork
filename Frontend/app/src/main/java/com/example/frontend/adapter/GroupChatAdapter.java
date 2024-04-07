@@ -125,13 +125,13 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextView.setText(message.getContent());
-            holder.user_name_right.setText("Văn Hoàn"); // Hiển thị tên người gửi tin nhắn
+            holder.user_name_right.setText(NameCurrentUser); // Hiển thị tên người gửi tin nhắn
             holder.user_name_left.setText(""); // Ẩn tên người gửi tin nhắn bên trái
         } else { // Nếu tin nhắn được gửi bởi người dùng khác
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextView.setText(message.getContent());
-            holder.user_name_left.setText("Ha Long"); // Hiển thị tên người gửi tin nhắn bên trái
+            holder.user_name_left.setText(NameOtherUser); // Hiển thị tên người gửi tin nhắn bên trái
             holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
         }
 

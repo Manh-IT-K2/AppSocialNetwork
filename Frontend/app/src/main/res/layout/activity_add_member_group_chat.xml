@@ -3,7 +3,8 @@
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".fragments.RemoveMembergroupChat"
+android:id="@+id/add_member"
+tools:context=".activities.AddMemberGroupChat"
 android:padding="16dp">
 
 <!-- Button back -->
@@ -21,7 +22,7 @@ android:padding="16dp">
     android:layout_height="wrap_content"
     android:layout_below="@id/btnBack"
     android:layout_marginLeft="25dp"
-    android:layout_marginTop="-25dp"
+    android:layout_marginTop="-20dp"
     android:hint="Tên nhóm" />
 <!-- Button Tạo nhóm chat -->
 <Button
@@ -30,12 +31,11 @@ android:padding="16dp">
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_marginTop="30dp"
-    android:drawableRight="@drawable/ic_delete"
 
-
+    android:drawableRight="@drawable/icon_add"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:text="Xóa thành viên" />
+    android:text="Thêm thành viên" />
 <ListView
     android:id="@+id/listViewFriends"
     android:layout_width="match_parent"

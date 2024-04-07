@@ -28,6 +28,12 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="34">
         <activity
+            android:name=".activities.RemoveMemberGruopChat"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddMemberGroupChat"
+            android:exported="false" />
+        <activity
             android:name=".activities.ViewMembers"
             android:exported="false" />
         <activity
