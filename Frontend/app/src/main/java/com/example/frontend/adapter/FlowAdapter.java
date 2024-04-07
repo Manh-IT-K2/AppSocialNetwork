@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
     private Context context;
     private LayoutInflater layoutInflater;
     private OnItemCheckedListener onItemCheckedListener;
+    // Khai báo một danh sách để lưu trữ trạng thái của checkbox
+    private SparseBooleanArray checkedPositions = new SparseBooleanArray();
 
     public FlowAdapter(Context context, List<GetAllUserByFollowsResponse> userList, OnItemCheckedListener listener) {
         super(context, 0, userList);
@@ -30,7 +33,6 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemCheckedListener = listener;
     }
-
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -47,14 +49,13 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         }
 
         GetAllUserByFollowsResponse user = userList.get(position);
-        holder.textFriendName.setText(user.getName());
-        // holder.subInformation.setText(user.getSubInformation());
+        holder.textFriendName.setText(user.getUsername());
+        holder.checkbox.setChecked(checkedPositions.get(position)); // Cập nhật trạng thái của checkbox
 
-        // Set trạng thái của checkbox dựa trên trường boolean trong mỗi mục
-        holder.checkbox.setChecked(user.isSelected());
         holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkedPositions.put(position, isChecked); // Lưu trạng thái mới của checkbox
                 user.setSelected(isChecked);
                 if (onItemCheckedListener != null) {
                     onItemCheckedListener.onItemChecked(user, isChecked);
@@ -64,6 +65,7 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
 
         return convertView;
     }
+
 
     // ViewHolder pattern để tối ưu hóa hiệu suất
     private static class ViewHolder {

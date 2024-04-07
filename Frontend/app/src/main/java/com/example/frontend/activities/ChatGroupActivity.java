@@ -216,7 +216,7 @@ public class ChatGroupActivity extends AppCompatActivity {
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_add_member) {
-
+                    addMember();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_remove_member) {
@@ -324,7 +324,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         Intent intent = new Intent(ChatGroupActivity.this, ViewMembers.class);
         intent.putExtra("groupChatId", groupId);
         intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
-
+        intent.putExtra("idcreater", Infor_GroupChat.getCreatorId());
         // Tạo một danh sách chứa id của các thành viên
         ArrayList<String> memberIdList = new ArrayList<>();
         for (UserResponse member : Infor_GroupChat.getMembers()) {
@@ -336,7 +336,21 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+    private void addMember(){
+        Intent intent = new Intent(ChatGroupActivity.this, AddMemberGroupChat.class);
+        intent.putExtra("groupChatId", groupId);
+        intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
+        // Tạo một danh sách chứa id của các thành viên
+        ArrayList<String> memberIdList = new ArrayList<>();
+        for (UserResponse member : Infor_GroupChat.getMembers()) {
+            memberIdList.add(member.getId());
+        }
 
+        // Truyền danh sách id qua Intent
+        intent.putStringArrayListExtra("memberIdList", memberIdList);
+
+        startActivity(intent);
+    }
 
 
 }
