@@ -306,18 +306,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 // Nếu tìm thấy biểu tượng trong chuỗi
                 while (index != -1) {
                     // Loại bỏ tên biểu tượng khỏi chuỗi
-                    content = content.substring(0, index) + content.substring(index + iconName.length());
+                    //content = content.substring(0, index) + content.substring(index + iconName.length());
 
                     // Thêm biểu tượng vào chuỗi với ImageSpan
                     Drawable iconDrawable = ContextCompat.getDrawable(itemView.getContext(), iconResId);
                     if (iconDrawable != null) {
                         iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
                         ImageSpan imageSpan = new ImageSpan(iconDrawable, ImageSpan.ALIGN_BOTTOM);
-                        builder.setSpan(imageSpan, index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        builder.setSpan(imageSpan, index, index+iconName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
 
                     // Tìm vị trí của biểu tượng tiếp theo
-                    index = content.indexOf(iconName);
+                    index = content.indexOf(iconName, index + 1);
                 }
             }
 

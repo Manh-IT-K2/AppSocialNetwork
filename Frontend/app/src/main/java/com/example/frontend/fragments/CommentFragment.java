@@ -4,8 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
@@ -59,6 +61,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
     public static int positionReplyComment = -1;
     public static int positionReplyCommentParent = -1;
     private ImageView btn_createComment, btn_sendGifComment;
+    private static List<String> listIconsChoosed = new ArrayList<>();
 
     public CommentFragment(Context context, String idPost) {
         super(context);
@@ -142,7 +145,14 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         btn_createComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String contentComment = edt_contentComment.getText().toString();
+                String contentComment = edt_contentComment.getText().toString();;
+                if(listIconsChoosed.size() > 0){
+                    for(int i = 0; i < listIconsChoosed.size(); i++){
+                        String placeholder = "-" + i + "-";
+                        contentComment = contentComment.replace(placeholder, listIconsChoosed.get(i));
+                    }
+                }
+                Log.e("contentComment",contentComment);
                 String idComment = "";
                 String idUserReply = "";
                 boolean isReplyComment = false;
@@ -196,6 +206,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
 
                 // Clear the EditText after submitting the comment
                 edt_contentComment.setText("");
+                listIconsChoosed.clear();
             }
         });
 
@@ -262,13 +273,14 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         if (iconDrawable != null) {
             iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
             ImageSpan imageSpan = new ImageSpan(iconDrawable, ImageSpan.ALIGN_BOTTOM);
-            builder.append(" ");
-            builder.setSpan(imageSpan, builder.length() - 1, builder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            builder.append(" -"+listIconsChoosed.size()+"-");
+            builder.setSpan(imageSpan, builder.length() - 3, builder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         // Thêm chuỗi biểu tượng vào nội dung của comment
-        builder.append(iconString);
-
+        //builder.append(iconString);
+        listIconsChoosed.add(iconString);
+        Log.e("icon",builder+"");
         // Hiển thị văn bản mới trong edt_contentComment
         edt_contentComment.setText(builder);
         edt_contentComment.setSelection(builder.length());

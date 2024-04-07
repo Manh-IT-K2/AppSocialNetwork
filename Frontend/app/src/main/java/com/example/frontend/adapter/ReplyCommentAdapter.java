@@ -1,11 +1,14 @@
 package com.example.frontend.adapter;
 
+import static com.example.frontend.fragments.CommentFragment.getIconList;
 import static com.example.frontend.fragments.CommentFragment.positionReplyComment;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +52,7 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
         replyClickListener = listener;
     }
 
-    private Context mContext;
+    private static Context mContext;
     private static List<CommentResponse> listComment;
 
     private static LifecycleOwner lifecycleOwner;
@@ -93,23 +96,7 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
             holder.txt_countLikeComment.setText(comment.getLike().size()+"");
         }else holder.txt_countLikeComment.setText("0");
 
-        // Check if the username begins with "@".
-        if (comment.getContent().startsWith("@")) {
-
-            SpannableStringBuilder builder = new SpannableStringBuilder(comment.getContent());
-            // Find the location of the first space after "@" in the username
-            int spaceIndex = comment.getContent().indexOf(" ");
-            if (spaceIndex != -1) {
-                //If there is a space, apply color to the part from "@" to the space
-                ForegroundColorSpan colorSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.blue1));
-                builder.setSpan(colorSpan, 0, spaceIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            holder.txt_contentComment.setText(builder);
-        } else {
-            holder.txt_contentComment.setText(comment.getContent());
-        }
-
+        holder.setContentWithIcon(comment.getContent());
 
         String timeAgo = getTimeAgo(comment.getCreateAt());
         holder.txt_timeComment.setText(timeAgo);
@@ -247,6 +234,48 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
                     }
                 }
             });
+        }
+
+        public void setContentWithIcon(String content) {
+            SpannableStringBuilder builder = new SpannableStringBuilder(content);
+            List<Integer> iconList = getIconList();
+
+            // Check if the username begins with "@".
+            if (content.startsWith("@")) {
+                // Find the location of the first space after "@" in the username
+                int spaceIndex =content.indexOf(" ");
+                if (spaceIndex != -1) {
+                    //If there is a space, apply color to the part from "@" to the space
+                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.blue1));
+                    builder.setSpan(colorSpan, 0, spaceIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+
+            // Duyệt qua danh sách icon
+            for (Integer iconResId : iconList) {
+                String iconName = itemView.getContext().getResources().getResourceEntryName(iconResId);
+                int index = content.indexOf(iconName);
+
+                // Nếu tìm thấy biểu tượng trong chuỗi
+                while (index != -1) {
+                    // Loại bỏ tên biểu tượng khỏi chuỗi
+                    //content = content.substring(0, index) + content.substring(index + iconName.length());
+
+                    // Thêm biểu tượng vào chuỗi với ImageSpan
+                    Drawable iconDrawable = ContextCompat.getDrawable(itemView.getContext(), iconResId);
+                    if (iconDrawable != null) {
+                        iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
+                        ImageSpan imageSpan = new ImageSpan(iconDrawable, ImageSpan.ALIGN_BOTTOM);
+                        builder.setSpan(imageSpan, index, index+iconName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+
+                    // Tìm vị trí của biểu tượng tiếp theo
+                    index = content.indexOf(iconName, index + 1);
+                }
+            }
+
+            // Hiển thị chuỗi đã được định dạng (với tên biểu tượng đã được loại bỏ)
+            txt_contentComment.setText(builder);
         }
     }
 

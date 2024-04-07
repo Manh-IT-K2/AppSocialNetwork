@@ -93,7 +93,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="no action"
                     android:textColor="@color/white"
                     android:textSize="13sp"
