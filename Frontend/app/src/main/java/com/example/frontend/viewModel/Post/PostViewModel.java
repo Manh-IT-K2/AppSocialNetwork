@@ -31,4 +31,9 @@ public class PostViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<PostResponse>> addLike(String postId, String userId){
         return postRepository.addLike(postId,userId);
     }
+
+    // get posts by search query
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(String id, String searchQuery) {
+        return postRepository.getListPostsBySearchQuery(id, searchQuery);
+    }
 }

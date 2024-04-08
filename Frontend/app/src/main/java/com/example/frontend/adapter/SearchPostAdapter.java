@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.Post.PostResponse;
 import com.example.frontend.response.User.UserResponse;
 
@@ -20,10 +21,10 @@ import java.util.List;
 public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.MyViewHolder> {
 
     Context context;
-    List<PostResponse> post_searchList;
+    List<RequestPostByUserId> post_searchList;
     LayoutInflater layoutInflater;
 
-    public SearchPostAdapter(Context context, List<PostResponse> post_searchList) {
+    public SearchPostAdapter(Context context, List<RequestPostByUserId> post_searchList) {
         this.context = context;
         this.post_searchList = post_searchList;
         layoutInflater = LayoutInflater.from(context);
@@ -41,6 +42,8 @@ public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.My
         if(post_searchList.get(position).getImagePost() != null)
             Glide.with(context)
                     .load(Uri.parse(post_searchList.get(position).getImagePost().get(0)))
+                    .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
+                    .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                     .into(holder.imgSearchPost);
     }
 
@@ -57,6 +60,7 @@ public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.My
             super(itemView);
 
             imgSearchPost = itemView.findViewById(R.id.imgSearchPost);
+
         }
     }
 }

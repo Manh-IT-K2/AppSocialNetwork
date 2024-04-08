@@ -25,4 +25,8 @@ public interface PostService {
     // add user like post
     @POST("post/addLike")
     Call<ApiResponse<PostResponse>> addLike(@Query("postId") String postId, @Query("userId") String userId);
+
+    // get posts by search query
+    @GET("post/getListPostsBySearchQuery")
+    Call<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(@Query("id") String id, @Query("searchQuery") String searchQuery);
  }

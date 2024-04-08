@@ -1,5 +1,7 @@
 package com.example.frontend.repository;
 
+import static android.content.ContentValues.TAG;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -102,4 +104,29 @@ public class PostRepository {
         return mutableLiveData;
     }
 
+    // get posts by search query
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(String userId, String searchQuery) {
+        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
+        postService.getListPostsBySearchQuery(userId, searchQuery).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        ApiResponse<List<RequestPostByUserId>> listApiResponse = response.body();
+                        mutableLiveData.setValue(listApiResponse);
+                        Log.d("posts by search query", mutableLiveData.getValue().getData().toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+                Log.i(TAG, "Unable to get data");
+            }
+        });
+
+        return mutableLiveData;
+    }
 }

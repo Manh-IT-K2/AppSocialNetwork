@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,29 +14,33 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.SearchPostAdapter;
 import com.example.frontend.adapter.SearchUserAdapter;
+import com.example.frontend.request.Post.RequestPostByUserId;
+import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.utils.GridSpacingItemDecoration;
+import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.Post.PostViewModel;
+import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Fragment_searchPost extends Fragment {
 
     private RecyclerView recyclerView_Post;
-    private List<PostResponse> post_searchList;
+    ProgressBar progressBar;
+    private List<RequestPostByUserId> post_searchList = new ArrayList<>();
+    private String id, searchQuery;
+    private PostViewModel postViewModel;
+    private SearchQuery_ViewModel searchQueryViewModel;
 
     public Fragment_searchPost() {
         // Required empty public constructor
-    }
-    public static Fragment_searchPost newInstance(String param1, String param2) {
-        Fragment_searchPost fragment = new Fragment_searchPost();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -48,15 +54,46 @@ public class Fragment_searchPost extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recyclerView_Post = view.findViewById(R.id.recyclerViewPost);
+        postViewModel = new ViewModelProvider(requireActivity()).get(PostViewModel.class);
+        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
 
-        // Dua ket qua tim kiem post vao recyclerView
-        putResultSearch_ToRecyclerView();
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//            if (bundle.getString("searchQuery") != null)
+//                searchQuery = bundle.getString("searchQuery", "");
+//        }
+        searchQuery = searchQueryViewModel.getSearchQuery();
+        id = SharedPreferenceLocal.read(getContext(), "userId");
+        recyclerView_Post = view.findViewById(R.id.recyclerViewPost);
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Bắt đầu tìm kiếm theo search query
+        startSearch(id, searchQuery);
+
+    }
+
+    private void startSearch(String id, String searchQuery) {
+        postViewModel.getListPostsBySearchQuery(id, searchQuery).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onChanged(ApiResponse<List<RequestPostByUserId>> listApiResponse) {
+                post_searchList = listApiResponse.getData();
+                progressBar.setVisibility(View.GONE);
+                // Dua ket qua tim kiem post vao recyclerView
+                putResultSearch_ToRecyclerView();
+            }
+        });
     }
 
     private void putResultSearch_ToRecyclerView() {
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        recyclerView_Post.setLayoutManager(layoutManager);
+        // Set layout manager
+        recyclerView_Post.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+        // Set spacing between items
+        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
+        recyclerView_Post.addItemDecoration(new GridSpacingItemDecoration(3, spacing, true));
+
+        // Set adapter
         SearchPostAdapter searchPostAdapter = new SearchPostAdapter(getContext(), post_searchList);
         recyclerView_Post.setAdapter(searchPostAdapter);
     }
