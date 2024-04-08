@@ -28,7 +28,7 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="34">
         <activity
-            android:name=".activities.RemoveMemberGruopChat"
+            android:name=".activities.RemoveMemberGroupChat"
             android:exported="false" />
         <activity
             android:name=".activities.AddMemberGroupChat"

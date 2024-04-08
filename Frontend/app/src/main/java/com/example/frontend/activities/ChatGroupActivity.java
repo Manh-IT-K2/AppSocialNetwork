@@ -220,7 +220,7 @@ public class ChatGroupActivity extends AppCompatActivity {
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_remove_member) {
-
+                    removeMember();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_disband_group) {
@@ -351,6 +351,20 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+    private void removeMember(){
+        Intent intent = new Intent(ChatGroupActivity.this, RemoveMemberGroupChat.class);
+        intent.putExtra("groupChatId", groupId);
+        intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
+        // Tạo một danh sách chứa id của các thành viên
+        ArrayList<String> memberIdList = new ArrayList<>();
+        for (UserResponse member : Infor_GroupChat.getMembers()) {
+            memberIdList.add(member.getId());
+        }
 
+        // Truyền danh sách id qua Intent
+        intent.putStringArrayListExtra("memberIdList", memberIdList);
+
+        startActivity(intent);
+    }
 
 }
