@@ -1,5 +1,6 @@
 package com.example.Backend.Service.Post;
 
+import com.example.Backend.Entity.Follows;
 import com.example.Backend.Entity.Post;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Post.RequestCreatePost;
@@ -131,5 +132,94 @@ public class PostIml implements PostService{
             // (Có thể throw exception hoặc xử lý theo nhu cầu của ứng dụng)
             return new ApiResponse<Post>(true,"add like success",post);
         }
+    }
+
+    public List<String> getFollowedUserIds(ObjectId currentUserId) {
+        Criteria criteria = Criteria.where("idFollower").is(currentUserId).and("status").is(1); // Lọc ra các người dùng đã theo dõi
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.project().and("idFollowing").as("idFollowing") // Chọn ra trường idFollowing
+        );
+        AggregationResults<Follows> results = mongoTemplate.aggregate(aggregation, "follows", Follows.class);
+        List<String> followedUserIds = new ArrayList<>();
+        for (Follows follows : results.getMappedResults()) {
+            followedUserIds.add(String.valueOf(follows.getIdFollowing()));
+        }
+        return followedUserIds;
+    }
+
+
+    @Override
+    public ApiResponse<List<RequestPostByUserId>> getListPostsBySearchQuery(String id, String searchQuery) {
+
+        // Lay danh sach following cua id
+        List<String> listFollowedUserIds = new ArrayList<>();
+        ObjectId objectId = new ObjectId(id);
+        listFollowedUserIds = getFollowedUserIds(objectId);
+
+        // Match để lọc các bài đăng theo điều kiện userId nam trong listFollowedUserIds va description chua searchQuery
+        Aggregation aggregation1 = Aggregation.newAggregation(
+                // Match để lọc các bài đăng theo điều kiện
+                Aggregation.match(
+                        Criteria.where("userId").in(listFollowedUserIds).and("description").regex(searchQuery)
+                ),
+                // Lookup để tham chiếu tới bộ sưu tập "users" và lấy thông tin avatar
+                LookupOperation.newLookup()
+                        .from("users")
+                        .localField("userId")
+                        .foreignField("_id")
+                        .as("user"),
+                // Unwind để giải nén kết quả từ Lookup
+                Aggregation.unwind("user"),
+                // Project để chọn ra trường avatar từ kết quả của Lookup
+                Aggregation.project("idPost", "userId", "description", "imagePost", "location", "createAt", "like")
+                        .and("user.avatarImg").as("avtImage")
+                        .and("user.username").as("userName"),
+                // Sort để sắp xếp danh sách kết quả
+                Aggregation.sort(Sort.Direction.DESC, "createAt")
+        );
+
+        // Thực hiện truy vấn bằng Aggregation và lấy ra kết quả
+        AggregationResults<RequestPostByUserId> result1 = mongoTemplate.aggregate(aggregation1, "post", RequestPostByUserId.class);
+
+        // Lấy danh sách kết quả
+        List<RequestPostByUserId> resultList1 = result1.getMappedResults();
+
+        //--------------------------------------------------------------------------------------------------------
+
+        // Match để lọc các bài đăng theo điều kiện userId khong nam trong listFollowedUserIds va description chua searchQuery
+        Aggregation aggregation2 = Aggregation.newAggregation(
+                // Match để lọc các bài đăng theo điều kiện
+                Aggregation.match(
+                        Criteria.where("userId").nin(listFollowedUserIds).and("description").regex(searchQuery)
+                ),
+                // Lookup để tham chiếu tới bộ sưu tập "users" và lấy thông tin avatar
+                LookupOperation.newLookup()
+                        .from("users")
+                        .localField("userId")
+                        .foreignField("_id")
+                        .as("user"),
+                // Unwind để giải nén kết quả từ Lookup
+                Aggregation.unwind("user"),
+                // Project để chọn ra trường avatar từ kết quả của Lookup
+                Aggregation.project("idPost", "userId", "description", "imagePost", "location", "createAt", "like")
+                        .and("user.avatarImg").as("avtImage")
+                        .and("user.username").as("userName"),
+                // Sort để sắp xếp danh sách kết quả
+                Aggregation.sort(Sort.Direction.DESC, "createAt")
+        );
+
+        // Thực hiện truy vấn bằng Aggregation và lấy ra kết quả
+        AggregationResults<RequestPostByUserId> result2 = mongoTemplate.aggregate(aggregation2, "post", RequestPostByUserId.class);
+
+        // Lấy danh sách kết quả
+        List<RequestPostByUserId> resultList2 = result2.getMappedResults();
+
+        // Ket hop 2 List
+        List<RequestPostByUserId> resultList = new ArrayList<>(resultList2);
+        resultList.addAll(0, resultList1);
+
+        // Trả về danh sách các tài liệu kết quả
+        return new ApiResponse<List<RequestPostByUserId>>(true, "Lấy posts bằng chuỗi truy vấn tìm kiếm", resultList);
     }
 }

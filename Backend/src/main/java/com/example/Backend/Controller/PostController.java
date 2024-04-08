@@ -46,4 +46,14 @@ public class PostController {
         return null;
     }
 
+    // get posts by search query
+    @GetMapping("/getListPostsBySearchQuery")
+    public ResponseEntity<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(@RequestParam String id, @RequestParam String searchQuery) {
+        if (!id.isEmpty() && !searchQuery.isEmpty()) {
+            ApiResponse<List<RequestPostByUserId>> apiResponse =  postService.getListPostsBySearchQuery(id, searchQuery);
+            return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(apiResponse, HttpStatus.OK);
+        }
+        return null;
+    }
+
 }
