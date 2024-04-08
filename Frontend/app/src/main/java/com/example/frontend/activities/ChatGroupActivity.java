@@ -1,6 +1,7 @@
 package com.example.frontend.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -221,6 +222,7 @@ public class ChatGroupActivity extends AppCompatActivity {
                 }
                 if (item.getItemId() == R.id.menu_remove_member) {
                     removeMember();
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_disband_group) {
@@ -366,5 +368,4 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
-
 }

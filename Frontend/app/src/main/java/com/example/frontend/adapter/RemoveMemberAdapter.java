@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ public class RemoveMemberAdapter extends ArrayAdapter<UserResponse> {
     private Context context;
     private LayoutInflater layoutInflater;
     private OnItemCheckedListener onItemCheckedListener;
+    // Khai báo một danh sách để lưu trữ trạng thái của checkbox
+    private SparseBooleanArray checkedPositions = new SparseBooleanArray();
 
     public RemoveMemberAdapter(Context context, List<UserResponse> userList, OnItemCheckedListener listener) {
         super(context, 0, userList);
@@ -30,8 +33,8 @@ public class RemoveMemberAdapter extends ArrayAdapter<UserResponse> {
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemCheckedListener = listener;
     }
-    public void setMembers(List<UserResponse> userList) {
-        this.userList = userList;
+    public void setMembers(List<UserResponse> tam) {
+        this.userList = tam;
         notifyDataSetChanged();
     }
 
@@ -54,12 +57,13 @@ public class RemoveMemberAdapter extends ArrayAdapter<UserResponse> {
         holder.textFriendName.setText(user.getUsername());
         holder.subInformation.setText(user.getId());
 
-        holder.checkbox.setChecked(user.isStatus());
+        holder.checkbox.setChecked(checkedPositions.get(position)); // Cập nhật trạng thái của checkbox
 
         holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                user.setStatus(isChecked);
+                checkedPositions.put(position, isChecked); // Lưu trạng thái mới của checkbox
+                user.setSelected(isChecked);
                 if (onItemCheckedListener != null) {
                     onItemCheckedListener.onItemChecked(user, isChecked);
                 }

@@ -46,7 +46,7 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
     private String groupName;
     private ArrayList<String> memberIdList;
     private List<UserResponse> tam=new ArrayList<>();
-    private List<String> memberIds;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
             public void onItemChecked(UserResponse user, boolean isChecked) {
                 if (isChecked) {
                     selectedUsers.add(user);
+                    Log.d("cong", "onItemChecked: ");
                 } else {
                     selectedUsers.remove(user);
                 }
@@ -98,7 +99,10 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
                         // Xóa các thành viên được chọn
                         removeAllSelectedMembers();
                         // Quay lại MainActivityChat mới
-                        Intent intent = new Intent(RemoveMemberGroupChat.this, MainChatActivity.class);
+                        Intent intent = new Intent(RemoveMemberGroupChat.this, ChatGroupActivity.class);
+
+                        intent.putExtra("groupChatId", GroupID);
+                        intent.putExtra("groupChatName", groupName);
                         startActivity(intent);
                         finish(); // Đóng Activity hiện tại nếu bạn muốn
                     }
@@ -107,13 +111,15 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
                 }
             }
         });
+
+        getAllGroupMembers();
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        getAllGroupMembers();
+
     }
 
     private void getAllGroupMembers() {
@@ -128,11 +134,13 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
                             if (userResponse != null) {
 
                                 tam.add(userResponse);
+                                Log.d("ds_tam", tam.get(0).getUsername());
 //                                // Nếu đã thêm tất cả các thành viên vào danh sách tam, cập nhật giao diện
-//                                if (tam.size() == memberIdList.size()) {
-//
-//                                    adapter.setMembers(tam);
-//                                }
+                                if (tam.size() == memberIdList.size()) {
+                                    adapter.clear();
+                                    adapter.addAll(tam);
+                                    updateCreateGroupButtonState();
+                                }
                             } else {
                                 Log.d("ttttt", "UserResponse is null for memberId: " + currentMemberId);
                             }
@@ -142,7 +150,7 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
                     }
                 });
             }
-            adapter.setMembers(tam);
+
         } else {
             Log.d("ttttt", "MemberIdList is null");
         }
@@ -151,25 +159,29 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
     private void updateCreateGroupButtonState() {
         btnRemove.setEnabled(selectedUsers.size() >= 1);
     }
+    private List<String> getSelectedUserIds() {
+        List<String> selectedIds = new ArrayList<>();
+        for (UserResponse user : selectedUsers) {
+            if (user.isSelected()) {
+                selectedIds.add(user.getId());
+            }
+        }
+        return selectedIds;
+    }
 
     private void removeAllSelectedMembers() {
 
-        for (UserResponse selectedUser : selectedUsers) {
-            memberIds.add(selectedUser.getId());
-        }
         RequestRemoveMemberFromGroupChat request = new RequestRemoveMemberFromGroupChat();
         request.setGroupId(GroupID);
-        request.setMemberIds(memberIds);
+        request.setMemberIds(getSelectedUserIds());
+
         // Gọi hàm removeMemberFromGroupChat từ viewModelGroupChat để xóa thành viên
         groupChatViewModel.removeMemberFromGroupChat(GroupID, request).observe(this, new Observer<ApiResponse<String>>() {
             @Override
             public void onChanged(ApiResponse<String> response) {
                 if (response != null && response.getStatus()) {
                     Toast.makeText(RemoveMemberGroupChat.this, "Đã xóa thành viên khỏi nhóm", Toast.LENGTH_SHORT).show();
-                    // Xóa các phần tử khớp trong memberIdList với memberIds
-                    memberIdList.removeAll(memberIds);
-                    // Refresh danh sách thành viên sau khi xóa
-                    getAllGroupMembers();
+//
                 } else {
                     Toast.makeText(RemoveMemberGroupChat.this, "Failed to remove member from group", Toast.LENGTH_SHORT).show();
                 }

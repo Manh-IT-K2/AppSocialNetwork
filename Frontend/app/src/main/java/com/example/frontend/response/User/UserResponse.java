@@ -15,11 +15,18 @@ public class UserResponse {
     private String gender;
     private String name;
     private boolean status;
+    private boolean isSelected;
 
     public UserResponse() {
 
     }
+    public boolean isSelected() {
+        return isSelected;
+    }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
     public boolean isStatus() {
         return status;
     }
