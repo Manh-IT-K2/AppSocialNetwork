@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,10 +33,10 @@ import java.util.List;
 
 public class AddMemberGroupChat extends AppCompatActivity {
 
-    private EditText edtGroupName;
+    private TextView GroupName;
     private Button btnAddMember;
     private ImageButton btnBack;
-    private ListView listViewFriends;
+    private ListView listView;
     private UserViewModel userViewModel;
     private AddMemberAdapter adapter;
     private String currentUserId;
@@ -59,18 +60,18 @@ public class AddMemberGroupChat extends AppCompatActivity {
             groupName = extras.getString("groupChatName");
             // Lấy danh sách thành viên từ Intent và hiển thị lên ListView
             memberIdList = getIntent().getStringArrayListExtra("memberIdList");
-            Log.d("dl nhan", GroupID+"  "+memberIdList+" "+groupName);
+            Log.d("dl nhan", GroupID+"  "+memberIdList+" "+groupName +" "+ currentUserId);
         }
 
 
         // Ánh xạ các thành phần UI từ layout
-        edtGroupName = findViewById(R.id.edtGroupName);
-        btnAddMember = findViewById(R.id.btnCreateGroup);
-        listViewFriends = findViewById(R.id.listViewFriends);
+        GroupName = findViewById(R.id.txtGroupName);
+        btnAddMember = findViewById(R.id.btnAdd);
+        listView = findViewById(R.id.listView);
         btnBack = findViewById(R.id.btnBack);
         // Hiển thị groupName trên TextView edtGroupName
         if (groupName != null) {
-            edtGroupName.setText(groupName);
+            GroupName.setText(groupName);
         }
         // Khởi tạo UserViewModel
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
@@ -88,7 +89,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
                 updateCreateGroupButtonState();
             }
         });
-        listViewFriends.setAdapter(adapter);
+        listView.setAdapter(adapter);
 
         // Thiết lập sự kiện click cho nút tạo nhóm
         btnAddMember.setOnClickListener(new View.OnClickListener() {
@@ -132,15 +133,15 @@ public class AddMemberGroupChat extends AppCompatActivity {
                     // Nếu phản hồi thành công, cập nhật danh sách người dùng trong adapter
                     List<GetAllUserByFollowsResponse> userList = response.getData();
                     Log.d("adddd", userList.get(0).getUsername());
-                    // Loại bỏ các người dùng có id trong memberIdList
+                    // Loại bỏ các người dùng có id trong memberIdList khỏi userList
+                    List<GetAllUserByFollowsResponse> filteredList = new ArrayList<>();
                     for (GetAllUserByFollowsResponse user : userList) {
-                        if (memberIdList.contains(user.getId())) {
-                            userList.remove(user);
+                        if (!memberIdList.contains(user.getId())) {
+                            filteredList.add(user);
                         }
                     }
-                    Log.d("ds flow", userList.get(0).getUsername());
                     adapter.clear();
-                    adapter.addAll(userList);
+                    adapter.addAll(filteredList);
                 } else {
                     // Nếu có lỗi, hiển thị thông báo lỗi
                     Toast.makeText(AddMemberGroupChat.this, "Bạn không flow người dùng nào cả", Toast.LENGTH_SHORT).show();
@@ -164,7 +165,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
             @Override
             public void onChanged(ApiResponse<String> response) {
                 if (response != null && response.getStatus()) {
-                    Toast.makeText(AddMemberGroupChat.this, "Đã thêm thành viên khỏi nhóm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddMemberGroupChat.this, "Đã thêm thành viên vào nhóm", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(AddMemberGroupChat.this, "Thất bại khi thêm thành viên", Toast.LENGTH_SHORT).show();
                 }

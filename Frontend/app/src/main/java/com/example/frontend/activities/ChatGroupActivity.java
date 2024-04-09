@@ -246,31 +246,31 @@ public class ChatGroupActivity extends AppCompatActivity {
 
 
     private void loadChatHistory() {
-        pusher = PusherClient.init();
-        pusher.connect();
-        pusher.subscribe("GroupChat")
-                .bind("send_chatgroup", (channelName, eventName, data) -> {
-                    try {
-                        Gson gson = new GsonBuilder()
-                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-                                .create();
-                        String jsonData = data.toString();
-                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
-                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
-                        if (messages != null && !messages.isEmpty()) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.setMessages(messages);
-                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-
-                                }
-                            });
-                        }
-                    } catch (Exception e) {
-                        Log.d("trycatch", new Gson().toJson(e));
-                    }
-                });
+//        pusher = PusherClient.init();
+//        pusher.connect();
+//        pusher.subscribe("GroupChat")
+//                .bind("send_chatgroup", (channelName, eventName, data) -> {
+//                    try {
+//                        Gson gson = new GsonBuilder()
+//                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+//                                .create();
+//                        String jsonData = data.toString();
+//                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
+//                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
+//                        if (messages != null && !messages.isEmpty()) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    adapter.setMessages(messages);
+//                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+//
+//                                }
+//                            });
+//                        }
+//                    } catch (Exception e) {
+//                        Log.d("trycatch", new Gson().toJson(e));
+//                    }
+//                });
 
         // Tải lịch sử tin nhắn ban đầu
         groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {

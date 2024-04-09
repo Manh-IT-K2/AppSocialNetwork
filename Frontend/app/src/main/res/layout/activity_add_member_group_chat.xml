@@ -17,7 +17,7 @@ android:padding="16dp">
     android:src="@drawable/ic_back" />
 <!-- EditText nhập tên nhóm -->
 <TextView
-    android:id="@+id/edtGroupName"
+    android:id="@+id/txtGroupName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@id/btnBack"
@@ -26,7 +26,7 @@ android:padding="16dp">
     android:hint="Tên nhóm" />
 <!-- Button Tạo nhóm chat -->
 <Button
-    android:id="@+id/btnCreateGroup"
+    android:id="@+id/btnAdd"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
@@ -37,10 +37,10 @@ android:padding="16dp">
     android:paddingEnd="16dp"
     android:text="Thêm thành viên" />
 <ListView
-    android:id="@+id/listViewFriends"
+    android:id="@+id/listView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/btnCreateGroup"
+    android:layout_below="@id/btnAdd"
     android:layout_marginTop="16dp" />
 
 

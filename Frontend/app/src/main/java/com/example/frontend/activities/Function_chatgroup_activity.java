@@ -16,18 +16,26 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.FlowAdapter;
+import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
+import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.example.frontend.repository.GroupChatRepository;
 import com.example.frontend.request.GroupChat.RequestCreateGroupChat;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Function_chatgroup_activity extends AppCompatActivity {
+    private Pusher pusher;
 
     private EditText edtGroupName;
     private Button btnCreateGroup;
@@ -157,6 +165,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
             public void onChanged(ApiResponse<GroupChatResponse> response) {
                 if (response != null && response.getStatus()) {
                     // Xử lý khi tạo nhóm chat thành công
+                    sendMessMacDinh(response,groupName);
                 } else {
                     // Xử lý khi gặp lỗi
                 }
@@ -181,5 +190,23 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     // Thêm phương thức để truy cập biến isEditTextFocused từ bên ngoài
     public boolean isEditTextFocused() {
         return isEditTextFocused;
+    }
+
+    private void sendMessMacDinh(ApiResponse<GroupChatResponse> response, String groupName){
+        // Tạo tin nhắn mặc định khi tạo nhóm chat thành công
+        String message ="Chào mừng bạn đã tham gia nhóm chat: " + groupName;
+        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message);
+        groupChatRepository.sendMessage(response.getData().getId(), request).observe(Function_chatgroup_activity.this,  new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
+                if (response != null && response.getStatus()) {
+                    Log.d("Function_chatgroup", "Default message sent successfully.");
+
+                } else {
+                    Log.e("Function_chatgroup", "Failed to send default message.");
+                }
+            }
+        });
+
     }
 }
