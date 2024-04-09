@@ -38,12 +38,17 @@ public class ViewMembers extends AppCompatActivity {
     private ListView listViewMembers;
     private ImageButton btnBack;
     private ViewMemberAdapter memberListAdapter;
+    private String currentUserId;
     private List<UserResponse> tam=new ArrayList<>();
+    private ArrayList<String> memberIdList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_members);
+
+        // Lấy id user hiện hành
+        currentUserId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
 
@@ -70,10 +75,22 @@ public class ViewMembers extends AppCompatActivity {
         listViewMembers.setAdapter(memberListAdapter);
 
         // Lấy danh sách thành viên từ Intent và hiển thị lên ListView
-        ArrayList<String> memberIdList = getIntent().getStringArrayListExtra("memberIdList");
+        memberIdList = getIntent().getStringArrayListExtra("memberIdList");
         // In danh sách memberIdList ra Logcat
         Log.d("MemberIdList", "Member IDs: " + memberIdList.toString());
 
+        // Xử lý sự kiện khi nút back được nhấn
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Đóng Activity hiện tại
+                finish();
+            }
+        });
+
+        load();
+    }
+    private void load(){
         if (memberIdList != null) {
             for (String memberId : memberIdList) {
                 Log.d("idT", memberId);
@@ -84,18 +101,20 @@ public class ViewMembers extends AppCompatActivity {
                         if (response.getMessage().equals("Success") && response.getStatus() && memberIdList.contains(currentMemberId)) {
                             UserResponse userResponse = response.getData();
                             if (userResponse != null) {
-
                                 tam.add(userResponse);
-                                Log.d("ttttt", tam.get(tam.size()-1).getName()+" "+userResponse.getName());
+                                Log.d("TamList", "Updated Tam List: " + tam.toString());
+
                                 // Nếu đã thêm tất cả các thành viên vào danh sách tam, cập nhật giao diện
                                 if (tam.size() == memberIdList.size()) {
-                                    // Loại bỏ các người dùng hiện hành khỏi ds thành viên
+                                    // Loại bỏ người dùng hiện tại khỏi danh sách thành viên
+                                    List<UserResponse> filteredMembers = new ArrayList<>();
                                     for (UserResponse user : tam) {
-                                        if (user.getId().equals(createrId)) {
-                                            tam.remove(user);
+                                        if (!user.getId().equals(currentUserId)) {
+                                            filteredMembers.add(user);
                                         }
                                     }
-                                    memberListAdapter.setMembers(tam);
+                                    memberListAdapter.setMembers(filteredMembers);
+
                                 }
                             } else {
                                 Log.d("ttttt", "UserResponse is null for memberId: " + currentMemberId);
@@ -106,19 +125,8 @@ public class ViewMembers extends AppCompatActivity {
                     }
                 });
             }
-            memberListAdapter.setMembers(tam);
         } else {
             Log.d("ttttt", "MemberIdList is null");
         }
-
-        // Xử lý sự kiện khi nút back được nhấn
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Đóng Activity hiện tại
-                finish();
-            }
-        });
     }
-
 }

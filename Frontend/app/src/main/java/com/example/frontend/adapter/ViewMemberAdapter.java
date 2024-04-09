@@ -39,16 +39,10 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
         UserResponse currentMember = mMembers.get(position);
 
         textViewName = listItem.findViewById(R.id.textFriendName);
-//        // Kiểm tra nếu tên của người dùng là null, gán giá trị là "Chưa có tên"
-//        if (currentMember.getName() == null || currentMember.getName().isEmpty()) {
-//            textViewName.setText("Chưa có tên");
-//        }else{
-//            textViewName.setText(currentMember.getName());
-//        }
-        textViewName.setText(currentMember.getUsername());
-        //Log.d("name", currentMember.getName());
-
         textViewSup = listItem.findViewById(R.id.subInformation);
+
+        textViewName.setText(currentMember.getUsername());
+
         textViewSup.setText("ID: "+currentMember.getId());
         Log.d("nickname", currentMember.getId());
         // Cập nhật các trường thông tin khác nếu cần

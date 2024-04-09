@@ -79,7 +79,6 @@ public class RemoveMemberGroupChat extends AppCompatActivity {
             public void onItemChecked(UserResponse user, boolean isChecked) {
                 if (isChecked) {
                     selectedUsers.add(user);
-                    Log.d("cong", "onItemChecked: ");
                 } else {
                     selectedUsers.remove(user);
                 }

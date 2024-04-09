@@ -33,10 +33,6 @@ public class RemoveMemberAdapter extends ArrayAdapter<UserResponse> {
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemCheckedListener = listener;
     }
-    public void setMembers(List<UserResponse> tam) {
-        this.userList = tam;
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override

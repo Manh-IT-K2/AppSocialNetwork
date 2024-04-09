@@ -218,6 +218,7 @@ public class ChatGroupActivity extends AppCompatActivity {
                 }
                 if (item.getItemId() == R.id.menu_add_member) {
                     addMember();
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_remove_member) {

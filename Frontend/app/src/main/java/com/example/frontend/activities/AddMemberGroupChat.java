@@ -22,6 +22,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.Message.GroupChatViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.example.frontend.repository.GroupChatRepository;
 import com.example.frontend.request.GroupChat.RequestCreateGroupChat;
@@ -39,7 +40,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
     private AddMemberAdapter adapter;
     private String currentUserId;
     private List<GetAllUserByFollowsResponse> selectedUsers = new ArrayList<>();
-    private GroupChatRepository groupChatRepository;
+    private GroupChatViewModel groupChatViewModel;
     private String GroupID;
     private String groupName;
     private ArrayList<String> memberIdList;
@@ -58,7 +59,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
             groupName = extras.getString("groupChatName");
             // Lấy danh sách thành viên từ Intent và hiển thị lên ListView
             memberIdList = getIntent().getStringArrayListExtra("memberIdList");
-            Log.d("dl nhan", GroupID+"  "+memberIdList);
+            Log.d("dl nhan", GroupID+"  "+memberIdList+" "+groupName);
         }
 
 
@@ -73,7 +74,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
         }
         // Khởi tạo UserViewModel
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        groupChatRepository = new GroupChatRepository();
+        groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
 
         // Khởi tạo adapter cho listViewFriends
         adapter = new AddMemberAdapter(this, new ArrayList<>(), new AddMemberAdapter.OnItemCheckedListener() {
@@ -89,17 +90,18 @@ public class AddMemberGroupChat extends AppCompatActivity {
         });
         listViewFriends.setAdapter(adapter);
 
-
-
         // Thiết lập sự kiện click cho nút tạo nhóm
         btnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Xử lý logic tạo nhóm chat ở đây
                 if (selectedUsers.size() >= 1) {
-                    AddMemberGroupChat(GroupID);
+                    AddmemberFroupChat(GroupID);
                     // Quay lại MainActivityChat mới
-                    Intent intent = new Intent(AddMemberGroupChat.this, MainChatActivity.class);
+                    Intent intent = new Intent(AddMemberGroupChat.this, ChatGroupActivity.class);
+
+                    intent.putExtra("groupChatId", GroupID);
+                    intent.putExtra("groupChatName", groupName);
                     startActivity(intent);
                     finish(); // Đóng Activity hiện tại nếu bạn muốn
                 } else {
@@ -107,9 +109,6 @@ public class AddMemberGroupChat extends AppCompatActivity {
                 }
             }
         });
-        // Gọi hàm getAllUsersByFollows để lấy danh sách người dùng theo follow
-        getAllUsersByFollows();
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +116,10 @@ public class AddMemberGroupChat extends AppCompatActivity {
                 finish();
             }
         });
+        // Gọi hàm getAllUsersByFollows để lấy danh sách người dùng theo follow
+        getAllUsersByFollows();
+
+
     }
 
     // Phương thức để lấy danh sách người dùng theo follow
@@ -128,6 +131,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
                 if (response != null && response.getStatus()) {
                     // Nếu phản hồi thành công, cập nhật danh sách người dùng trong adapter
                     List<GetAllUserByFollowsResponse> userList = response.getData();
+                    Log.d("adddd", userList.get(0).getUsername());
                     // Loại bỏ các người dùng có id trong memberIdList
                     for (GetAllUserByFollowsResponse user : userList) {
                         if (memberIdList.contains(user.getId())) {
@@ -139,7 +143,7 @@ public class AddMemberGroupChat extends AppCompatActivity {
                     adapter.addAll(userList);
                 } else {
                     // Nếu có lỗi, hiển thị thông báo lỗi
-                    Toast.makeText(AddMemberGroupChat.this, "Failed to fetch users.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddMemberGroupChat.this, "Bạn không flow người dùng nào cả", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -150,30 +154,22 @@ public class AddMemberGroupChat extends AppCompatActivity {
         btnAddMember.setEnabled(selectedUsers.size() >= 1);
     }
 
-    // Thêm Member
-    private void AddMemberGroupChat(String GroupId) {
-        List<String> memberIds = new ArrayList<>();
-        for (GetAllUserByFollowsResponse user : selectedUsers) {
-            memberIds.add(user.getId());
-        }
-
-        // Tạo một đối tượng RequestAddMemberToGroupChat với thông tin cần thiết
+    private void AddmemberFroupChat(String GroupId){
+       // Tạo một đối tượng RequestAddMemberToGroupChat với thông tin cần thiết
         RequestAddMemberToGroupChat request = new RequestAddMemberToGroupChat();
         request.setGroupId(GroupId); //id nhóm chat
-        request.setMemberIds(getSelectedUserIds()); // getSelectedUserIds() là phương thức để lấy danh sách id của các thành viên được chọn
-
-        // Gọi hàm addMemberToGroupChat trong GroupChatRepository và truyền request vào
-        groupChatRepository.addMemberToGroupChat(GroupId, request).observe(this, new Observer<ApiResponse<String>>() {
+        request.setMemberIds(getSelectedUserIds());
+        // Gọi hàm addMemberToGroupChat từ viewModelGroupChat để thêm thành viên
+        groupChatViewModel.addMemberToGroupChat(GroupID, request).observe(this, new Observer<ApiResponse<String>>() {
             @Override
             public void onChanged(ApiResponse<String> response) {
                 if (response != null && response.getStatus()) {
-                    // Xử lý khi thêm thành viên vào nhóm chat thành công
+                    Toast.makeText(AddMemberGroupChat.this, "Đã thêm thành viên khỏi nhóm", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Xử lý khi gặp lỗi
+                    Toast.makeText(AddMemberGroupChat.this, "Thất bại khi thêm thành viên", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     private List<String> getSelectedUserIds() {
@@ -183,8 +179,6 @@ public class AddMemberGroupChat extends AppCompatActivity {
                 selectedIds.add(user.getId());
             }
         }
-        // Thêm ID của người tạo vào danh sách thành viên
-        selectedIds.add(currentUserId);
         return selectedIds;
     }
 }

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.Function_chatgroup_activity;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 
 import java.util.List;
@@ -23,8 +24,6 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
     private Context context;
     private LayoutInflater layoutInflater;
     private OnItemCheckedListener onItemCheckedListener;
-    // Khai báo một danh sách để lưu trữ trạng thái của checkbox
-    private SparseBooleanArray checkedPositions = new SparseBooleanArray();
 
     public FlowAdapter(Context context, List<GetAllUserByFollowsResponse> userList, OnItemCheckedListener listener) {
         super(context, 0, userList);
@@ -33,6 +32,8 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemCheckedListener = listener;
     }
+
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -50,12 +51,18 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
 
         GetAllUserByFollowsResponse user = userList.get(position);
         holder.textFriendName.setText(user.getUsername());
-        holder.checkbox.setChecked(checkedPositions.get(position)); // Cập nhật trạng thái của checkbox
+
+
+
+        // Ép kiểu context sang Function_chatgroup_activity để gọi phương thức isEditTextFocused()
+        Function_chatgroup_activity activity = (Function_chatgroup_activity) context;
+        if (!activity.isEditTextFocused()) {
+            holder.checkbox.setChecked(user.isSelected());
+        }
 
         holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                checkedPositions.put(position, isChecked); // Lưu trạng thái mới của checkbox
                 user.setSelected(isChecked);
                 if (onItemCheckedListener != null) {
                     onItemCheckedListener.onItemChecked(user, isChecked);

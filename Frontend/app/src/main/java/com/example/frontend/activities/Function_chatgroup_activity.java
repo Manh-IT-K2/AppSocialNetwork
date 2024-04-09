@@ -2,6 +2,7 @@ package com.example.frontend.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +37,8 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     private String currentUserId;
     private List<GetAllUserByFollowsResponse> selectedUsers = new ArrayList<>();
     private GroupChatRepository groupChatRepository;
-
+    // Thêm biến boolean để kiểm soát việc cập nhật trạng thái của các CheckBox
+    private boolean isEditTextFocused = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +104,14 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 finish();
             }
         });
+        // Theo dõi sự kiện focus của EditText
+        edtGroupName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // Cập nhật trạng thái của biến isEditTextFocused
+                isEditTextFocused  = hasFocus;
+            }
+        });
     }
 
     // Phương thức để lấy danh sách người dùng theo follow
@@ -155,14 +165,21 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     }
     private List<String> getSelectedUserIds() {
         List<String> selectedIds = new ArrayList<>();
+        boolean currentUserAdded = false; // Biến để kiểm tra xem currentUserId đã được thêm vào hay chưa
         for (GetAllUserByFollowsResponse user : selectedUsers) {
             if (user.isSelected()) {
-                selectedIds.add(user.getId()); //
-                // Thêm ID của người tạo vào danh sách thành viên
-                selectedIds.add(currentUserId);
+                selectedIds.add(user.getId());
+                if (!currentUserAdded) {
+                    // Thêm currentUserId vào danh sách nếu chưa có trong selectedIds
+                    selectedIds.add(currentUserId);
+                    currentUserAdded = true; // Đánh dấu đã thêm currentUserId
+                }
             }
         }
         return selectedIds;
     }
-
+    // Thêm phương thức để truy cập biến isEditTextFocused từ bên ngoài
+    public boolean isEditTextFocused() {
+        return isEditTextFocused;
+    }
 }
