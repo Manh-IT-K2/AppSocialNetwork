@@ -105,7 +105,9 @@ public class ChatActivity extends AppCompatActivity     {
         btn_back_main_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent i = new Intent(ChatActivity.this,MainChatActivity.class);
+                startActivity(i);
+                //finish();
             }
         });
         imgAvatar.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +143,7 @@ public class ChatActivity extends AppCompatActivity     {
                     List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
                     if (messages != null && !messages.isEmpty()) {
                         adapter.setListMessage(messages);
+                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                     }
                 } else {
                     String errorMessage = "Failed to load initial messages";
@@ -152,52 +155,6 @@ public class ChatActivity extends AppCompatActivity     {
             }
         });
     }
-//    private void sendMessage() {
-//        String message = inputMessage.getText().toString();
-//        RequestPrivateChat requestPrivateChat = new RequestPrivateChat(userId, recipientId, message);
-//        messageViewModel.sendMessage(requestPrivateChat).observe(this, new Observer<ApiResponse<PrivateChatWithMessagesResponse>>() {
-//            @Override
-//            public void onChanged(ApiResponse<PrivateChatWithMessagesResponse> response) {
-//                if (response != null && response.isSuccess()) {
-//                    inputMessage.setText(null);
-//                    pusher = PusherClient.init();
-//                    pusher.connect();
-//                    pusher.subscribe("newmess")
-//                            .bind("send", (channelName, eventName, data) -> {
-//                                try {
-//                                    Gson gson = new GsonBuilder()
-//                                            .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-//                                            .create();
-//                                    String jsonData = data.toString();
-//                                    PrivateChatWithMessagesResponse privateChatResponse = gson.fromJson(jsonData, PrivateChatWithMessagesResponse.class);
-//                                    List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
-//                                    if (messages != null && !messages.isEmpty()) {
-//                                        runOnUiThread(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//
-//                                                adapter.setListMessage(messages);
-//
-//
-//
-//                                            }
-//                                        });
-//                                    }
-//                                } catch (Exception e) {
-//                                    Log.d("trycatch", new Gson().toJson(e));
-//                                }
-//                            });
-//                } else {
-//                    // Xử lý khi gửi tin nhắn không thành công
-//                    String errorMessage = "Request failed";
-//                    if (response != null && response.getMessage() != null) {
-//                        errorMessage += ": " + response.getMessage();
-//                    }
-//                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
-//    }
 private void sendMessage() {
     String message = inputMessage.getText().toString();
     RequestPrivateChat requestPrivateChat = new RequestPrivateChat(userId, recipientId, message);
@@ -222,6 +179,7 @@ private void sendMessage() {
                                         @Override
                                         public void run() {
                                             adapter.setListMessage(messages);
+                                            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                                             // Gửi Broadcast Intent với dữ liệu tin nhắn mới
                                             Intent intent = new Intent("NEW_MESSAGE_ACTION");
                                             Gson gson = new Gson();
