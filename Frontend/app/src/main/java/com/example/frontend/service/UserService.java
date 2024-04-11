@@ -4,6 +4,7 @@ import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
@@ -46,4 +47,9 @@ public interface  UserService {
     Call<ApiResponse<List<String>>> getListUserName();
     @GET("user/getUser_privateChat")
     Call<ApiResponse<List<UserResponse>>> findUser_privatechat(@Query("u") String keyword);
+    @POST("user/updateTokenFCM")
+    Call<ApiResponse<UserResponse>> updateTokenFCM(@Body RequestUpdateTokenFCM request);
+
+    @GET("user/getTokenFCM")
+    Call<ApiResponse<String>> getTokenFCM(@Query("id") String id);
 }

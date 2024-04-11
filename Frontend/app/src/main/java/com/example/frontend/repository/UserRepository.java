@@ -10,6 +10,7 @@ import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
@@ -364,6 +365,43 @@ public class UserRepository {
             @Override
             public void onFailure(Call<ApiResponse<List<UserResponse>>> call, Throwable t) {
                 mutableLiveData.setValue(new ApiResponse<List<UserResponse>>(false, "Request failed:" , null));
+            }
+        });
+        return mutableLiveData;
+    }
+
+    public void updateTokenFCM(RequestUpdateTokenFCM request) {
+        Log.e("request1",new Gson().toJson(request));
+        userService.updateTokenFCM(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if (response.isSuccessful()) {
+                } else {
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+            }
+        });
+    }
+
+    public MutableLiveData<ApiResponse<String>> getTokenFCM(String id) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+        userService.getTokenFCM(id).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    Log.e("tokenFCM", new Gson().toJson(response.body()));
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<String>(false, "Request failed:" , null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e("tokenFCM", new Gson().toJson(t));
+                mutableLiveData.setValue(new ApiResponse<String>(false, "Request failed:" , null));
             }
         });
         return mutableLiveData;

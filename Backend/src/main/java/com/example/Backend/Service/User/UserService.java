@@ -1,6 +1,7 @@
 package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.GroupChat;
+import com.example.Backend.Entity.Notification;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
@@ -32,6 +33,10 @@ public interface UserService {
     ApiResponse<GroupChat> removeMemberFromGroupChat(String groupId, String memberId);
 
     ApiResponse<List<User>> findUser_privatechat(String u);
+    void addNotification(Notification notification);
+    void updateTokenFCM(RequestUpdateTokenFCM updateTokenFCM);
+    List<Notification> getNotificationById(String id);
+    String getTokenFCM(String id);
 
 
 }

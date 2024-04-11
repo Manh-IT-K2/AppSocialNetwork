@@ -2,6 +2,7 @@ package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.Follows;
 import com.example.Backend.Entity.GroupChat;
+import com.example.Backend.Entity.Notification;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
@@ -330,5 +331,49 @@ public class UserImpl implements UserService {
         } else {
             return new ApiResponse<>(false, "Users not found", null);
         }
+    }
+
+    @Override
+    public void addNotification(Notification notification) {
+        Query query = new Query(Criteria.where("_id").is(notification.getIdRecipient()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        if(user != null){
+            if(user.getNotificationList() == null) user.setNotificationList(new ArrayList<>());
+            user.getNotificationList().add(notification);
+            mongoTemplate.save(user);
+        }
+    }
+
+    @Override
+    public void updateTokenFCM(RequestUpdateTokenFCM updateTokenFCM) {
+        Query query = new Query(Criteria.where("_id").is(updateTokenFCM.getUserId()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        if(user != null) {
+            user.setTokenFCM(updateTokenFCM.getToken());
+            mongoTemplate.save(user);
+        }
+    }
+
+    @Override
+    public List<Notification> getNotificationById(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        if(user != null) {
+            return user.getNotificationList();
+        }
+        return null;
+    }
+
+    @Override
+    public String getTokenFCM(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        if(user!=null){
+            return user.getTokenFCM();
+        }
+        return "";
     }
 }

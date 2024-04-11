@@ -65,6 +65,7 @@ public class PostIml implements PostService{
         AggregationOperation projectOperation = Aggregation.project()
                 .andExpression("_id").as("userId")
                 .andExpression("username").as("userName")
+                .andExpression("tokenFCM").as("tokenFCM")
                 .andExpression("avatarImg").as("avtImage")
                 .andExpression("posts._id").as("idPost")
                 .andExpression("posts.imagePost").as("imagePost")
