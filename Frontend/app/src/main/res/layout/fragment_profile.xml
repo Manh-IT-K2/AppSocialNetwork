@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ProfileFragment"
+    android:id="@+id/profileFragment"
     android:orientation="vertical">
    <LinearLayout
        android:orientation="vertical"
@@ -384,27 +384,37 @@
         </LinearLayout>
     </LinearLayout>
     <!-- MEDIA -->
-    <LinearLayout
-        android:id="@+id/coordinatorLayout"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
+        app:tabMode="fixed"
+        app:tabIndicatorFullWidth="true"
+        app:tabIndicatorColor="@color/blackLite"
+        app:tabIndicatorHeight="1.5dp"
+        app:backgroundTint="@null"
+        android:background="@null">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:menu="@menu/media_menu"
-            app:itemIconSize="25dp"
-            app:labelVisibilityMode="unlabeled"
-            android:background="@color/zxing_transparent">
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
-    </LinearLayout>
-    <View
-        android:id="@+id/view3"
+            android:icon="@drawable/icon_grid"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/icon_reels"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/icons_square"/>
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#575656" />
+        android:layout_height="match_parent"/>
     <FrameLayout
         android:id="@+id/fragment_layout_main"
         android:layout_width="match_parent"
