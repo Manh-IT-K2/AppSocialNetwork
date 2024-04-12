@@ -63,8 +63,6 @@ public class PostsProfileAdapter extends RecyclerView.Adapter<PostsProfileAdapte
             super(itemView);
             imagePost = itemView.findViewById(R.id.imagePost);
             this.lifecycleOwner = lifecycleOwner;
-            imagePost.setMaxWidth(200);
-            imagePost.setMaxHeight(200);
             imagePost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

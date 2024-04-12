@@ -60,13 +60,7 @@ public class PostProfileFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         // Thiết lập layout manager cho RecyclerView
         recyclerView.setLayoutManager(layoutManager);
-        final int spacing = 1; // Khoảng cách mong muốn giữa các item
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.set(spacing, spacing, spacing, spacing); // Set khoảng cách giữa các item
-            }
-        });
+
         // init call api suggest
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
