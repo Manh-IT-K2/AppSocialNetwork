@@ -94,7 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 holder.btn_like.setImageResource(R.drawable.icon_favorite); // Thay bằng icon khác nếu không được like
             }
         }
-    Log.e("checkLike",String.valueOf(checkLike));
+
         // check location to set text
         if(post.getLocation().isEmpty()){
             holder.txt_address.setText("Unknown Location");
@@ -130,7 +130,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                        ViewGroup.LayoutParams.MATCH_PARENT,
-                       1200 // Set chiều cao mong muốn ở đây (350px)
+                       350 // Set chiều cao mong muốn ở đây (350px)
                );
                layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
                imageView.setLayoutParams(layoutParams);
@@ -192,7 +192,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                     int position = getAdapterPosition();
                     RequestPostByUserId post = listPost.get(position);
                     String idPost = post.getIdPost();
-                    CommentFragment dialog = new CommentFragment(mContext, idPost);
+                    CommentFragment dialog = new CommentFragment(mContext, idPost, "",listPost.get(position).getUserId(), listPost.get(position).getTokenFCM());
                     dialog.show();
                 }
             });
@@ -210,17 +210,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                         notification.setPostId(post.getIdPost());
                         notification.setLikePost(true);
                         notification.setUserId(SharedPreferenceLocal.read(itemView.getContext(), "userId"));
+                        notification.setIdRecipient(post.getUserId());
+                        String userName = SharedPreferenceLocal.read(itemView.getContext(), "userName");
 
                         if (!post.isLiked()) {
                             btn_like.setImageResource(R.drawable.icon_liked);
                             post.setLiked(true);
-                            notification.setText("Vừa like bài viết của bạn");
+                            notification.setText(userName+" vừa like bài viết của bạn");
+                            userViewModel.addNotification(notification);
                             NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         } else {
                             btn_like.setImageResource(R.drawable.icon_favorite);
                             post.setLiked(false);
-                            notification.setText("Vừa bỏ like bài viết của bạn");
-                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
+//                            notification.setText("Vừa bỏ like bài viết của bạn");
+//                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         }
                         postViewModel.addLike(postId,"65e8a525714ccc3a3caa7f77").observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override

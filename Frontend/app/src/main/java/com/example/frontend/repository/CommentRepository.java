@@ -78,9 +78,9 @@ public class CommentRepository {
     }
 
     // get list comment by idPost
-    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id) {
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id, String idComment) {
         MutableLiveData<ApiResponse<List<CommentResponse>>> mutableLiveData = new MutableLiveData<>();
-        commentService.getListCommentByIdPost(id).enqueue(new Callback<ApiResponse<List<CommentResponse>>>() {
+        commentService.getListCommentByIdPost(id, idComment).enqueue(new Callback<ApiResponse<List<CommentResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<CommentResponse>>> call, Response<ApiResponse<List<CommentResponse>>> response) {
                 if (response.isSuccessful()) {

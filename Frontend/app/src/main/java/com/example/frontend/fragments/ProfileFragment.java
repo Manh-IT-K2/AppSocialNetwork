@@ -51,11 +51,13 @@ import com.example.frontend.activities.MainActivity;
 import com.example.frontend.adapter.PostAdapter;
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.request.Follows.RequestUpdateFollows;
+import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Follows.GetQuantityResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.NotificationService;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
@@ -325,6 +327,16 @@ public class ProfileFragment extends Fragment {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                     Date currentDate = new Date();
                     String formattedDate = dateFormat.format(currentDate);
+
+                    Notification notification = new Notification();
+                    notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
+                    String userName = SharedPreferenceLocal.read(getContext(), "userName");
+                    notification.setText(userName + " vừa theo dõi bạn");
+                    notification.setIdRecipient(userId);
+
+                    NotificationService.sendNotification(getContext(), notification.getText(), userResponse.getTokenFCM());
+
+                    userViewModel.addNotification(notification);
 
                     RequestCreateFollows requestCreateFollows = new RequestCreateFollows(SharedPreferenceLocal.read(getContext(), "userId"), userId, formattedDate);
                     followsViewModel.createFollows(requestCreateFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {

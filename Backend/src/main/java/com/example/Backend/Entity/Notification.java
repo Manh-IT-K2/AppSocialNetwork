@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -21,7 +22,7 @@ public class Notification {
     boolean isComment;
     String idComment;
     boolean isReplyComment;
-    String createAt;
+    Date createAt;
     boolean isFollow;
     String idRecipient;
     public String generateId() {

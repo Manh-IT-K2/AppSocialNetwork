@@ -18,7 +18,7 @@ public interface CommentService {
     void deleteComment(RequestDeleteComment deleteComment) throws Exception;
 
     // get list comment by post
-    List<Comment> getListCommentByIdPost(String id) throws Exception;
+    List<Comment> getListCommentByIdPost(String id, String idComment) throws Exception;
 
     void likeComment(RequestLikeComment likeComment) throws Exception;
 }

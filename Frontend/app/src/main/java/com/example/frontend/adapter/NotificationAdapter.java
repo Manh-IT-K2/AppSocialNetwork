@@ -1,6 +1,9 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +13,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.activities.PostIDActivity;
+import com.example.frontend.fragments.ProfileFragment;
 import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Notification.NotificationResponse;
+import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -28,10 +35,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     Context mContext;
     List<NotificationResponse> mNotification;
+    private FragmentManager fragmentManager;
 
-    public NotificationAdapter(Context mContext, List<NotificationResponse> mNotification) {
+    public NotificationAdapter(Context mContext, List<NotificationResponse> mNotification, FragmentManager fragmentManager) {
         this.mContext = mContext;
         this.mNotification = mNotification;
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -56,8 +65,34 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(notification.isLikePost()){
-                    Toast.makeText(mContext, "Like", Toast.LENGTH_SHORT).show();
+                if(notification.getText().contains("vừa like bài viết")){
+                    Intent intent = new Intent(mContext, PostIDActivity.class);
+                    intent.putExtra("id", notification.getIdPost());
+                    intent.putExtra("idComment", "");
+                    mContext.startActivity(intent);
+                }
+
+                if(notification.getText().contains("bình luận")){
+                    Intent intent = new Intent(mContext, PostIDActivity.class);
+                    intent.putExtra("id", notification.getIdPost());
+                    intent.putExtra("idComment", notification.getIdComment());
+                    Log.e("checkIdComment", notification.getIdComment());
+                    //mContext.startActivity(intent);
+                }
+
+                if(notification.getText().contains("theo dõi")){
+                    ProfileFragment profileFragment = new ProfileFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userId", notification.getUser().getId());
+
+                    profileFragment.setArguments(bundle);
+
+                    // Thay thế SenderFragment bằng ReceiverFragment
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.fragment_layout_main, profileFragment)
+                            .addToBackStack(null)
+                            .commit();
                 }
             }
         });
@@ -66,7 +101,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public int getItemCount() {
-        return mNotification.size();
+        return mNotification != null ? mNotification.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -78,7 +113,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             super(itemView);
             image_profile = itemView.findViewById(R.id.image_profile);
             username = itemView.findViewById(R.id.username);
-            text = itemView.findViewById(R.id.text);
+            text = itemView.findViewById(R.id.comment);
             time = itemView.findViewById(R.id.txt_time);
         }
     }
@@ -112,13 +147,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 return seconds + " giây";
             }
         } catch (ParseException e) {
-            e.printStackTrace();
             return "N/A";
         }
-    }
-
-    //
-    public void updateData() {
-        notifyDataSetChanged();
     }
 }

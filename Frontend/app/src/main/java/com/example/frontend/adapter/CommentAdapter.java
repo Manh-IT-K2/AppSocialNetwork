@@ -35,6 +35,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.response.Post.PostResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -189,7 +190,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 // Show btn_deleteComment
-                holder.btn_deleteComment.setVisibility(View.VISIBLE);
+//                if(comment.getUser().getId() == SharedPreferenceLocal.read(mContext, "userId")){
+                    holder.btn_deleteComment.setVisibility(View.VISIBLE);
+//                }
 
                 // Hide btn_deleteComment after a delay (for example, 2 seconds)
                 holder.itemView.postDelayed(new Runnable() {

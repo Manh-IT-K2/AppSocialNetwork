@@ -26,7 +26,7 @@ public interface CommentService {
 
     // get list comment by pot
     @GET("comment/getListCommentByIdPost")
-    Call<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(@Query("id") String id) ;
+    Call<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(@Query("id") String id, @Query("idComment") String idComment) ;
 
     // like comment
     @POST("comment/likeComment")

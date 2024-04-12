@@ -1,5 +1,7 @@
 package com.example.frontend.service;
 
+import com.example.frontend.request.Notification.Notification;
+import com.example.frontend.request.Notification.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
@@ -52,4 +54,9 @@ public interface  UserService {
 
     @GET("user/getTokenFCM")
     Call<ApiResponse<String>> getTokenFCM(@Query("id") String id);
+    @POST("user/addNotification")
+    Call<ApiResponse<String>> addNotification(@Body Notification notification);
+
+    @GET("user/getNotification")
+    Call<ApiResponse<List<NotificationResponse>>> getNotification(@Query("id") String id);
 }

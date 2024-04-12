@@ -33,7 +33,7 @@ public interface UserService {
     ApiResponse<GroupChat> removeMemberFromGroupChat(String groupId, String memberId);
 
     ApiResponse<List<User>> findUser_privatechat(String u);
-    void addNotification(Notification notification);
+    void addNotification(RequestNotification notification);
     void updateTokenFCM(RequestUpdateTokenFCM updateTokenFCM);
     List<Notification> getNotificationById(String id);
     String getTokenFCM(String id);

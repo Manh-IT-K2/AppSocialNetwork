@@ -33,8 +33,8 @@ public class CommentViewModel extends ViewModel {
     }
 
     // get list comment by id post
-    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id){
-        return commentRepository.getListCommentByIdPost(id);
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id, String idComment){
+        return commentRepository.getListCommentByIdPost(id, idComment);
     }
 
     // get list comment by id post

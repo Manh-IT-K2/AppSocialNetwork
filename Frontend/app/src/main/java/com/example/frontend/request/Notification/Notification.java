@@ -8,6 +8,8 @@ public class Notification {
     boolean isComment;
     boolean isReplyComment;
     String idComment;
+    boolean isFollow;
+    String idRecipient;
 
     public Notification(){}
 
@@ -75,5 +77,21 @@ public class Notification {
 
     public void setIdComment(String idComment) {
         this.idComment = idComment;
+    }
+
+    public boolean isFollow() {
+        return isFollow;
+    }
+
+    public void setFollow(boolean follow) {
+        isFollow = follow;
+    }
+
+    public String getIdRecipient() {
+        return idRecipient;
+    }
+
+    public void setIdRecipient(String idRecipient) {
+        this.idRecipient = idRecipient;
     }
 }

@@ -6,6 +6,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.example.Backend.Response.ApiResponse.ResponsePostById;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -222,5 +223,21 @@ public class PostIml implements PostService{
 
         // Trả về danh sách các tài liệu kết quả
         return new ApiResponse<List<RequestPostByUserId>>(true, "Lấy posts bằng chuỗi truy vấn tìm kiếm", resultList);
+    }
+
+    @Override
+    public ApiResponse<ResponsePostById> getPostById(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        Post post = mongoTemplate.findOne(query, Post.class,"post");
+
+        if(post != null){
+            Query queryUser = new Query(Criteria.where("_id").is(post.getUserId()));
+            User user = mongoTemplate.findOne(queryUser, User.class,"users");
+            ResponsePostById postById = new ResponsePostById();
+            postById.setPost(post);
+            postById.setUser(user);
+            return new ApiResponse<ResponsePostById>(true, "", postById);
+        }
+        return null;
     }
 }

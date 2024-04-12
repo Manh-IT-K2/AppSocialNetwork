@@ -7,10 +7,11 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.sun.xml.txw2.Document;
+
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,10 +21,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class UserImpl implements UserService {
@@ -334,14 +338,35 @@ public class UserImpl implements UserService {
     }
 
     @Override
-    public void addNotification(Notification notification) {
+    public void addNotification(RequestNotification notification) {
         Query query = new Query(Criteria.where("_id").is(notification.getIdRecipient()));
         User user = mongoTemplate.findOne(query, User.class, "users");
 
         if(user != null){
             if(user.getNotificationList() == null) user.setNotificationList(new ArrayList<>());
-            user.getNotificationList().add(notification);
-            mongoTemplate.save(user);
+            query = new Query(Criteria.where("_id").is(notification.getUserId()));
+            User userCreateNotification = mongoTemplate.findOne(query, User.class, "users");
+
+            if(userCreateNotification != null) {
+                Notification noti = new Notification();
+                noti.setUser(userCreateNotification);
+                noti.setId(noti.generateId());
+                noti.setText(notification.getText());
+                noti.setCreateAt(new Date());
+
+                if(notification.getText().contains("vừa like")) {
+                    noti.setIdPost(notification.getPostId());
+                }
+
+                if(notification.getText().contains("vừa bình luận bài viết")
+                        || notification.getText().contains("vừa phản hồi bình luận")){
+                    noti.setIdPost(notification.getPostId());
+                    noti.setIdComment(notification.getIdComment());
+                }
+
+                user.getNotificationList().add(noti);
+                mongoTemplate.save(user);
+            }
         }
     }
 
@@ -362,7 +387,10 @@ public class UserImpl implements UserService {
         User user = mongoTemplate.findOne(query, User.class, "users");
 
         if(user != null) {
-            return user.getNotificationList();
+            if(user.getNotificationList() != null){
+                Collections.reverse(user.getNotificationList());
+                return user.getNotificationList();
+            }
         }
         return null;
     }

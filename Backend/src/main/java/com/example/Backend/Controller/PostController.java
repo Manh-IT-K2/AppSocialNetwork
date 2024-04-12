@@ -4,6 +4,7 @@ import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.example.Backend.Response.ApiResponse.ResponsePostById;
 import com.example.Backend.Service.Post.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,12 @@ public class PostController {
             return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(apiResponse, HttpStatus.OK);
         }
         return null;
+    }
+
+    @GetMapping("/getPostById")
+    public ResponseEntity<ApiResponse<ResponsePostById>> getPostById(@RequestParam String id) {
+        ApiResponse<ResponsePostById> result = postService.getPostById(id);
+        return new ResponseEntity<ApiResponse<ResponsePostById>>(result, HttpStatus.OK);
     }
 
 }

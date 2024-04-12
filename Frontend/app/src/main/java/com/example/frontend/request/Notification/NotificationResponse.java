@@ -5,7 +5,7 @@ import com.example.frontend.response.User.UserResponse;
 public class NotificationResponse {
     UserResponse user;
     String text;
-    String postId;
+    String idPost;
     boolean isLikePost;
     boolean isComment;
     boolean isReplyComment;
@@ -16,10 +16,10 @@ public class NotificationResponse {
     public NotificationResponse() {
     }
 
-    public NotificationResponse(UserResponse user, String text, String postId, boolean isLikePost, boolean isComment, boolean isReplyComment, String idComment, String createAt, boolean isFollow) {
+    public NotificationResponse(UserResponse user, String text, String idPost, boolean isLikePost, boolean isComment, boolean isReplyComment, String idComment, String createAt, boolean isFollow) {
         this.user = user;
         this.text = text;
-        this.postId = postId;
+        this.idPost = idPost;
         this.isLikePost = isLikePost;
         this.isComment = isComment;
         this.isReplyComment = isReplyComment;
@@ -44,12 +44,12 @@ public class NotificationResponse {
         this.text = text;
     }
 
-    public String getPostId() {
-        return postId;
+    public String getIdPost() {
+        return idPost;
     }
 
-    public void setPostId(String postId) {
-        this.postId = postId;
+    public void setIdPost(String postId) {
+        this.idPost = postId;
     }
 
     public boolean isLikePost() {

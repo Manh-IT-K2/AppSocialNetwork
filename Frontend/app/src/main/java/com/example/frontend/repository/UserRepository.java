@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.frontend.request.Notification.Notification;
+import com.example.frontend.request.Notification.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
@@ -25,6 +27,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Body;
 
 public class UserRepository {
     UserService userService;
@@ -402,6 +405,38 @@ public class UserRepository {
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 Log.e("tokenFCM", new Gson().toJson(t));
                 mutableLiveData.setValue(new ApiResponse<String>(false, "Request failed:" , null));
+            }
+        });
+        return mutableLiveData;
+    }
+
+    public void addNotification(Notification notification) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+        userService.addNotification(notification).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+            }
+        });
+    }
+
+    public MutableLiveData<ApiResponse<List<NotificationResponse>>> getNotification(String id) {
+        MutableLiveData<ApiResponse<List<NotificationResponse>>> mutableLiveData = new MutableLiveData<>();
+        userService.getNotification(id).enqueue(new Callback<ApiResponse<List<NotificationResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<NotificationResponse>>> call, Response<ApiResponse<List<NotificationResponse>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<NotificationResponse>> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<List<NotificationResponse>>> call, Throwable t) {
+                Log.e("notification", new Gson().toJson(t));
             }
         });
         return mutableLiveData;

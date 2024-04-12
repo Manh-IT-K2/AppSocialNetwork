@@ -3,6 +3,7 @@ package com.example.frontend.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,9 @@ import android.widget.LinearLayout;
 import com.example.frontend.R;
 import com.example.frontend.adapter.NotificationAdapter;
 import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.viewModel.User.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,7 @@ public class NotificationFragment extends Fragment {
     RecyclerView recyclerView;
     NotificationAdapter notificationAdapter;
     List<NotificationResponse> notificationResponseList;
+    UserViewModel userViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,8 +39,18 @@ public class NotificationFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         notificationResponseList = new ArrayList<>();
-        notificationAdapter = new NotificationAdapter(getContext(), notificationResponseList);
-        recyclerView.setAdapter(notificationAdapter);
+
+        String userId = SharedPreferenceLocal.read(getContext(), "userId");
+        userViewModel = new UserViewModel();
+
+        userViewModel.getNotification(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<NotificationResponse>>>() {
+            @Override
+            public void onChanged(ApiResponse<List<NotificationResponse>> listApiResponse) {
+                notificationResponseList = listApiResponse.getData();
+                notificationAdapter = new NotificationAdapter(getContext(), notificationResponseList,getChildFragmentManager());
+                recyclerView.setAdapter(notificationAdapter);
+            }
+        });
         return view;
     }
 }

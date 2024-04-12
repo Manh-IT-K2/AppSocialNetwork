@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.frontend.repository.UserRepository;
+import com.example.frontend.request.Notification.Notification;
+import com.example.frontend.request.Notification.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
@@ -71,5 +73,13 @@ public class UserViewModel extends ViewModel {
 
     public MutableLiveData<ApiResponse<String>> getTokenFCM(String id){
         return userRepository.getTokenFCM(id);
+    }
+
+    public void addNotification(Notification notification){
+        userRepository.addNotification(notification);
+    }
+
+    public MutableLiveData<ApiResponse<List<NotificationResponse>>> getNotification(String id){
+        return userRepository.getNotification(id);
     }
 }

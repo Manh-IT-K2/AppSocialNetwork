@@ -29,10 +29,13 @@ import com.example.frontend.R;
 import com.example.frontend.adapter.CommentAdapter;
 import com.example.frontend.adapter.IconAdapter;
 import com.example.frontend.request.Comment.RequestCreateComment;
+import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.NotificationService;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -57,16 +60,22 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
     private List<Integer> listIcon;
     private Context context;
     private String idPost;
+    private String idComment;
     private int positionComment = -1;
     public static int positionReplyComment = -1;
     public static int positionReplyCommentParent = -1;
     private ImageView btn_createComment, btn_sendGifComment;
     private static List<String> listIconsChoosed = new ArrayList<>();
+    private String userId;
+    private String tokenFCM;
 
-    public CommentFragment(Context context, String idPost) {
+    public CommentFragment(Context context, String idPost, String idComment, String userId, String tokenFCM) {
         super(context);
         this.context = context;
         this.idPost = idPost;
+        this.idComment = idComment;
+        this.userId = userId;
+        this.tokenFCM = tokenFCM;
     }
 
     @Override
@@ -113,8 +122,9 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         commentViewModel = new ViewModelProvider((FragmentActivity) context).get(CommentViewModel.class);
         userViewModel = new ViewModelProvider((FragmentActivity) context).get(UserViewModel.class);
 
+
         // Observe LiveData directly
-        commentViewModel.getListCommentByIdPost(idPost).observe((FragmentActivity) context, new Observer<ApiResponse<List<CommentResponse>>>() {
+        commentViewModel.getListCommentByIdPost(idPost, idComment).observe((FragmentActivity) context, new Observer<ApiResponse<List<CommentResponse>>>() {
             @Override
             public void onChanged(ApiResponse<List<CommentResponse>> response) {
                 Gson gson = new Gson();
@@ -152,11 +162,12 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                         contentComment = contentComment.replace(placeholder, listIconsChoosed.get(i));
                     }
                 }
-                Log.e("contentComment",contentComment);
+
                 String idComment = "";
                 String idUserReply = "";
                 boolean isReplyComment = false;
-                if (positionComment != -1){
+
+                if (positionComment != -1 ){
                     idComment = listComment.get(positionComment).getId();
                     isReplyComment = true;
                     idUserReply = listComment.get(positionComment).getUser().getId();
@@ -166,6 +177,28 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                     isReplyComment = true;
                     idUserReply = listComment.get(positionReplyCommentParent).getReplyComment().get(positionReplyComment).getUser().getId();
                 }
+
+                Notification notification = new Notification();
+                notification.setPostId(idPost);
+                notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
+                String userName = SharedPreferenceLocal.read(getContext(), "userName");
+
+                if(isReplyComment){
+                    notification.setIdComment(idComment);
+                    Log.e("idComment", idComment);
+                    notification.setText(userName+" vừa phản hôi bình luận của bạn");
+                    notification.setIdRecipient(idUserReply);
+                    tokenFCM = listComment.get(positionComment).getUser().getTokenFCM();
+                }else{
+                    notification.setText(userName+" vừa bình luận bài viết của bạn");
+                    notification.setIdRecipient(userId);
+                }
+
+                NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
+
+                userViewModel.addNotification(notification);
+
+
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
                         "65e8a525714ccc3a3caa7f77",
@@ -178,12 +211,13 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                 String j = gson.toJson(createComment);
                 Log.e("relly",j);
                 // Call the ViewModel to create a comment
+                String finalIdComment = idComment;
                 commentViewModel.createComment(createComment).observe((FragmentActivity) context, new Observer<ApiResponse<CommentResponse>>() {
                     @Override
                     public void onChanged(ApiResponse<CommentResponse> response) {
                         if (response.getData() != null) {
                             // Comment created successfully, refresh the comment list
-                            commentViewModel.getListCommentByIdPost(idPost).observe((FragmentActivity) context, new Observer<ApiResponse<List<CommentResponse>>>() {
+                            commentViewModel.getListCommentByIdPost(idPost, finalIdComment).observe((FragmentActivity) context, new Observer<ApiResponse<List<CommentResponse>>>() {
                                 @Override
                                 public void onChanged(ApiResponse<List<CommentResponse>> response) {
                                     Gson gson = new Gson();
@@ -207,6 +241,9 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                 // Clear the EditText after submitting the comment
                 edt_contentComment.setText("");
                 listIconsChoosed.clear();
+                positionComment = -1;
+                positionReplyComment = -1;
+                positionReplyCommentParent = -1;
             }
         });
 

@@ -94,14 +94,13 @@ public class UserController {
     }
 
     @PostMapping("/addNotification")
-    public ResponseEntity<ApiResponse<String>> addNotification(@RequestBody Notification notification)throws Exception {
+    public ResponseEntity<ApiResponse<String>> addNotification(@RequestBody RequestNotification notification)throws Exception {
         userService.addNotification(notification);
         return new ResponseEntity<ApiResponse<String>>(new ApiResponse<String>(true, "Đã tạo thông báo",null), HttpStatus.OK);
     }
 
     @PostMapping("/updateTokenFCM")
     public ResponseEntity<ApiResponse<String>> updateTokenFCM(@RequestBody RequestUpdateTokenFCM updateTokenFCM)throws Exception {
-        System.out.println(new Gson().toJson(updateTokenFCM));
         userService.updateTokenFCM(updateTokenFCM);
         return new ResponseEntity<ApiResponse<String>>(new ApiResponse<String>(true, "Đã tạo update tokenFCM",null), HttpStatus.OK);
     }
