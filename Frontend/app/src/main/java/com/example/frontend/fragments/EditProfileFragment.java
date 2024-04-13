@@ -25,24 +25,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
-import com.example.frontend.activities.FragmentReplacerActivity;
 import com.example.frontend.activities.MainActivity;
-import com.example.frontend.adapter.PostAdapter;
-import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.FirebaseStorageUploader;
-import com.example.frontend.viewModel.Story.StoryViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.firebase.firestore.auth.User;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
-import java.io.Console;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

@@ -68,10 +68,7 @@ public class PostProfileFragment extends Fragment {
         postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
-                Gson gson = new Gson();
-                String json = gson.toJson(response);
-                Log.d("check", json);
-                if (response.getData().size() > 0) {
+                if (response.getStatus() && !response.getData().isEmpty()) {
                     postResponseList = response.getData();
                     postsProfileAdapter = new PostsProfileAdapter(getContext(), postResponseList, getViewLifecycleOwner(),userViewModel,postViewModel);
                     recyclerView.setAdapter(postsProfileAdapter);

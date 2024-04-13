@@ -1,6 +1,8 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +10,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.activities.FragmentReplacerActivity;
+import com.example.frontend.activities.MainActivity;
+import com.example.frontend.fragments.DetailPostsProfileFragment;
 import com.example.frontend.request.Post.RequestPostByUserId;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 
@@ -63,14 +74,32 @@ public class PostsProfileAdapter extends RecyclerView.Adapter<PostsProfileAdapte
             super(itemView);
             imagePost = itemView.findViewById(R.id.imagePost);
             this.lifecycleOwner = lifecycleOwner;
+            String userId = SharedPreferenceLocal.read(mContext.getApplicationContext(), "userId");
             imagePost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("Width", String.valueOf(imagePost.getWidth()));
-                    Log.d("Height", String.valueOf(imagePost.getHeight()));
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        postViewModel.getListPostByUserId(userId).observe(lifecycleOwner, new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+                            @Override
+                            public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
+                                if (response.getData().size() > 0) {
+                                    RequestPostByUserId clickedPost = response.getData().get(position);
+                                    Intent intent = new Intent(mContext, FragmentReplacerActivity.class);
+                                    intent.putExtra("fragment_to_load", "detail_posts_profile");
+                                    intent.putExtra("postId", clickedPost.getIdPost());
+                                    mContext.startActivity(intent);
+                                } else {
+                                    // Xử lý khi không có dữ liệu hoặc có lỗi
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }
-
     }
+
+
+
 }

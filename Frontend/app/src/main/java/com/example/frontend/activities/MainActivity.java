@@ -16,9 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
-import com.example.frontend.fragments.HomeFragment;
-import com.example.frontend.fragments.CreateAccountFragment;
-import com.example.frontend.fragments.EditProfileFragment;
+import com.example.frontend.fragments.DetailPostsProfileFragment;
 import com.example.frontend.fragments.HomeFragment;
 import com.example.frontend.fragments.NotificationFragment;
 import com.example.frontend.fragments.ProfileFragment;
@@ -101,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                     case "back_profile":
                         selectedFragment = new ProfileFragment();
                         break;
-
                 }
                 // Replace the fragment with the selected one
                 if (selectedFragment != null) {

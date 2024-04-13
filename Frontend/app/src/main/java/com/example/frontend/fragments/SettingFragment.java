@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 
 import com.example.frontend.R;
 import com.example.frontend.activities.FragmentReplacerActivity;
-import com.example.frontend.activities.MainActivity;
 import com.example.frontend.utils.SharedPreferenceLocal;
 
 

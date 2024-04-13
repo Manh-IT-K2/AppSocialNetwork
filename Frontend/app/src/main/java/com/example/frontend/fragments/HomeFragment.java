@@ -154,11 +154,10 @@ public class HomeFragment extends Fragment {
                         // Xử lý lỗi khi không lấy được token
                         return;
                     }
-
                     // Lấy token thành công
                     String deviceToken = task.getResult();
-                    String userId = SharedPreferenceLocal.read(getContext(),"userId");
-                    userViewModel.updateTokenFCM(new RequestUpdateTokenFCM(userId, deviceToken));
+                    //String userId = SharedPreferenceLocal.read(getContext(),"userId");
+                    //userViewModel.updateTokenFCM(new RequestUpdateTokenFCM(userId, deviceToken));
                     // Sử dụng deviceToken để gửi thông báo FCM cho thiết bị người nhận
                 });
     }
