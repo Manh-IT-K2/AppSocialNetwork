@@ -63,7 +63,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(notification.getText().contains("vừa like bài viết")){
+                if(notification.getText().contains("vừa like bài viết")
+                        || notification.getText().contains("đăng một bài viết")){
                     Intent intent = new Intent(mContext, PostIDActivity.class);
                     intent.putExtra("id", notification.getIdPost());
                     intent.putExtra("idComment", "");
