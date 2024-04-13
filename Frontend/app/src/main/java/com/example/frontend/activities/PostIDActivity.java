@@ -180,7 +180,6 @@ public class PostIDActivity extends AppCompatActivity {
             public void onClick(View v) {
                     Notification notification = new Notification();
                     notification.setPostId(post.getPost().getId());
-                    notification.setLikePost(true);
                     notification.setUserId(SharedPreferenceLocal.read(PostIDActivity.this, "userId"));
                     notification.setIdRecipient(post.getUser().getId());
                     String userName = SharedPreferenceLocal.read(PostIDActivity.this, "userName");

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.frontend.repository.UserRepository;
 import com.example.frontend.request.Notification.Notification;
-import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;

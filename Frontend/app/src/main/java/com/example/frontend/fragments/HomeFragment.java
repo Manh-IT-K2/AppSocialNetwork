@@ -125,13 +125,18 @@ public class HomeFragment extends Fragment {
            }
        });
 
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
-        } else {
-            // Quyền truy cập chưa được cấp, yêu cầu quyền từ người dùng
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        // Xử lý lỗi khi không lấy được token
+                        return;
+                    }
 
-        }
-        retrieveToken();
+                    // Lấy token thành công
+                    String deviceToken = task.getResult();
+                    userViewModel.updateTokenFCM(new RequestUpdateTokenFCM(userId, deviceToken));
+                    // Sử dụng deviceToken để gửi thông báo FCM cho thiết bị người nhận
+                });
 
         return view;
     }
@@ -145,20 +150,5 @@ public class HomeFragment extends Fragment {
                 // Quyền truy cập bị từ chối, xử lý tương ứng (ví dụ: hiển thị thông báo, vô hiệu hóa tính năng liên quan, vv.)
             }
         }
-    }
-
-    private void retrieveToken() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        // Xử lý lỗi khi không lấy được token
-                        return;
-                    }
-                    // Lấy token thành công
-                    String deviceToken = task.getResult();
-                    //String userId = SharedPreferenceLocal.read(getContext(),"userId");
-                    //userViewModel.updateTokenFCM(new RequestUpdateTokenFCM(userId, deviceToken));
-                    // Sử dụng deviceToken để gửi thông báo FCM cho thiết bị người nhận
-                });
     }
 }
