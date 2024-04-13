@@ -208,7 +208,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
                         Notification notification = new Notification();
                         notification.setPostId(post.getIdPost());
-                        notification.setLikePost(true);
                         notification.setUserId(SharedPreferenceLocal.read(itemView.getContext(), "userId"));
                         notification.setIdRecipient(post.getUserId());
                         String userName = SharedPreferenceLocal.read(itemView.getContext(), "userName");

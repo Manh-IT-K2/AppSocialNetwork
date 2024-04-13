@@ -7,7 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.frontend.request.Notification.Notification;
-import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
@@ -21,13 +21,11 @@ import com.example.frontend.service.UserService;
 import com.example.frontend.utils.CallApi;
 import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Body;
 
 public class UserRepository {
     UserService userService;

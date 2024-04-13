@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.NotificationAdapter;
-import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;

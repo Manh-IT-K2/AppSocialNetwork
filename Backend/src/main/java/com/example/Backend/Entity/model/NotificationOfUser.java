@@ -1,18 +1,22 @@
-package com.example.Backend.Request.User;
+package com.example.Backend.Entity.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestNotification {
+@Getter
+@Setter
+public class NotificationOfUser {
     String userId;
+    String userName;
+    String avatar;
     String text;
-    String postId;
+    String idPost;
     String idComment;
-    String idRecipient;
+    Date createAt;
 }

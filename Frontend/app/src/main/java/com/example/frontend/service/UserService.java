@@ -1,7 +1,7 @@
 package com.example.frontend.service;
 
 import com.example.frontend.request.Notification.Notification;
-import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
@@ -11,7 +11,6 @@ import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import java.util.List;
 
