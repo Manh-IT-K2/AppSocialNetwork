@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
-import com.example.frontend.fragments.Fragment_searchHistory;
 import com.example.frontend.response.User.UserResponse;
 
 import java.util.List;
@@ -54,10 +53,13 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
         holder.userName.setText(user_searchList.get(position).getUsername());
         holder.name.setText(user_searchList.get(position).getName());
         if (user_searchList.get(position).getAvatarImg() != null)
-            if (user_searchList.get(position).getAvatarImg() != "")
+            if (user_searchList.get(position).getAvatarImg() != "") {
                 Glide.with(context)
                         .load(Uri.parse(user_searchList.get(position).getAvatarImg()))
                         .into(holder.avatar);
+                holder.avatar.setBorderWidth(0);
+            }
+
 
     }
 
@@ -90,7 +92,6 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.My
                 }
             });
         }
-
 
     }
 }

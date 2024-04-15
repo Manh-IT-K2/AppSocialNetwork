@@ -123,7 +123,7 @@ public class PostRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
-                Log.i(TAG, "Unable to get data");
+                Log.i(TAG, "Unable to get data posts by search query");
             }
         });
 

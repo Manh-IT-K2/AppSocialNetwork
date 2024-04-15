@@ -4,23 +4,16 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,12 +24,9 @@ import com.example.frontend.response.Search.SearchHistoryResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.utils.SharedPreference_SearchHistory;
-import com.example.frontend.viewModel.Search.SearchQuery_ViewModel;
+import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
-import java.lang.reflect.Type;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,18 +36,18 @@ import java.util.regex.Pattern;
 public class Fragment_searchUser extends Fragment {
 
     UserViewModel userViewModel;
-    SearchQuery_ViewModel searchQueryViewModel;
+    FollowsViewModel followsViewModel;
     RecyclerView recyclerView_User;
     ProgressBar progressBar;
     TextView search_noResult;
-    Toolbar toolbar_profile;
     private List<UserResponse> userList = new ArrayList<>();
     private List<UserResponse> user_searchList;
-    Fragment_searchHistory fragment_searchHistory;
     private SearchUserAdapter searchUserAdapter;
-    private SharedPreference_SearchHistory sharedPreferences;
-    private ArrayList<SearchHistoryResponse> searchHistoryResponseArrayList;
-    private Gson gson;
+    private SharedPreference_SearchHistory sharedPreferenceSearchHistory;
+    private List<SearchHistoryResponse> listSearchHistory;
+    private List<UserResponse> listFollowing = new ArrayList<>();
+    private String search_query;
+    private boolean getUserList, getFollowingList = false;
 
     public Fragment_searchUser() {
         // Required empty public constructor
@@ -73,7 +63,8 @@ public class Fragment_searchUser extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Khởi tạo search Query ViewModel
-        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
+        //searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
+        followsViewModel = new ViewModelProvider(requireActivity()).get(FollowsViewModel.class);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_user, container, false);
@@ -82,9 +73,14 @@ public class Fragment_searchUser extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gson = new Gson();
-        sharedPreferences = new SharedPreference_SearchHistory(getActivity());
-        getSearchHistoryListFromSharedPreference();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getString("search_query") != null) {
+                search_query = bundle.getString("search_query");
+            }
+        }
+
+        sharedPreferenceSearchHistory = new SharedPreference_SearchHistory(getActivity());
 
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
@@ -92,35 +88,89 @@ public class Fragment_searchUser extends Fragment {
         progressBar.setVisibility(View.GONE);
         recyclerView_User = view.findViewById(R.id.recyclerViewUser);
         search_noResult = view.findViewById(R.id.search_noResults);
-        toolbar_profile = getActivity().findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar_profile);
 
         resultList();
     }
 
+    private void takeFollowingUsers() {
+        if (listFollowing.isEmpty()) {
+            String id = SharedPreferenceLocal.read(getContext(), "userId");
+            progressBar.setVisibility(View.VISIBLE);
+            followsViewModel.getUserFollowingById(id).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
+                @Override
+                public void onChanged(ApiResponse<List<UserResponse>> listApiResponse) {
+                    listFollowing = listApiResponse.getData();
+                    //progressBar.setVisibility(View.GONE);
+                    getFollowingList = true;
+                    if(getUserList == true) {
+                        // Bat dau tim kiem theo danh sach dang follow
+                        searchUserFollowing(search_query);
+                        // Xoa cac tai khoan da duoc tim trong danh sach dang theo doi
+                        removeAccountsSearched();
+                        // Bắt đầu tìm kiếm theo search query và hiển thị trên recyclerView
+                        search_User(search_query);
+                    }
+                }
+            });
+        }
+        else searchUserFollowing(search_query);
+    }
+
+    private void searchUserFollowing(String query) {
+        user_searchList = new ArrayList<>();
+
+        // Tim kiem theo ten user -> Them vao user_searchList
+        for (int i = 0; i < listFollowing.size(); i++) {
+            // Chuyen username thanh tieng viet khong dau
+            String a = removeAccent(listFollowing.get(i).getUsername().toUpperCase());
+            // Chuyen noi dung tim kiem thanh tieng viet khong dau
+            String b = removeAccent(query.toUpperCase());
+            if (a.contains(b)) {
+                user_searchList.add(listFollowing.get(i));
+            }
+        }
+    }
+
     // Lấy dữ liệu allUsers và kết quả tìm kiếm user thong qua ham searchUser
     public void resultList() {
+        // Lay danh sach following
+        takeFollowingUsers();
+
         if (userList.isEmpty()) {
-            progressBar.setVisibility(View.VISIBLE);
+            //progressBar.setVisibility(View.VISIBLE);
             userViewModel.getAllUsers().observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<UserResponse>>>() {
                 @Override
                 public void onChanged(ApiResponse<List<UserResponse>> userResponses) {
                     userList = userResponses.getData();
+
                     // Xóa tài khoản người dùng hiện tại trong userList
-                    removeAccountCurrent(SharedPreferenceLocal.read(getContext(), "userId"));
+                    removeAccount(SharedPreferenceLocal.read(getContext(), "userId"));
+
                     // Ẩn ProgressBar khi dữ liệu đã được cập nhật
                     progressBar.setVisibility(View.GONE);
-                    // Bắt đầu tìm kiếm theo search query và hiển thị trên recyclerView
-                    search_User(searchQueryViewModel.getSearchQuery());
+
+                    getUserList = true;
+                    if(getFollowingList == true) {
+                        // Bat dau tim kiem theo danh sach dang follow
+                        searchUserFollowing(search_query);
+                        // Xoa cac tai khoan da duoc tim trong danh sach dang theo doi
+                        removeAccountsSearched();
+                        // Bắt đầu tìm kiếm theo search query và hiển thị trên recyclerView
+                        search_User(search_query);
+                    }
                 }
             });
-        }
-
-        // Bắt đầu tìm kiếm theo search query
-        search_User(searchQueryViewModel.getSearchQuery());
+        } else
+            search_User(search_query);
     }
 
-    private void removeAccountCurrent(String userId) {
+    private void removeAccountsSearched() {
+        for (int i = 0; i < user_searchList.size(); i++) {
+            removeAccount(user_searchList.get(i).getId());
+        }
+    }
+
+    private void removeAccount(String userId) {
         int i = 0;
         while (i < userList.size()) {
             if (userId.equals(userList.get(i).getId())) {
@@ -131,10 +181,8 @@ public class Fragment_searchUser extends Fragment {
         }
     }
 
-
     // Ham chuyen doi tieng viet co dau thanh tieng viet khong dau
     public static String removeAccent(String s) {
-
         String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(temp).replaceAll("");
@@ -142,131 +190,66 @@ public class Fragment_searchUser extends Fragment {
 
     // Tìm kiếm user và hiển thị trên recyclerView
     public void search_User(String query) {
+        //user_searchList = new ArrayList<>();
 
-        user_searchList = new ArrayList<>();
+        // Tim kiem theo ten user
+        // Them vao user_searchList
+        for (int i = 0; i < userList.size(); i++) {
+            // Chuyen username thanh tieng viet khong dau
+            String a = removeAccent(userList.get(i).getUsername().toUpperCase());
+            // Chuyen noi dung tim kiem thanh tieng viet khong dau
+            String b = removeAccent(query.toUpperCase());
 
-        if (query.length() > 0) { // Co nhap noi dung tim kiem
-
-            recyclerView_User.setVisibility(View.VISIBLE);
-
-            // Tim kiem theo ten user
-            // Them vao user_searchList
-            for (int i = 0; i < userList.size(); i++) {
-                // Chuyen username thanh tieng viet khong dau
-                String a = removeAccent(userList.get(i).getUsername().toUpperCase());
-                // Chuyen noi dung tim kiem thanh tieng viet khong dau
-                String b = removeAccent(query.toUpperCase());
-
-                if (a.contains(b)) {
-                    user_searchList.add(userList.get(i));
-                }
+            if (a.contains(b)) {
+                user_searchList.add(userList.get(i));
             }
-            Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_Search_Container);
+        }
 
-            if (user_searchList.isEmpty() && !userList.isEmpty()) {
-                if (currentFragment instanceof Fragment_searchUser)
-                    search_noResult.setText("");
-                else
-                    search_noResult.setText(R.string.noResults_wereFound);
-                recyclerView_User.setVisibility(View.GONE);
-            } else {
-                search_noResult.setText("");
+        if (user_searchList.isEmpty()) {
+            search_noResult.setText(R.string.noResults_wereFound);
+        } else {
+            search_noResult.setText("");
 
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                recyclerView_User.setLayoutManager(layoutManager);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView_User.setLayoutManager(layoutManager);
+            searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
+            recyclerView_User.setAdapter(searchUserAdapter);
 
-                // Khoi tao Adapter
-                if (currentFragment instanceof Fragment_searchUser) {
-                    // Đang ở Fragment_searchUser
-                    // Chi hien thi toi da 5 phan tu trong user_searchList
-                    if (user_searchList.size() >= 5) {
-                        searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList.subList(0, 4));
-                        recyclerView_User.setAdapter(searchUserAdapter);
-                    } else {
-                        searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
-                        recyclerView_User.setAdapter(searchUserAdapter);
-                    }
-
-                } else {
-                    // Đang ở Fragment_performSearch
-                    // Hiển thị toàn bộ user_searchList
-                    searchUserAdapter = new SearchUserAdapter(getContext(), user_searchList);
-                    recyclerView_User.setAdapter(searchUserAdapter);
+            searchUserAdapter.setOnItemClickListener(new SearchUserAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(user_searchList.get(position).getUsername(), user_searchList.get(position).getAvatarImg(), true, user_searchList.get(position).getId(), user_searchList.get(position).getName(), new java.util.Date());
+                    clickUserToProfile(searchHistoryResponse);
                 }
-
-                clickUserToProfile();
-
-            }
-
-
-        } else { // Khong nhap noi dung tim kiem
-
-            // Hiển thị fragment_searchHistory cho container fragment_Search_Container
-            fragment_searchHistory = new Fragment_searchHistory();
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_Search_Container, fragment_searchHistory)
-                    .commit();
+            });
         }
     }
 
-    private void clickUserToProfile() {
-        searchUserAdapter.setOnItemClickListener(new SearchUserAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
+    private void clickUserToProfile(SearchHistoryResponse history) {
 
-                // Khi nhan tim kiem -> put data vao Shared preferences
-                SearchHistoryResponse searchHistoryResponse = new SearchHistoryResponse(user_searchList.get(position).getUsername(), user_searchList.get(position).getAvatarImg(), true, user_searchList.get(position).getId(), user_searchList.get(position).getName(), new java.util.Date());
-                // Luu vao shared preference
-                saveToSearchHistory(searchHistoryResponse, user_searchList.get(position).getUsername());
-
-                Bundle args = new Bundle();
-                args.putString("userId", user_searchList.get(position).getId());
-
-                ProfileFragment clickAccount = new ProfileFragment();
-                clickAccount.setArguments(args);
-
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
-
+        listSearchHistory = sharedPreferenceSearchHistory.read_SearchHistoryList(listSearchHistory);
+        // Xoa tai khoan bi trung
+        for (int i = 0; i < listSearchHistory.size(); i++) {
+            if (listSearchHistory.get(i).getAccount() && Objects.equals(listSearchHistory.get(i).getId(), history.getId())) {
+                listSearchHistory.remove(listSearchHistory.get(i));
+                break;
             }
-        });
-    }
-
-    private void getSearchHistoryListFromSharedPreference() {
-        String jsonHistory = sharedPreferences.read_SearchHistoryList();
-        Type type = new TypeToken<List<SearchHistoryResponse>>() {}.getType();
-        searchHistoryResponseArrayList = gson.fromJson(jsonHistory, type);
-
-        if (searchHistoryResponseArrayList == null) {
-            searchHistoryResponseArrayList = new ArrayList<>();
         }
-    }
-
-    private void saveSearchHistoryListToSharedPreference(ArrayList<SearchHistoryResponse> searchHistoryList) {
-        // convert object to String by Gson
-        String jsonHistory = gson.toJson(searchHistoryList);
-
-        // save to shared preference
-        sharedPreferences.save_SearchHistoryList(jsonHistory);
-    }
-
-    private void saveToSearchHistory(SearchHistoryResponse searchHistoryResponse, String query) {
-        if (searchHistoryResponseArrayList.isEmpty())
-            searchHistoryResponseArrayList.add(searchHistoryResponse);
-        else {
-            // Xoa object trong shared preference co text trung voi query
-            int i = 0;
-            while (i < searchHistoryResponseArrayList.size()) {
-                if (searchHistoryResponseArrayList.get(i).getText().equals(query) && searchHistoryResponseArrayList.get(i).getAccount() == searchHistoryResponse.getAccount()) {
-                    searchHistoryResponseArrayList.remove(searchHistoryResponseArrayList.get(i));
-                    break;
-                }
-                i++;
-            }
-            searchHistoryResponseArrayList.add(0, searchHistoryResponse);
-        }
+        // Them vao dau danh sach lich su
+        listSearchHistory.add(0, history);
 
         // Luu vao shared preference
-        saveSearchHistoryListToSharedPreference(searchHistoryResponseArrayList);
+        sharedPreferenceSearchHistory.save_SearchHistoryList(listSearchHistory);
+
+        // Set bundle
+        Bundle args = new Bundle();
+        args.putString("userId", history.getId());
+
+        ProfileFragment clickAccount = new ProfileFragment();
+        clickAccount.setArguments(args);
+
+        // Chuyen sang Profile Fragment
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_layout_main, clickAccount).addToBackStack(null).commit();
     }
 }

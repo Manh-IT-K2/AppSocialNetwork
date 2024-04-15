@@ -23,6 +23,15 @@ public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.My
     Context context;
     List<RequestPostByUserId> post_searchList;
     LayoutInflater layoutInflater;
+    private SearchPostAdapter.OnItemClickListener itemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(SearchPostAdapter.OnItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
 
     public SearchPostAdapter(Context context, List<RequestPostByUserId> post_searchList) {
         this.context = context;
@@ -60,6 +69,18 @@ public class SearchPostAdapter extends RecyclerView.Adapter<SearchPostAdapter.My
             super(itemView);
 
             imgSearchPost = itemView.findViewById(R.id.imgSearchPost);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemClickListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            itemClickListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
 
         }
     }
