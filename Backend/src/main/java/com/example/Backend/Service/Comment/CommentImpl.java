@@ -5,6 +5,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Comment.RequestCreateComment;
 import com.example.Backend.Request.Comment.RequestDeleteComment;
 import com.example.Backend.Request.Comment.RequestLikeComment;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -74,10 +75,23 @@ public class CommentImpl implements CommentService {
 
     // get lít comment by post
     @Override
-    public List<Comment> getListCommentByIdPost(String id) throws Exception {
+    public List<Comment> getListCommentByIdPost(String id, String idComment) throws Exception {
         Query query = new Query(Criteria.where("idPost").is(id));
         query.with(Sort.by(Sort.Direction.DESC, "createAt"));
-        return mongoTemplate.find(query, Comment.class, "comments");
+
+        List<Comment> list = mongoTemplate.find(query, Comment.class, "comments");
+
+        if(!idComment.isEmpty()){
+            for (int i = 0; i < list.size(); i++) {
+                Comment comment = list.get(i);
+                if (comment.getId().equals(idComment)) {
+                    list.remove(i); // Xóa sản phẩm khỏi vị trí hiện tại
+                    list.add(0, comment); // Thêm sản phẩm vào đầu danh sách
+                    break; // Dừng vòng lặp sau khi di chuyển sản phẩm
+                }
+            }
+        }
+        return list;
     }
 
     @Override

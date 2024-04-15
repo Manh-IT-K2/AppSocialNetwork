@@ -151,7 +151,6 @@ public class MainChatActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     adapter.setChatList(chatList);
-
                                 }
                             });
                             Log.d("pushertest2", new Gson().toJson(privateChatResponse));
@@ -165,38 +164,11 @@ public class MainChatActivity extends AppCompatActivity {
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent i = new Intent(getApplicationContext(),MainChatActivity.class);
+                startActivity(i);
+                //finish();
             }
         });
-//        searchUser_txt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                toolbar.setVisibility(View.GONE);
-//                recyclerView.setVisibility(View.GONE);
-//                layoutSearch.setVisibility(View.VISIBLE);
-//                cancelSearchBtn.setVisibility(View.VISIBLE);
-//                String keyword = searchUser_txt.getText().toString();
-//                userViewModel = new ViewModelProvider(MainChatActivity.this).get(UserViewModel.class);
-//                userViewModel.findUser_privatechat(keyword).observe(MainChatActivity.this, new Observer<ApiResponse<List<UserResponse>>>() {
-//                    @Override
-//                    public void onChanged(ApiResponse<List<UserResponse>> response) {
-//                        if (response != null) {
-//                            List<UserResponse> userResponse = null;
-//                            if (response.getStatus()) {
-//                                userResponse = response.getData();
-//                                searchRecyclerView.setVisibility(View.VISIBLE);
-//                                searchAdapter.setListUser(userResponse);
-//                            } else {
-//                                searchRecyclerView.setVisibility(View.GONE);
-//                            }
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "Có lỗi xảy ra. Vui lòng thử lại sau.", Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
-        // Lắng nghe sự kiện click trên searchUser_txt
         searchUser_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

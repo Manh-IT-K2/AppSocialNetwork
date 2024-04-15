@@ -23,5 +23,6 @@ public class RequestPostByUserId {
     private String location;
     private Date createAt;
     private List<User> like;
+    private String tokenFCM;
 
 }

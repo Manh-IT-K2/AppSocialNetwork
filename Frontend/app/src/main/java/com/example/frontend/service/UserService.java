@@ -1,14 +1,16 @@
 package com.example.frontend.service;
 
+import com.example.frontend.request.Notification.Notification;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 import com.example.frontend.response.User.UserResponse;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import java.util.List;
 
@@ -46,4 +48,14 @@ public interface  UserService {
     Call<ApiResponse<List<String>>> getListUserName();
     @GET("user/getUser_privateChat")
     Call<ApiResponse<List<UserResponse>>> findUser_privatechat(@Query("u") String keyword);
+    @POST("user/updateTokenFCM")
+    Call<ApiResponse<UserResponse>> updateTokenFCM(@Body RequestUpdateTokenFCM request);
+
+    @GET("user/getTokenFCM")
+    Call<ApiResponse<String>> getTokenFCM(@Query("id") String id);
+    @POST("user/addNotification")
+    Call<ApiResponse<String>> addNotification(@Body Notification notification);
+
+    @GET("user/getNotification")
+    Call<ApiResponse<List<NotificationResponse>>> getNotification(@Query("id") String id);
 }

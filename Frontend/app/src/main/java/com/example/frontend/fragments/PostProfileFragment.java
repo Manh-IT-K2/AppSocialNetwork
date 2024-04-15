@@ -60,13 +60,7 @@ public class PostProfileFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         // Thiết lập layout manager cho RecyclerView
         recyclerView.setLayoutManager(layoutManager);
-        final int spacing = 1; // Khoảng cách mong muốn giữa các item
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.set(spacing, spacing, spacing, spacing); // Set khoảng cách giữa các item
-            }
-        });
+
         // init call api suggest
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
@@ -74,10 +68,7 @@ public class PostProfileFragment extends Fragment {
         postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
-                Gson gson = new Gson();
-                String json = gson.toJson(response);
-                Log.d("check", json);
-                if (response.getData().size() > 0) {
+                if (response.getStatus() && !response.getData().isEmpty()) {
                     postResponseList = response.getData();
                     postsProfileAdapter = new PostsProfileAdapter(getContext(), postResponseList, getViewLifecycleOwner(),userViewModel,postViewModel);
                     recyclerView.setAdapter(postsProfileAdapter);

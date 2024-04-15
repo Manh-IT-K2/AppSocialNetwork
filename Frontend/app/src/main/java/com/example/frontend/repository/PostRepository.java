@@ -12,6 +12,7 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponsePostById;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.PostService;
 import com.example.frontend.utils.CallApi;
@@ -127,6 +128,29 @@ public class PostRepository {
             }
         });
 
+        return mutableLiveData;
+    }
+
+    public MutableLiveData<ApiResponse<ResponsePostById>> getPostById(String id) {
+        MutableLiveData<ApiResponse<ResponsePostById>> mutableLiveData = new MutableLiveData<>();
+        postService.getPostById(id).enqueue(new Callback<ApiResponse<ResponsePostById>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<ResponsePostById>> call, Response<ApiResponse<ResponsePostById>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<ResponsePostById> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Gson gson = new Gson();
+                    String data = gson.toJson(apiResponse);
+                    Log.d("add",data);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<>(false,"Failed add like", null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<ResponsePostById>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<ResponsePostById>(false, "Error add like: " + t.getMessage(), null));
+            }
+        });
         return mutableLiveData;
     }
 }

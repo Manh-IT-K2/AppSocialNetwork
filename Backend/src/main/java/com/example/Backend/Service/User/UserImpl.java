@@ -2,14 +2,17 @@ package com.example.Backend.Service.User;
 
 import com.example.Backend.Entity.Follows;
 import com.example.Backend.Entity.GroupChat;
+import com.example.Backend.Entity.Notification;
+import com.example.Backend.Entity.model.NotificationOfUser;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.sun.xml.txw2.Document;
+
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,10 +22,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class UserImpl implements UserService {
@@ -330,5 +336,100 @@ public class UserImpl implements UserService {
         } else {
             return new ApiResponse<>(false, "Users not found", null);
         }
+    }
+
+    @Override
+    public void addNotification(RequestNotification notification) {
+        Query query = new Query(Criteria.where("userId").is(notification.getIdRecipient()));
+        Notification notify = mongoTemplate.findOne(query, Notification.class, "notification");
+
+        query = new Query(Criteria.where("_id").is(notification.getUserId()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        if(user!= null){
+            if(notify == null){
+                notify = new Notification();
+                notify.setUserId(notification.getIdRecipient());
+
+                List<NotificationOfUser> list = new ArrayList<>();
+
+                NotificationOfUser notificationOfUser = new NotificationOfUser();
+                notificationOfUser.setUserId(user.getId());
+                notificationOfUser.setUserName(user.getUsername());
+                notificationOfUser.setText(notification.getText());
+                notificationOfUser.setAvatar(user.getAvatarImg());
+                notificationOfUser.setCreateAt(new Date());
+
+                if(notification.getText().contains("vừa like")
+                || notification.getText().contains("vừa bình luận bài viết")) {
+                    notificationOfUser.setIdPost(notification.getPostId());
+                }
+
+                if(notification.getText().contains("vừa phản hồi bình luận")){
+                    System.out.println("idComment "+ notification.getIdComment());
+                    notificationOfUser.setIdPost(notification.getPostId());
+                    notificationOfUser.setIdComment(notification.getIdComment());
+                }
+
+                list.add(notificationOfUser);
+                notify.setNotificationList(list);
+                mongoTemplate.save(notify);
+            }else{
+                NotificationOfUser notificationOfUser = new NotificationOfUser();
+                notificationOfUser.setUserId(user.getId());
+                notificationOfUser.setUserName(user.getUsername());
+                notificationOfUser.setText(notification.getText());
+                notificationOfUser.setAvatar(user.getAvatarImg());
+                notificationOfUser.setCreateAt(new Date());
+
+                if(notification.getText().contains("vừa like")) {
+                    notificationOfUser.setIdPost(notification.getPostId());
+                }
+
+                if(notification.getText().contains("vừa bình luận bài viết")
+                        || notification.getText().contains("vừa phản hồi bình luận")){
+                    notificationOfUser.setIdPost(notification.getPostId());
+                    notificationOfUser.setIdComment(notification.getIdComment());
+                }
+
+                notify.getNotificationList().add(notificationOfUser);
+                mongoTemplate.save(notify);
+            }
+        }
+    }
+
+    @Override
+    public void updateTokenFCM(RequestUpdateTokenFCM updateTokenFCM) {
+        Query query = new Query(Criteria.where("_id").is(updateTokenFCM.getUserId()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+
+        if(user != null) {
+            user.setTokenFCM(updateTokenFCM.getToken());
+            mongoTemplate.save(user);
+        }
+    }
+
+    @Override
+    public List<NotificationOfUser> getNotificationById(String id) {
+        Query query = new Query(Criteria.where("userId").is(id));
+        Notification notification = mongoTemplate.findOne(query, Notification.class, "notification");
+
+        if(notification != null) {
+            if(notification.getNotificationList() != null){
+                Collections.reverse(notification.getNotificationList());
+                return notification.getNotificationList();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getTokenFCM(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        User user = mongoTemplate.findOne(query, User.class, "users");
+        if(user!=null){
+            return user.getTokenFCM();
+        }
+        return "";
     }
 }

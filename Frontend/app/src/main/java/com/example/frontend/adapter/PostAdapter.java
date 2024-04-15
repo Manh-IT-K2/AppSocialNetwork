@@ -24,12 +24,16 @@ import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.fragments.CommentFragment;
 import com.example.frontend.fragments.LikeFragment;
+import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.Story.RequestStoryByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.NotificationService;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
+import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
@@ -90,7 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 holder.btn_like.setImageResource(R.drawable.icon_favorite); // Thay bằng icon khác nếu không được like
             }
         }
-    Log.e("checkLike",String.valueOf(checkLike));
+
         // check location to set text
         if(post.getLocation().isEmpty()){
             holder.txt_address.setText("Unknown Location");
@@ -126,7 +130,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                        ViewGroup.LayoutParams.MATCH_PARENT,
-                       1200 // Set chiều cao mong muốn ở đây (350px)
+                       350 // Set chiều cao mong muốn ở đây (350px)
                );
                layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
                imageView.setLayoutParams(layoutParams);
@@ -157,6 +161,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         // Khai báo biến tạm để lưu trữ txt_liked
         private TextView txt_liked;
         private PostViewModel postViewModel = new PostViewModel();
+        private UserViewModel userViewModel = new UserViewModel();
         private ImageView img_user, img_userLiked, img_post, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
         private TextView txt_userName, txt_address, txt_contentPost, txt_timeCreatePost;
         LinearLayout linear_layout_drag_Post;
@@ -187,7 +192,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                     int position = getAdapterPosition();
                     RequestPostByUserId post = listPost.get(position);
                     String idPost = post.getIdPost();
-                    CommentFragment dialog = new CommentFragment(mContext, idPost);
+                    CommentFragment dialog = new CommentFragment(mContext, idPost, "",listPost.get(position).getUserId(), listPost.get(position).getTokenFCM());
                     dialog.show();
                 }
             });
@@ -200,12 +205,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                     if (position != RecyclerView.NO_POSITION) {
                         RequestPostByUserId post = listPost.get(position);
                         String postId = post.getIdPost();
+
+                        Notification notification = new Notification();
+                        notification.setPostId(post.getIdPost());
+                        notification.setUserId(SharedPreferenceLocal.read(itemView.getContext(), "userId"));
+                        notification.setIdRecipient(post.getUserId());
+                        String userName = SharedPreferenceLocal.read(itemView.getContext(), "userName");
+
                         if (!post.isLiked()) {
                             btn_like.setImageResource(R.drawable.icon_liked);
                             post.setLiked(true);
+                            notification.setText(userName+" vừa like bài viết của bạn");
+                            userViewModel.addNotification(notification);
+                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         } else {
                             btn_like.setImageResource(R.drawable.icon_favorite);
                             post.setLiked(false);
+//                            notification.setText("Vừa bỏ like bài viết của bạn");
+//                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         }
                         postViewModel.addLike(postId,"65e8a525714ccc3a3caa7f77").observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override

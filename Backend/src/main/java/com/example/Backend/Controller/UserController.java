@@ -1,5 +1,7 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.Entity.Notification;
+import com.example.Backend.Entity.model.NotificationOfUser;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -90,5 +92,27 @@ public class UserController {
     public ResponseEntity<ApiResponse<List<User>>> getUser_privatechat(@RequestParam String u) throws Exception {
         ApiResponse<List<User>> apiResponse = userService.findUser_privatechat(u);
         return new ResponseEntity<ApiResponse<List<User>>>(apiResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/addNotification")
+    public ResponseEntity<ApiResponse<String>> addNotification(@RequestBody RequestNotification notification)throws Exception {
+        userService.addNotification(notification);
+        return new ResponseEntity<ApiResponse<String>>(new ApiResponse<String>(true, "Đã tạo thông báo",null), HttpStatus.OK);
+    }
+
+    @PostMapping("/updateTokenFCM")
+    public ResponseEntity<ApiResponse<String>> updateTokenFCM(@RequestBody RequestUpdateTokenFCM updateTokenFCM)throws Exception {
+        userService.updateTokenFCM(updateTokenFCM);
+        return new ResponseEntity<ApiResponse<String>>(new ApiResponse<String>(true, "Đã tạo update tokenFCM",null), HttpStatus.OK);
+    }
+
+    @GetMapping("/getNotification")
+    public ResponseEntity<ApiResponse<List<NotificationOfUser>>> getNotification(@RequestParam String id ) throws Exception {
+        return new ResponseEntity<ApiResponse<List<NotificationOfUser>>>(new ApiResponse<>(true, "",userService.getNotificationById(id)), HttpStatus.OK);
+    }
+
+    @GetMapping("/getTokenFCM")
+    public ResponseEntity<ApiResponse<String>> getTokenFCM(@RequestParam String id ) throws Exception {
+        return new ResponseEntity<ApiResponse<String>>(new ApiResponse<>(true, "",userService.getTokenFCM(id)), HttpStatus.OK);
     }
 }

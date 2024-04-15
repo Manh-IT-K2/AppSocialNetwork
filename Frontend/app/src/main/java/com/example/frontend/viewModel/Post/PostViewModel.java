@@ -12,6 +12,7 @@ import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponsePostById;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,5 +50,9 @@ public class PostViewModel extends ViewModel {
 
     public void setListPostsBySearchQuery(List<RequestPostByUserId> listPostsBySearchQuery) {
         this.listPostsBySearchQuery = listPostsBySearchQuery;
+    }
+
+    public MutableLiveData<ApiResponse<ResponsePostById>> getPostById(String id){
+        return postRepository.getPostById(id);
     }
 }

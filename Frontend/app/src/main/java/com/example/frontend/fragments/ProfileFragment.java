@@ -20,10 +20,13 @@ import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.FragmentManager;
 
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.Gravity;
@@ -44,28 +47,22 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.ChatActivity;
-import com.example.frontend.activities.CreatePostActivity;
 import com.example.frontend.activities.FollowsActivity;
 import com.example.frontend.activities.FragmentReplacerActivity;
-import com.example.frontend.activities.MainActivity;
-import com.example.frontend.adapter.PostAdapter;
+import com.example.frontend.adapter.ViewPagerMediaAdapter;
 import com.example.frontend.request.Follows.RequestCreateFollows;
 import com.example.frontend.request.Follows.RequestUpdateFollows;
-import com.example.frontend.request.Post.RequestPostByUserId;
+import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Follows.GetQuantityResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.NotificationService;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
-import com.example.frontend.viewModel.Post.PostViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -93,11 +90,13 @@ public class ProfileFragment extends Fragment {
     CircleImageView profileImage;
     TextView nameTV;
     private List<Uri> selectedFiles;
-    Fragment selectedFragment = null;
     FrameLayout fragment_layout_main;
-    BottomNavigationView bottomNavigationView;
     private UserResponse userResponse;
     Toolbar toolbar;
+
+    TabLayout tabLayout;
+    ViewPager2 viewPager2;
+    ViewPagerMediaAdapter viewPagerMediaAdapter;
 
     @Override
     public void onResume() {
@@ -170,11 +169,36 @@ public class ProfileFragment extends Fragment {
         follow_QRCode_messageLayout = view.findViewById(R.id.follow_QRCode_message_Layout);
         menu_downLayout = view.findViewById(R.id.menu_downLayout);
         menuLayout = view.findViewById(R.id.menuLayout);
-        bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
         fragment_layout_main = view.findViewById(R.id.fragment_layout_main);
+        tabLayout = view.findViewById(R.id.tabLayout);
+        viewPager2 = view.findViewById(R.id.viewPager2);
         toolbar = view.findViewById(R.id.toolbar);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemReselectedListener);
-        bottomNavigationView.setSelectedItemId(R.id.menu_Posts);
+
+        viewPagerMediaAdapter = new ViewPagerMediaAdapter(getActivity());
+        viewPager2.setAdapter(viewPagerMediaAdapter);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                tabLayout.getTabAt(position).select();
+            }
+        });
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         followsViewModel = new ViewModelProvider(this).get(FollowsViewModel.class);
 
@@ -326,6 +350,16 @@ public class ProfileFragment extends Fragment {
                     Date currentDate = new Date();
                     String formattedDate = dateFormat.format(currentDate);
 
+                    Notification notification = new Notification();
+                    notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
+                    String userName = SharedPreferenceLocal.read(getContext(), "userName");
+                    notification.setText(userName + " vừa theo dõi bạn");
+                    notification.setIdRecipient(userId);
+
+                    NotificationService.sendNotification(getContext(), notification.getText(), userResponse.getTokenFCM());
+
+                    userViewModel.addNotification(notification);
+
                     RequestCreateFollows requestCreateFollows = new RequestCreateFollows(SharedPreferenceLocal.read(getContext(), "userId"), userId, formattedDate);
                     followsViewModel.createFollows(requestCreateFollows).observe(getViewLifecycleOwner(), new Observer<ApiResponse<String>>() {
                         @Override
@@ -441,34 +475,6 @@ public class ProfileFragment extends Fragment {
         ;
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemReselectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            if (item.getItemId() == R.id.menu_Posts) {
-                selectedFragment = new PostProfileFragment();
-            } else if (item.getItemId() == R.id.menu_Watch) {
-                selectedFragment = new WatchProfileFragment();
-            } else if (item.getItemId() == R.id.menu_YouLiked) {
-                selectedFragment = new SubscriptionsFragment();
-            }
-            if (selectedFragment != null) {
-                getChildFragmentManager().beginTransaction().replace(R.id.fragment_layout_main, selectedFragment).commit();
-            }
-            return true;
-        }
-    };
-
-    public void setFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
-        if (fragment instanceof CreateAccountFragment) {
-            fragmentTransaction.addToBackStack(null);
-        }
-        fragmentTransaction.replace(fragment_layout_main.getId(), fragment);
-        fragmentTransaction.commit();
-    }
 
     // Kiểm tra người dùng hiện tại đã được follow chưa
     private boolean check_user_Followed() {

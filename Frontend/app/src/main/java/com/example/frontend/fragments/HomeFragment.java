@@ -1,8 +1,15 @@
 package com.example.frontend.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -10,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,15 +31,20 @@ import com.example.frontend.adapter.PostAdapter;
 import com.example.frontend.adapter.StoryAdapter;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.Story.RequestStoryByUserId;
+import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
 import com.example.frontend.viewModel.Story.StoryViewModel;
+import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.util.List;
 
 public class HomeFragment extends Fragment {
+    private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 1;
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
 
     private RecyclerView recyclerViewPost, recyclerViewStory;
     private PostAdapter postAdapter;
@@ -41,6 +54,7 @@ public class HomeFragment extends Fragment {
     private PostViewModel postViewModel;
     private StoryViewModel storyViewModel;
     private ImageView imgMessage;
+    private UserViewModel userViewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +73,7 @@ public class HomeFragment extends Fragment {
 
         // init call api post
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // init call api story
         storyViewModel = new ViewModelProvider(this).get(StoryViewModel.class);
@@ -110,6 +125,30 @@ public class HomeFragment extends Fragment {
            }
        });
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        // Xử lý lỗi khi không lấy được token
+                        return;
+                    }
+
+                    // Lấy token thành công
+                    String deviceToken = task.getResult();
+                    userViewModel.updateTokenFCM(new RequestUpdateTokenFCM(userId, deviceToken));
+                    // Sử dụng deviceToken để gửi thông báo FCM cho thiết bị người nhận
+                });
+
         return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Quyền truy cập đã được cấp, thực hiện các hành động cần thiết
+            } else {
+                // Quyền truy cập bị từ chối, xử lý tương ứng (ví dụ: hiển thị thông báo, vô hiệu hóa tính năng liên quan, vv.)
+            }
+        }
     }
 }

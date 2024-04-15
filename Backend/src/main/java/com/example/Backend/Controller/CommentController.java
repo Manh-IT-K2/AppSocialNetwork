@@ -36,8 +36,8 @@ public class CommentController {
 
     // get list comment by post
     @GetMapping("/getListCommentByIdPost")
-    public ResponseEntity<ApiResponse<List<Comment>>> getListCommentByIdPost(@RequestParam String id) throws Exception{
-        ApiResponse<List<Comment>> apiResponse = new ApiResponse<List<Comment>>(true, "",commentService.getListCommentByIdPost(id));
+    public ResponseEntity<ApiResponse<List<Comment>>> getListCommentByIdPost(@RequestParam String id,@RequestParam String idComment) throws Exception{
+        ApiResponse<List<Comment>> apiResponse = new ApiResponse<List<Comment>>(true, "",commentService.getListCommentByIdPost(id, idComment));
         return new ResponseEntity<ApiResponse<List<Comment>>>(apiResponse, HttpStatus.OK);
     }
 

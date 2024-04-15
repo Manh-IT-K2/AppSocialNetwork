@@ -4,6 +4,7 @@ import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponsePostById;
 
 import java.util.List;
 import retrofit2.Call;
@@ -29,4 +30,7 @@ public interface PostService {
     // get posts by search query
     @GET("post/getListPostsBySearchQuery")
     Call<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(@Query("id") String id, @Query("searchQuery") String searchQuery);
- }
+
+    @GET("post/getPostById")
+    Call<ApiResponse<ResponsePostById>> getPostById(@Query("id") String id);
+}
