@@ -4,19 +4,24 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.frontend.R;
+import com.example.frontend.adapter.PostAdapter;
 import com.example.frontend.adapter.SearchPostAdapter;
 import com.example.frontend.adapter.SearchUserAdapter;
 import com.example.frontend.request.Post.RequestPostByUserId;
@@ -33,11 +38,12 @@ import java.util.List;
 public class Fragment_searchPost extends Fragment {
 
     private RecyclerView recyclerView_Post;
-    ProgressBar progressBar;
-    private List<RequestPostByUserId> post_searchList = new ArrayList<>();
+    private ProgressBar progressBar;
+    private TextView search_noResult;
+    private List<RequestPostByUserId> post_searchList;
     private String id, searchQuery;
     private PostViewModel postViewModel;
-    private SearchQuery_ViewModel searchQueryViewModel;
+    SearchPostAdapter searchPostAdapter;
 
     public Fragment_searchPost() {
         // Required empty public constructor
@@ -55,22 +61,21 @@ public class Fragment_searchPost extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         postViewModel = new ViewModelProvider(requireActivity()).get(PostViewModel.class);
-        searchQueryViewModel = new ViewModelProvider(requireActivity()).get(SearchQuery_ViewModel.class);
 
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
-//            if (bundle.getString("searchQuery") != null)
-//                searchQuery = bundle.getString("searchQuery", "");
-//        }
-        searchQuery = searchQueryViewModel.getSearchQuery();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getString("search_query") != null)
+                searchQuery = bundle.getString("search_query");
+        }
         id = SharedPreferenceLocal.read(getContext(), "userId");
+
         recyclerView_Post = view.findViewById(R.id.recyclerViewPost);
+        search_noResult = view.findViewById(R.id.search_noResults);
         progressBar = view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
         // Bắt đầu tìm kiếm theo search query
         startSearch(id, searchQuery);
-
     }
 
     private void startSearch(String id, String searchQuery) {
@@ -78,9 +83,15 @@ public class Fragment_searchPost extends Fragment {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> listApiResponse) {
                 post_searchList = listApiResponse.getData();
+                postViewModel.setListPostsBySearchQuery(post_searchList);
                 progressBar.setVisibility(View.GONE);
-                // Dua ket qua tim kiem post vao recyclerView
-                putResultSearch_ToRecyclerView();
+                if (!post_searchList.isEmpty()) {
+                    search_noResult.setText("");
+                    // Dua ket qua tim kiem post vao recyclerView
+                    putResultSearch_ToRecyclerView();
+                } else {
+                    search_noResult.setText(R.string.noResults_wereFound);
+                }
             }
         });
     }
@@ -91,10 +102,30 @@ public class Fragment_searchPost extends Fragment {
 
         // Set spacing between items
         int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        recyclerView_Post.addItemDecoration(new GridSpacingItemDecoration(3, spacing, true));
+        recyclerView_Post.addItemDecoration(new GridSpacingItemDecoration(3, spacing, false));
 
         // Set adapter
-        SearchPostAdapter searchPostAdapter = new SearchPostAdapter(getContext(), post_searchList);
+        searchPostAdapter = new SearchPostAdapter(getContext(), post_searchList);
         recyclerView_Post.setAdapter(searchPostAdapter);
+
+        // Khi nhan vao mot post
+        clickAPost();
+    }
+
+    private void clickAPost() {
+        searchPostAdapter.setOnItemClickListener(new SearchPostAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+
+                Fragment_Searched_Posts fragment_searched_posts= new Fragment_Searched_Posts();
+                fragment_searched_posts.setArguments(bundle);
+
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_layout_main, fragment_searched_posts).addToBackStack("search_post").commit();
+            }
+        });
     }
 }

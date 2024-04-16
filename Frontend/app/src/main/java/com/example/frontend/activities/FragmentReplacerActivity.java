@@ -13,7 +13,6 @@ import com.example.frontend.R;
 import com.example.frontend.fragments.ChangePasswordFragment;
 import com.example.frontend.fragments.CreateAccountFragment;
 import com.example.frontend.fragments.DetailPostsProfileFragment;
-import com.example.frontend.fragments.Fragment_search_ClickAccount;
 import com.example.frontend.fragments.Function_change_password;
 import com.example.frontend.fragments.LoginFragment;
 import com.example.frontend.fragments.ProfileFragment;

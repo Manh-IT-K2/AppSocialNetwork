@@ -16,13 +16,15 @@ import com.example.frontend.R;
 import com.example.frontend.response.Search.SearchHistoryResponse;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdapter.MyHolder> {
 
     Context context;
-    ArrayList<SearchHistoryResponse> searchHistoryResponseList;
+    List<SearchHistoryResponse> searchHistoryResponseList;
     LayoutInflater layoutInflater;
     private OnItemClickListener listener;
 
@@ -35,7 +37,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         listener = clickListener;
     }
 
-    public SearchHistoryAdapter(Context context, ArrayList<SearchHistoryResponse> searchHistoryResponseList) {
+    public SearchHistoryAdapter(Context context, List<SearchHistoryResponse> searchHistoryResponseList) {
         this.context = context;
         this.searchHistoryResponseList = searchHistoryResponseList;
         this.layoutInflater = LayoutInflater.from(context);
@@ -63,9 +65,12 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
             holder.userName.setText(searchHistoryResponseList.get(position).getText());
             holder.name.setText(searchHistoryResponseList.get(position).getName());
             if(searchHistoryResponseList.get(position).getAvatar() != null)
-                Glide.with(context)
-                        .load(Uri.parse(searchHistoryResponseList.get(position).getAvatar()))
-                        .into(holder.avatar);
+                if (!Objects.equals(searchHistoryResponseList.get(position).getAvatar(), "")) {
+                    Glide.with(context)
+                            .load(Uri.parse(searchHistoryResponseList.get(position).getAvatar()))
+                            .into(holder.avatar);
+                    holder.avatar.setBorderWidth(0);
+                }
         }
     }
 
