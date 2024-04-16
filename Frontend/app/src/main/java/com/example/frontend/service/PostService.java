@@ -33,4 +33,6 @@ public interface PostService {
 
     @GET("post/getPostById")
     Call<ApiResponse<ResponsePostById>> getPostById(@Query("id") String id);
+    @GET("post/getPostUserLiked")
+    Call<ApiResponse<List<RequestPostByUserId>>> getListPostUserLiked(@Query("id") String id);
 }

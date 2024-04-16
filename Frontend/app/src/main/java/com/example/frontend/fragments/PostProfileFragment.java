@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.FollowerAdapter;
@@ -40,6 +41,7 @@ public class PostProfileFragment extends Fragment {
     private PostsProfileAdapter postsProfileAdapter;
     private UserViewModel userViewModel;
     public PostViewModel postViewModel;
+    private LinearLayout noPosts;
 
     public PostProfileFragment() {
         // Required empty public constructor
@@ -56,6 +58,8 @@ public class PostProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post_profile, container, false);
         recyclerView = view.findViewById(R.id.list_posts);
+        noPosts = view.findViewById(R.id.noPosts);
+        noPosts.setVisibility(View.VISIBLE);
         // Khai báo GridLayoutManager với 3 cột
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         // Thiết lập layout manager cho RecyclerView
@@ -69,6 +73,7 @@ public class PostProfileFragment extends Fragment {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
                 if (response.getStatus() && !response.getData().isEmpty()) {
+                    noPosts.setVisibility(View.GONE);
                     postResponseList = response.getData();
                     postsProfileAdapter = new PostsProfileAdapter(getContext(), postResponseList, getViewLifecycleOwner(),userViewModel,postViewModel);
                     recyclerView.setAdapter(postsProfileAdapter);

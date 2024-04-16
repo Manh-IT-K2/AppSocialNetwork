@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.frontend.fragments.PostProfileFragment;
+import com.example.frontend.fragments.PostsUserLikedFragment;
 import com.example.frontend.fragments.WatchProfileFragment;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ViewPagerMediaAdapter extends FragmentStateAdapter {
             case 1:
                 return new WatchProfileFragment();
             case 2:
-                return new WatchProfileFragment();
+                return new PostsUserLikedFragment();
             default:
                 return new PostProfileFragment();
       }
@@ -37,6 +38,6 @@ public class ViewPagerMediaAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }

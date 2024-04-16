@@ -153,4 +153,23 @@ public class PostRepository {
         });
         return mutableLiveData;
     }
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostUserLiked(String id) {
+        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
+        postService.getListPostUserLiked(id).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<>(false,"Failed get list posts", null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error get list posts:" + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
 }

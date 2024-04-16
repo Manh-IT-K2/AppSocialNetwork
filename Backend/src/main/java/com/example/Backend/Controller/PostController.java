@@ -4,7 +4,7 @@ import com.example.Backend.Entity.Post;
 import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.example.Backend.Response.ApiResponse.ResponsePostById;
+import com.example.Backend.Response.ApiResponse.Post.ResponsePostById;
 import com.example.Backend.Service.Post.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,4 +63,13 @@ public class PostController {
         return new ResponseEntity<ApiResponse<ResponsePostById>>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/getPostUserLiked")
+    public ResponseEntity<ApiResponse<List<RequestPostByUserId>>> getListPostUserLiked(@RequestParam String id) {
+        if (id.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse<>(), HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<List<RequestPostByUserId>> result = postService.getListPostUserLiked(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

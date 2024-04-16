@@ -1,4 +1,4 @@
-package com.example.Backend.Response.ApiResponse;
+package com.example.Backend.Response.ApiResponse.Post;
 
 import com.example.Backend.Entity.Post;
 import com.example.Backend.Entity.model.User;
