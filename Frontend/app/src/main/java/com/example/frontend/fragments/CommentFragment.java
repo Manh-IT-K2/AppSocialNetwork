@@ -122,7 +122,6 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         commentViewModel = new ViewModelProvider((FragmentActivity) context).get(CommentViewModel.class);
         userViewModel = new ViewModelProvider((FragmentActivity) context).get(UserViewModel.class);
 
-
         // Observe LiveData directly
         commentViewModel.getListCommentByIdPost(idPost, idComment).observe((FragmentActivity) context, new Observer<ApiResponse<List<CommentResponse>>>() {
             @Override
@@ -167,6 +166,11 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                 String idUserReply = "";
                 boolean isReplyComment = false;
 
+                Notification notification = new Notification();
+                notification.setPostId(idPost);
+                notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
+                String userName = SharedPreferenceLocal.read(getContext(), "userName");
+
                 if (positionComment != -1 ){
                     idComment = listComment.get(positionComment).getId();
                     isReplyComment = true;
@@ -178,17 +182,16 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                     idUserReply = listComment.get(positionReplyCommentParent).getReplyComment().get(positionReplyComment).getUser().getId();
                 }
 
-                Notification notification = new Notification();
-                notification.setPostId(idPost);
-                notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
-                String userName = SharedPreferenceLocal.read(getContext(), "userName");
-
                 if(isReplyComment){
                     notification.setIdComment(idComment);
-                    Log.e("idComment", idComment);
-                    notification.setText(userName+" vừa phản hôi bình luận của bạn");
+                    notification.setText(userName+" vừa phản hồi bình luận của bạn");
                     notification.setIdRecipient(idUserReply);
-                    tokenFCM = listComment.get(positionComment).getUser().getTokenFCM();
+                    if(positionComment != -1){
+                        tokenFCM = listComment.get(positionComment).getUser().getTokenFCM();
+                    }else if (positionReplyComment != -1 && positionReplyCommentParent != -1){
+                        tokenFCM = listComment.get(positionReplyCommentParent).getReplyComment().get(positionReplyComment).getUser().getTokenFCM();
+                    }
+
                 }else{
                     notification.setText(userName+" vừa bình luận bài viết của bạn");
                     notification.setIdRecipient(userId);
@@ -198,7 +201,8 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
 
                 userViewModel.addNotification(notification);
 
-
+                Log.e("checkNotificaiton","idPost "+ idPost);
+                Log.e("checkNotificaiton","idComment "+ idComment);
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
                         "65e8a525714ccc3a3caa7f77",
@@ -241,9 +245,6 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                 // Clear the EditText after submitting the comment
                 edt_contentComment.setText("");
                 listIconsChoosed.clear();
-                positionComment = -1;
-                positionReplyComment = -1;
-                positionReplyCommentParent = -1;
             }
         });
 

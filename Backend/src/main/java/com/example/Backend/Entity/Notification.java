@@ -1,32 +1,21 @@
 package com.example.Backend.Entity;
 
-import com.example.Backend.Entity.model.User;
+import com.example.Backend.Entity.model.NotificationOfUser;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.UUID;
+import javax.persistence.Id;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "notification")
 public class Notification {
-    String id;
-    User user;
-    String idPost;
-    String text;
-    boolean isLikePost;
-    boolean isComment;
-    String idComment;
-    boolean isReplyComment;
-    Date createAt;
-    boolean isFollow;
-    String idRecipient;
-    public String generateId() {
-        // Tạo một id ngẫu nhiên cho đối tượng Comment
-        return UUID.randomUUID().toString();
-    }
+    @Id
+    private String id;
+    private String userId;
+    private List<NotificationOfUser> notificationList;
 }

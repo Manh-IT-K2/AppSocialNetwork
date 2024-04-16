@@ -4,22 +4,15 @@ public class Notification {
     String userId;
     String text;
     String postId;
-    boolean isLikePost;
-    boolean isComment;
-    boolean isReplyComment;
     String idComment;
-    boolean isFollow;
     String idRecipient;
 
     public Notification(){}
 
-    public Notification(String userId, String text, String postId, boolean isLikePost, boolean isComment, boolean isReplyComment, String idComment) {
+    public Notification(String userId, String text, String postId, String idComment) {
         this.userId = userId;
         this.text = text;
         this.postId = postId;
-        this.isLikePost = isLikePost;
-        this.isComment = isComment;
-        this.isReplyComment = isReplyComment;
         this.idComment = idComment;
     }
 
@@ -47,44 +40,12 @@ public class Notification {
         this.postId = postId;
     }
 
-    public boolean isLikePost() {
-        return isLikePost;
-    }
-
-    public void setLikePost(boolean likePost) {
-        isLikePost = likePost;
-    }
-
-    public boolean isComment() {
-        return isComment;
-    }
-
-    public void setComment(boolean comment) {
-        isComment = comment;
-    }
-
-    public boolean isReplyComment() {
-        return isReplyComment;
-    }
-
-    public void setReplyComment(boolean replyComment) {
-        isReplyComment = replyComment;
-    }
-
     public String getIdComment() {
         return idComment;
     }
 
     public void setIdComment(String idComment) {
         this.idComment = idComment;
-    }
-
-    public boolean isFollow() {
-        return isFollow;
-    }
-
-    public void setFollow(boolean follow) {
-        isFollow = follow;
     }
 
     public String getIdRecipient() {

@@ -9,14 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.PostIDActivity;
 import com.example.frontend.fragments.ProfileFragment;
-import com.example.frontend.request.Notification.Notification;
-import com.example.frontend.request.Notification.NotificationResponse;
+import com.example.frontend.response.User.NotificationResponse;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
@@ -55,17 +53,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         NotificationResponse notification = mNotification.get(position);
 
         holder.text.setText(notification.getText());
-        holder.time.setText(getTimeAgo(notification.getCreateAt()));
+        holder.time.setText(getTimeAgo(notification.getCreateAt().toString()));
         Glide.with(mContext)
-                .load(notification.getUser().getAvatarImg())
+                .load(notification.getAvatar())
                 .into(holder.image_profile);
 
-        holder.username.setText(notification.getUser().getUsername());
+        holder.username.setText(notification.getUserName());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(notification.getText().contains("vừa like bài viết")){
+                if(notification.getText().contains("vừa like bài viết")
+                        || notification.getText().contains("đăng một bài viết")){
                     Intent intent = new Intent(mContext, PostIDActivity.class);
                     intent.putExtra("id", notification.getIdPost());
                     intent.putExtra("idComment", "");
@@ -76,15 +75,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     Intent intent = new Intent(mContext, PostIDActivity.class);
                     intent.putExtra("id", notification.getIdPost());
                     intent.putExtra("idComment", notification.getIdComment());
-                    Log.e("checkIdComment", notification.getIdComment());
-                    //mContext.startActivity(intent);
+                    mContext.startActivity(intent);
                 }
 
                 if(notification.getText().contains("theo dõi")){
                     ProfileFragment profileFragment = new ProfileFragment();
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("userId", notification.getUser().getId());
+                    bundle.putString("userId", notification.getUserId());
 
                     profileFragment.setArguments(bundle);
 
@@ -122,8 +120,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private String getTimeAgo(String createdAt) {
         try {
             // Parse chuỗi thời gian thành đối tượng Date
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
             Date createdDate = sdf.parse(createdAt);
 
             // Lấy thời gian hiện tại
@@ -140,13 +137,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             if (days > 0) {
                 return days + " ngày";
             } else if (hours > 0) {
-                return hours + " Giờ";
+                return hours + " giờ";
             } else if (minutes > 0) {
                 return minutes + " phút";
             } else {
                 return seconds + " giây";
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             return "N/A";
         }
     }

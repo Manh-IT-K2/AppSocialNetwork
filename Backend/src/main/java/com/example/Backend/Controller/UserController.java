@@ -1,6 +1,7 @@
 package com.example.Backend.Controller;
 
 import com.example.Backend.Entity.Notification;
+import com.example.Backend.Entity.model.NotificationOfUser;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -106,13 +107,12 @@ public class UserController {
     }
 
     @GetMapping("/getNotification")
-    public ResponseEntity<ApiResponse<List<Notification>>> getNotification(@RequestParam String id ) throws Exception {
-        return new ResponseEntity<ApiResponse<List<Notification>>>(new ApiResponse<>(true, "",userService.getNotificationById(id)), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<List<NotificationOfUser>>> getNotification(@RequestParam String id ) throws Exception {
+        return new ResponseEntity<ApiResponse<List<NotificationOfUser>>>(new ApiResponse<>(true, "",userService.getNotificationById(id)), HttpStatus.OK);
     }
 
     @GetMapping("/getTokenFCM")
     public ResponseEntity<ApiResponse<String>> getTokenFCM(@RequestParam String id ) throws Exception {
-        System.out.println(userService.getTokenFCM(id));
         return new ResponseEntity<ApiResponse<String>>(new ApiResponse<>(true, "",userService.getTokenFCM(id)), HttpStatus.OK);
     }
 }

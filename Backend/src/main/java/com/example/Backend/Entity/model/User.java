@@ -45,6 +45,5 @@ public class User {
 
     @Min(0)
     private int following;
-    private List<Notification> notificationList;
     private String tokenFCM;
 }
