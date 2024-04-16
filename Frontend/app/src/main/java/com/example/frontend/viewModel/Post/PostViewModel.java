@@ -55,4 +55,7 @@ public class PostViewModel extends ViewModel {
     public MutableLiveData<ApiResponse<ResponsePostById>> getPostById(String id){
         return postRepository.getPostById(id);
     }
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostUserLiked(String id){
+        return postRepository.getListPostUserLiked(id);
+    }
 }

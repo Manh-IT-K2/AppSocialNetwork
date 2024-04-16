@@ -224,7 +224,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 //                            notification.setText("Vừa bỏ like bài viết của bạn");
 //                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         }
-                        postViewModel.addLike(postId,"65e8a525714ccc3a3caa7f77").observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
+                        postViewModel.addLike(postId,SharedPreferenceLocal.read(itemView.getContext(), "userId")).observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override
                             public void onChanged(ApiResponse<PostResponse> response) {
 //                                List<UserResponse> list = post.getLike();

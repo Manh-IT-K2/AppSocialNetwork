@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.PostProfileFragment">
+    tools:context=".fragments.PostsUserLikedFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <LinearLayout
-            android:id="@+id/noPosts"
+            android:id="@+id/noUserLiked"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -21,17 +21,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/photographer"/>
+                android:src="@drawable/camera"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your posts will appear here"
+                android:text="Your favorite articles will appear here"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"/>
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_posts"
+            android:id="@+id/list_posts_user_liked"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>

@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment {
         String userId = SharedPreferenceLocal.read(getContext(),"userId");
 
         // call api display list story in home
-        storyViewModel.getListStoryByUserId("65e8a525714ccc3a3caa7f77").observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestStoryByUserId>>>() {
+        storyViewModel.getListStoryByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestStoryByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestStoryByUserId>> response) {
                 Gson gson = new Gson();
@@ -101,7 +101,8 @@ public class HomeFragment extends Fragment {
         });
 
         // call api display list post in home
-        postViewModel.getListPostByUserId("65e8a525714ccc3a3caa7f77").observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+
+        postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
                 Gson gson = new Gson();

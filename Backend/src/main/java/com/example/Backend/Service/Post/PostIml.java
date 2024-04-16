@@ -6,7 +6,7 @@ import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
-import com.example.Backend.Response.ApiResponse.ResponsePostById;
+import com.example.Backend.Response.ApiResponse.Post.ResponsePostById;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
 @Service
@@ -234,5 +235,52 @@ public class PostIml implements PostService{
             return new ApiResponse<ResponsePostById>(true, "", postById);
         }
         return null;
+    }
+
+    @Override
+    public ApiResponse<List<RequestPostByUserId>> getListPostUserLiked(String userId) {
+        ObjectId objectId = new ObjectId(userId);
+        // Tạo một truy vấn để tìm các bài post mà người dùng đã like
+        Query likeQuery = new Query(Criteria.where("like.id").is(objectId));
+        List<Post> likedPosts = mongoTemplate.find(likeQuery, Post.class, "post");
+
+        // Lấy ra danh sách userId từ các bài post đã like
+        List<String> userIds = likedPosts.stream()
+                .map(post -> post.getUserId().toString()) // Chuyển đổi ObjectId thành String
+                .collect(Collectors.toList());
+        for (String id : userIds) {
+            System.err.println(id);
+        }
+
+        LookupOperation lookupOperation = LookupOperation.newLookup()
+                .from("post")
+                .localField("_id")
+                .foreignField("userId")
+                .as("posts");
+
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("_id").in(userIds));
+        AggregationOperation unwindOperation = Aggregation.unwind("posts");
+        AggregationOperation projectOperation = Aggregation.project()
+                .andExpression("_id").as("userId")
+                .andExpression("username").as("userName")
+                .andExpression("tokenFCM").as("tokenFCM")
+                .andExpression("avatarImg").as("avtImage")
+                .andExpression("posts._id").as("idPost")
+                .andExpression("posts.imagePost").as("imagePost")
+                .andExpression("posts.description").as("description")
+                .andExpression("posts.location").as("location")
+                .andExpression("posts.createAt").as("createAt")
+                .andExpression("posts.like").as("like");
+
+        SortOperation sortOperation = Aggregation.sort(Sort .by(Sort.Direction.DESC, "createAt"));
+
+        Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation, sortOperation);
+
+        List<RequestPostByUserId> resultList = mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
+
+        // Trả về ApiResponse tương ứng với kết quả truy vấn
+        return !likedPosts.isEmpty() ?
+                new ApiResponse<>(true, "Success", resultList) :
+                new ApiResponse<>(false, "No data", null);
     }
 }
