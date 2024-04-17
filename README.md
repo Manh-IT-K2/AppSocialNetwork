@@ -35,29 +35,9 @@ This is a social networking application built with features such as chat, chat g
 ```
 ## [Project Demo Link]([https://www.youtube.com/watch?v=20o8wvX0VQw](https://youtu.be/2TR-u_WX7tU?si=1MO8wxxKaDUzIFDO))
 ## Some features of the site:
-Home Page                   |                   Friend request
+Sign In                   |                   Sign Up
 :---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/home.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/request.png" height="200">
-
-Confirm Page                   |                   Suggest Page
-:---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/confirm.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/suggest.png" height="200">
-
-Post                   |                   Comments
-:---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/post.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/comments.png" height="200">
-
-Profile                   |                   Profile
-:---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/profile.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/profile2.png" height="200">
-
-Lists Friends                   |                   Edit
-:---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/listfriends.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/edit.png" height="200">
-
-Notify                   |                   Message
-:---------------------------------:        |      :------------------------------:
-<img src="./SocialNetworkFE/src/assets/ScreenCapture/notify.png" height="200">  | <img src="./SocialNetworkFE/src/assets/ScreenCapture/message.png" height="200">
+<img src="./Frontend/app/src/assets/login.png" height="200">  | <img src="./Frontend/app/src/assets/signup.png" height="200">
 
 ### Make sure to star the repository if you find it helpful!
 <a href="https://github.com/Qmanh1804/AppSocialNetwork/stargazers"><img src="https://img.shields.io/github/stars/Qmanh1804/AppSocialNetwork?color=yellow" alt="Stars Badge"/></a>
