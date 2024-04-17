@@ -197,12 +197,11 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                     notification.setIdRecipient(userId);
                 }
 
-                NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
+                if(!notification.getIdRecipient().equals(notification.getUserId())){
+                    NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
+                    userViewModel.addNotification(notification);
+                }
 
-                userViewModel.addNotification(notification);
-
-                Log.e("checkNotificaiton","idPost "+ idPost);
-                Log.e("checkNotificaiton","idComment "+ idComment);
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
                         "65e8a525714ccc3a3caa7f77",

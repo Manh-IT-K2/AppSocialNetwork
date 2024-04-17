@@ -33,7 +33,7 @@ public class PostIml implements PostService{
 
     // create post
     @Override
-    public void createPost(RequestCreatePost requestPost, String userId) throws Exception {
+    public String createPost(RequestCreatePost requestPost, String userId) throws Exception {
         Post post = new Post();
         ObjectId objectId = new ObjectId(userId);
         post.setUserId(objectId);
@@ -50,7 +50,7 @@ public class PostIml implements PostService{
         }
 
         post.setCreateAt(requestPost.getCreateAt());
-        mongoTemplate.insert(post, "post");
+        return mongoTemplate.insert(post, "post").getId();
     }
 
 

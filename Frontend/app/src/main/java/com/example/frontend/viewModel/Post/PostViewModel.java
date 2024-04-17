@@ -12,6 +12,7 @@ import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponseCreatePost;
 import com.example.frontend.response.Post.ResponsePostById;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class PostViewModel extends ViewModel {
     }
 
     //create post
-    public void createPost(RequestCreatePost createPost, String userId){
-        postRepository.createPost(createPost,userId);
+    public MutableLiveData<ApiResponse<ResponseCreatePost>> createPost(RequestCreatePost createPost, String userId){
+        return postRepository.createPost(createPost,userId);
     }
 
     // get list post by userId

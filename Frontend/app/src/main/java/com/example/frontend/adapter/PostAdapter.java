@@ -216,13 +216,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                             btn_like.setImageResource(R.drawable.icon_liked);
                             post.setLiked(true);
                             notification.setText(userName+" vừa like bài viết của bạn");
-                            userViewModel.addNotification(notification);
-                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
+                            if(!notification.getIdRecipient().equals(notification.getUserId())){
+                                NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
+                                userViewModel.addNotification(notification);
+                            }
                         } else {
                             btn_like.setImageResource(R.drawable.icon_favorite);
                             post.setLiked(false);
-//                            notification.setText("Vừa bỏ like bài viết của bạn");
-//                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         }
                         postViewModel.addLike(postId,SharedPreferenceLocal.read(itemView.getContext(), "userId")).observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override
