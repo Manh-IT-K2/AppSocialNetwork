@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatGroupActivity extends AppCompatActivity {
-
+    private boolean initialMessagesLoaded = false;
     private RecyclerView recyclerView;
     private GroupChatAdapter adapter;
     private EditText inputMessage;
@@ -116,34 +116,6 @@ public class ChatGroupActivity extends AppCompatActivity {
                                 adapter.addMessage(chatWithMessagesResponse);
                                 // Cuộn đến tin nhắn mới nhất
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-
-
-                                pusher = PusherClient.init();
-                                pusher.connect();
-                                pusher.subscribe("GroupChat")
-
-                                        .bind("send_chatgroup", (channelName, eventName, data) -> {
-                                            try {
-                                                Gson gson = new GsonBuilder()
-                                                        .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-                                                        .create();
-                                                String jsonData = data.toString();
-                                                GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
-                                                List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
-                                                Toast.makeText(ChatGroupActivity.this, messages.get(0).getContent(), Toast.LENGTH_SHORT).show();
-                                                if (messages != null && !messages.isEmpty()) {
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            adapter.setMessages(messages);
-                                                        }
-                                                    });
-                                                }
-                                            } catch (Exception e) {
-                                                Log.d("trycatch", new Gson().toJson(e));
-                                            }
-                                        });
-
                             }
                             // Xóa nội dung tin nhắn sau khi gửi
                             inputMessage.setText("");
@@ -183,9 +155,15 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // Thực hiện bắt sự kiện từ Pusher
+        setupPusherEventListener();
     }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        // Kết nối và đăng ký sự kiện Pusher khi hoạt động được hiển thị trên màn hình
+//        setupPusherEventListener();
+//    }
     private void showPopupMenu(View v) {
         // Kiểm tra xem dữ liệu nhóm chat đã được tải chưa
         if (!isInforGroupChatLoaded) {
@@ -246,60 +224,63 @@ public class ChatGroupActivity extends AppCompatActivity {
 
 
     private void loadChatHistory() {
-//        pusher = PusherClient.init();
-//        pusher.connect();
-//        pusher.subscribe("GroupChat")
-//                .bind("send_chatgroup", (channelName, eventName, data) -> {
-//                    try {
-//                        Gson gson = new GsonBuilder()
-//                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-//                                .create();
-//                        String jsonData = data.toString();
-//                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
-//                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
-//                        if (messages != null && !messages.isEmpty()) {
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    adapter.setMessages(messages);
-//                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-//
-//                                }
-//                            });
-//                        }
-//                    } catch (Exception e) {
-//                        Log.d("trycatch", new Gson().toJson(e));
-//                    }
-//                });
+        if (!initialMessagesLoaded) {
+            // Chỉ tải tin nhắn ban đầu nếu chưa được tải
+            groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
+                @Override
+                public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
+                    if (response != null && response.isSuccess()) {
+                        GroupChatWithMessagesResponse chatHistory = response.getData();
+                        if (chatHistory != null) {
+                            List<MessageWithSenderInfo> messages = chatHistory.getMessages();
+                            if (messages != null && !messages.isEmpty()) {
+                                // Nếu có tin nhắn, hiển thị chúng và cuộn đến tin nhắn mới nhất
+                                adapter.setMessages(messages);
+                                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                            }
+                        }
+                        // Đã tải tin nhắn ban đầu
+                        initialMessagesLoaded = true;
 
-        // Tải lịch sử tin nhắn ban đầu
-        groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-                if (response != null && response.isSuccess()) {
-                    GroupChatWithMessagesResponse chatHistory = response.getData();
-                    if (chatHistory != null) {
-                        List<MessageWithSenderInfo> messages = chatHistory.getMessages();
+                    } else {
+                        String errorMessage = "Failed to load chat history";
+                        if (response != null && response.getMessage() != null) {
+                            errorMessage += ": " + response.getMessage();
+                        }
+                        Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void setupPusherEventListener() {
+        pusher = PusherClient.init();
+        pusher.connect();
+        pusher.subscribe("GroupChat")
+
+                .bind("send_chatgroup", (channelName, eventName, data) -> {
+                    try {
+                        Gson gson = new GsonBuilder()
+                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+                                .create();
+                        String jsonData = data.toString();
+                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
+                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
+                        Toast.makeText(ChatGroupActivity.this, messages.get(0).getContent(), Toast.LENGTH_SHORT).show();
                         if (messages != null && !messages.isEmpty()) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    adapter.setMessages(messages);
-
-                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                                    adapter.setMessages(messages); // Thêm tin nhắn mới vào RecyclerView
+                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1); // Cuộn đến tin nhắn mới nhất
                                 }
                             });
                         }
+                    } catch (Exception e) {
+                        Log.d("trycatch", new Gson().toJson(e));
                     }
-                } else {
-                    String errorMessage = "Failed to load chat history";
-                    if (response != null && response.getMessage() != null) {
-                        errorMessage += ": " + response.getMessage();
-                    }
-                    Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                });
     }
 
     private void handleDisbandGroup() {

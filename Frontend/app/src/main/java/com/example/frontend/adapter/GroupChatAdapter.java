@@ -48,6 +48,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         this.messages = messages;
         notifyDataSetChanged();
     }
+
     // Phương thức thêm tin nhắn mới vào danh sách
     public void addNewMessage(MessageWithSenderInfo message) {
         // Thêm tin nhắn mới vào danh sách tin nhắn của adapter
