@@ -1,8 +1,16 @@
 package com.example.frontend.request.User;
 
 public class RequestChangePW {
-    String email;
-    String newpass;
+    private String newPw; // Thay đổi lại thành NewPass
+    private String email;
+
+    public String getNewPw() {
+        return newPw;
+    }
+
+    public void setNewPw(String newPw) {
+        this.newPw = newPw;
+    }
 
     public String getEmail() {
         return email;
@@ -12,17 +20,8 @@ public class RequestChangePW {
         this.email = email;
     }
 
-
-    public String getNewpass() {
-        return newpass;
-    }
-
-    public void setNewpass(String newpass) {
-        this.newpass = newpass;
-    }
-
-    public RequestChangePW(String email, String newpass) {
+    public RequestChangePW(String newPw, String email) {
+        this.newPw = newPw;
         this.email = email;
-        this.newpass = newpass;
     }
 }

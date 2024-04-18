@@ -16,12 +16,13 @@ public class RequestPostByUserId {
     String createAt;
     List<UserResponse> like;
     private boolean isLiked;
+    private String tokenFCM;
 
 
     public RequestPostByUserId() {
     }
 
-    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, List<String> imagePost, String description, String location, String createAt, List<UserResponse> like) {
+    public RequestPostByUserId(String idPost, String userId, String userName, String avtImage, List<String> imagePost, String description, String location, String createAt, List<UserResponse> like, boolean isLiked, String tokenFCM) {
         this.idPost = idPost;
         this.userId = userId;
         this.userName = userName;
@@ -31,6 +32,8 @@ public class RequestPostByUserId {
         this.location = location;
         this.createAt = createAt;
         this.like = like;
+        this.isLiked = isLiked;
+        this.tokenFCM = tokenFCM;
     }
 
     public String getIdPost() {
@@ -104,11 +107,20 @@ public class RequestPostByUserId {
     public void setLike(List<UserResponse> like) {
         this.like = like;
     }
+
     public boolean isLiked() {
         return isLiked;
     }
 
     public void setLiked(boolean liked) {
         isLiked = liked;
+    }
+
+    public String getTokenFCM() {
+        return tokenFCM;
+    }
+
+    public void setTokenFCM(String tokenFCM) {
+        this.tokenFCM = tokenFCM;
     }
 }

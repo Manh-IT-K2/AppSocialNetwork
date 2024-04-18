@@ -1,0 +1,5 @@
+<!-- res/drawable/custom_checkbox.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:drawable="@drawable/custom_checkbox_checked_circle" />
+    <item android:drawable="@drawable/custom_checkbox_unchecked_circle" />
+</selector>

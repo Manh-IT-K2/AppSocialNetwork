@@ -2,6 +2,7 @@ package com.example.frontend.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,18 +16,26 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.R;
 import com.example.frontend.adapter.FlowAdapter;
+import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
+import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.example.frontend.repository.GroupChatRepository;
 import com.example.frontend.request.GroupChat.RequestCreateGroupChat;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Function_chatgroup_activity extends AppCompatActivity {
+    private Pusher pusher;
 
     private EditText edtGroupName;
     private Button btnCreateGroup;
@@ -36,7 +45,8 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     private String currentUserId;
     private List<GetAllUserByFollowsResponse> selectedUsers = new ArrayList<>();
     private GroupChatRepository groupChatRepository;
-
+    // Thêm biến boolean để kiểm soát việc cập nhật trạng thái của các CheckBox
+    private boolean isEditTextFocused = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +112,14 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 finish();
             }
         });
+        // Theo dõi sự kiện focus của EditText
+        edtGroupName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // Cập nhật trạng thái của biến isEditTextFocused
+                isEditTextFocused  = hasFocus;
+            }
+        });
     }
 
     // Phương thức để lấy danh sách người dùng theo follow
@@ -147,6 +165,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
             public void onChanged(ApiResponse<GroupChatResponse> response) {
                 if (response != null && response.getStatus()) {
                     // Xử lý khi tạo nhóm chat thành công
+                    sendMessMacDinh(response,groupName);
                 } else {
                     // Xử lý khi gặp lỗi
                 }
@@ -155,14 +174,39 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     }
     private List<String> getSelectedUserIds() {
         List<String> selectedIds = new ArrayList<>();
+        boolean currentUserAdded = false; // Biến để kiểm tra xem currentUserId đã được thêm vào hay chưa
         for (GetAllUserByFollowsResponse user : selectedUsers) {
             if (user.isSelected()) {
-                selectedIds.add(user.getId()); //
-                // Thêm ID của người tạo vào danh sách thành viên
-                selectedIds.add(currentUserId);
+                selectedIds.add(user.getId());
+                if (!currentUserAdded) {
+                    // Thêm currentUserId vào danh sách nếu chưa có trong selectedIds
+                    selectedIds.add(currentUserId);
+                    currentUserAdded = true; // Đánh dấu đã thêm currentUserId
+                }
             }
         }
         return selectedIds;
     }
+    // Thêm phương thức để truy cập biến isEditTextFocused từ bên ngoài
+    public boolean isEditTextFocused() {
+        return isEditTextFocused;
+    }
 
+    private void sendMessMacDinh(ApiResponse<GroupChatResponse> response, String groupName){
+        // Tạo tin nhắn mặc định khi tạo nhóm chat thành công
+        String message ="Chào mừng bạn đã tham gia nhóm chat: " + groupName;
+        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message);
+        groupChatRepository.sendMessage(response.getData().getId(), request).observe(Function_chatgroup_activity.this,  new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
+                if (response != null && response.getStatus()) {
+                    Log.d("Function_chatgroup", "Default message sent successfully.");
+
+                } else {
+                    Log.e("Function_chatgroup", "Failed to send default message.");
+                }
+            }
+        });
+
+    }
 }

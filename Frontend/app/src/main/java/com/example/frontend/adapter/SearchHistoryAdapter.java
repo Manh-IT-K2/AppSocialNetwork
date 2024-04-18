@@ -16,13 +16,15 @@ import com.example.frontend.R;
 import com.example.frontend.response.Search.SearchHistoryResponse;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdapter.MyHolder> {
 
     Context context;
-    ArrayList<SearchHistoryResponse> searchHistoryResponseList;
+    List<SearchHistoryResponse> searchHistoryResponseList;
     LayoutInflater layoutInflater;
     private OnItemClickListener listener;
 
@@ -35,7 +37,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         listener = clickListener;
     }
 
-    public SearchHistoryAdapter(Context context, ArrayList<SearchHistoryResponse> searchHistoryResponseList) {
+    public SearchHistoryAdapter(Context context, List<SearchHistoryResponse> searchHistoryResponseList) {
         this.context = context;
         this.searchHistoryResponseList = searchHistoryResponseList;
         this.layoutInflater = LayoutInflater.from(context);
@@ -61,10 +63,14 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         }
         else {
             holder.userName.setText(searchHistoryResponseList.get(position).getText());
+            holder.name.setText(searchHistoryResponseList.get(position).getName());
             if(searchHistoryResponseList.get(position).getAvatar() != null)
-                Glide.with(context)
-                        .load(Uri.parse(searchHistoryResponseList.get(position).getAvatar()))
-                        .into(holder.avatar);
+                if (!Objects.equals(searchHistoryResponseList.get(position).getAvatar(), "")) {
+                    Glide.with(context)
+                            .load(Uri.parse(searchHistoryResponseList.get(position).getAvatar()))
+                            .into(holder.avatar);
+                    holder.avatar.setBorderWidth(0);
+                }
         }
     }
 
@@ -81,6 +87,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     public class MyHolder extends RecyclerView.ViewHolder {
 
         TextView userName;
+        TextView name;
         CircleImageView avatar;
         TextView text;
         ImageButton imgButtonDelete;
@@ -88,6 +95,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         public MyHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             userName = itemView.findViewById(R.id.txt_UserName);
+            name = itemView.findViewById(R.id.txt_Name);
             avatar = itemView.findViewById(R.id.imgAvatar);
             text = itemView.findViewById(R.id.txt_Text);
             imgButtonDelete = itemView.findViewById(R.id.delete_item);

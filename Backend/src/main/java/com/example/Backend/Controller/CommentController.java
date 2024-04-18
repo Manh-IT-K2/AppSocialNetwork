@@ -3,6 +3,7 @@ package com.example.Backend.Controller;
 import com.example.Backend.Entity.Comment;
 import com.example.Backend.Request.Comment.RequestCreateComment;
 import com.example.Backend.Request.Comment.RequestDeleteComment;
+import com.example.Backend.Request.Comment.RequestLikeComment;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Service.Comment.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,14 @@ public class CommentController {
 
     // get list comment by post
     @GetMapping("/getListCommentByIdPost")
-    public ResponseEntity<ApiResponse<List<Comment>>> getListCommentByIdPost(@RequestParam String id) throws Exception{
-        ApiResponse<List<Comment>> apiResponse = new ApiResponse<List<Comment>>(true, "",commentService.getListCommentByIdPost(id));
+    public ResponseEntity<ApiResponse<List<Comment>>> getListCommentByIdPost(@RequestParam String id,@RequestParam String idComment) throws Exception{
+        ApiResponse<List<Comment>> apiResponse = new ApiResponse<List<Comment>>(true, "",commentService.getListCommentByIdPost(id, idComment));
         return new ResponseEntity<ApiResponse<List<Comment>>>(apiResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/likeComment")
+    public ResponseEntity<ApiResponse<String>> likeComment(@RequestBody RequestLikeComment likeComment) throws Exception{
+        commentService.likeComment(likeComment);
+        return new ResponseEntity<ApiResponse<String>>(new ApiResponse<String>(true, "Ok",null), HttpStatus.OK);
     }
 }

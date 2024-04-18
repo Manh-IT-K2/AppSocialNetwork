@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.frontend.request.Comment.RequestCreateComment;
 import com.example.frontend.request.Comment.RequestDeleteComment;
+import com.example.frontend.request.Comment.RequestLikeComment;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.service.CommentService;
@@ -77,9 +78,34 @@ public class CommentRepository {
     }
 
     // get list comment by idPost
-    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id) {
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id, String idComment) {
         MutableLiveData<ApiResponse<List<CommentResponse>>> mutableLiveData = new MutableLiveData<>();
-        commentService.getListCommentByIdPost(id).enqueue(new Callback<ApiResponse<List<CommentResponse>>>() {
+        commentService.getListCommentByIdPost(id, idComment).enqueue(new Callback<ApiResponse<List<CommentResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<CommentResponse>>> call, Response<ApiResponse<List<CommentResponse>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<CommentResponse>> apiResponse = response.body();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(apiResponse);
+                    Log.e("Data Comment", json);
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<>(false, "Error get data from server", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<CommentResponse>>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<>(false, "Failed: " + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
+
+    // Like Comment
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> likeComment(RequestLikeComment likeComment) {
+        MutableLiveData<ApiResponse<List<CommentResponse>>> mutableLiveData = new MutableLiveData<>();
+        commentService.likeComment(likeComment).enqueue(new Callback<ApiResponse<List<CommentResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<CommentResponse>>> call, Response<ApiResponse<List<CommentResponse>>> response) {
                 if (response.isSuccessful()) {

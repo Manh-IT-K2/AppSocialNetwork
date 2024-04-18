@@ -1,15 +1,13 @@
 package com.example.frontend.activities;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,25 +19,26 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.adapter.GroupChatAdapter;
-import com.example.frontend.fragments.ViewMembers_GroupChat;
 import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
-import com.example.frontend.viewModel.User.UserViewModel;
-import com.google.firebase.firestore.auth.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pusher.client.Pusher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatGroupActivity extends AppCompatActivity {
-
+    private boolean initialMessagesLoaded = false;
     private RecyclerView recyclerView;
     private GroupChatAdapter adapter;
     private EditText inputMessage;
@@ -53,6 +52,7 @@ public class ChatGroupActivity extends AppCompatActivity {
 
     private GroupChatResponse Infor_GroupChat;
     private boolean isInforGroupChatLoaded = false;
+    private Pusher pusher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +82,13 @@ public class ChatGroupActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        adapter = new GroupChatAdapter(this, new ArrayList<>(), currentUserId);
+        adapter = new GroupChatAdapter(this, new ArrayList<>(), currentUserId,this);
 
 
         recyclerView.setAdapter(adapter);
 
+        // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
+        loadChatHistory();
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,12 +133,6 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
 
-
-        // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
-        loadChatHistory();
-
-
-
         btn_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +154,16 @@ public class ChatGroupActivity extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
+
+        // Thực hiện bắt sự kiện từ Pusher
+        setupPusherEventListener();
     }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        // Kết nối và đăng ký sự kiện Pusher khi hoạt động được hiển thị trên màn hình
+//        setupPusherEventListener();
+//    }
     private void showPopupMenu(View v) {
         // Kiểm tra xem dữ liệu nhóm chat đã được tải chưa
         if (!isInforGroupChatLoaded) {
@@ -190,11 +195,13 @@ public class ChatGroupActivity extends AppCompatActivity {
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_add_member) {
-
+                    addMember();
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_remove_member) {
-
+                    removeMember();
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_disband_group) {
@@ -216,30 +223,66 @@ public class ChatGroupActivity extends AppCompatActivity {
     }
 
 
-
     private void loadChatHistory() {
-        groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-                if (response != null && response.isSuccess()) {
-                    // Hiển thị lịch sử tin nhắn khi nhận được phản hồi thành công từ API
-                    GroupChatWithMessagesResponse chatHistory = response.getData();
-                    if (chatHistory != null) {
-                        adapter.setMessages(chatHistory.getMessages());
-                        // Cuộn đến tin nhắn mới nhất
-                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        if (!initialMessagesLoaded) {
+            // Chỉ tải tin nhắn ban đầu nếu chưa được tải
+            groupChatViewModel.getMessagesByGroupChatId(groupId).observe(this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
+                @Override
+                public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
+                    if (response != null && response.isSuccess()) {
+                        GroupChatWithMessagesResponse chatHistory = response.getData();
+                        if (chatHistory != null) {
+                            List<MessageWithSenderInfo> messages = chatHistory.getMessages();
+                            if (messages != null && !messages.isEmpty()) {
+                                // Nếu có tin nhắn, hiển thị chúng và cuộn đến tin nhắn mới nhất
+                                adapter.setMessages(messages);
+                                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                            }
+                        }
+                        // Đã tải tin nhắn ban đầu
+                        initialMessagesLoaded = true;
+
+                    } else {
+                        String errorMessage = "Failed to load chat history";
+                        if (response != null && response.getMessage() != null) {
+                            errorMessage += ": " + response.getMessage();
+                        }
+                        Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    // Xử lý khi không thể tải lịch sử tin nhắn
-                    String errorMessage = "Failed to load chat history";
-                    if (response != null && response.getMessage() != null) {
-                        errorMessage += ": " + response.getMessage();
-                    }
-                    Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
+        }
     }
+
+    private void setupPusherEventListener() {
+        pusher = PusherClient.init();
+        pusher.connect();
+        pusher.subscribe("GroupChat")
+
+                .bind("send_chatgroup", (channelName, eventName, data) -> {
+                    try {
+                        Gson gson = new GsonBuilder()
+                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+                                .create();
+                        String jsonData = data.toString();
+                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
+                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
+                        Toast.makeText(ChatGroupActivity.this, messages.get(0).getContent(), Toast.LENGTH_SHORT).show();
+                        if (messages != null && !messages.isEmpty()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setMessages(messages); // Thêm tin nhắn mới vào RecyclerView
+                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1); // Cuộn đến tin nhắn mới nhất
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        Log.d("trycatch", new Gson().toJson(e));
+                    }
+                });
+    }
+
     private void handleDisbandGroup() {
         groupChatViewModel.deleteGroupChat(groupId).observe(this, new Observer<ApiResponse<String>>() {
             @Override
@@ -260,11 +303,12 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showGroupMembers() {
-        Intent intent = new Intent(ChatGroupActivity.this, ViewMembers_GroupChat.class);
+        Intent intent = new Intent(ChatGroupActivity.this, ViewMembers.class);
         intent.putExtra("groupChatId", groupId);
         intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
-
+        intent.putExtra("idcreater", Infor_GroupChat.getCreatorId());
         // Tạo một danh sách chứa id của các thành viên
         ArrayList<String> memberIdList = new ArrayList<>();
         for (UserResponse member : Infor_GroupChat.getMembers()) {
@@ -273,14 +317,37 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         // Truyền danh sách id qua Intent
         intent.putStringArrayListExtra("memberIdList", memberIdList);
+
         startActivity(intent);
     }
+    private void addMember(){
+        Intent intent = new Intent(ChatGroupActivity.this, AddMemberGroupChat.class);
+        intent.putExtra("groupChatId", groupId);
+        intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
+        // Tạo một danh sách chứa id của các thành viên
+        ArrayList<String> memberIdList = new ArrayList<>();
+        for (UserResponse member : Infor_GroupChat.getMembers()) {
+            memberIdList.add(member.getId());
+        }
 
+        // Truyền danh sách id qua Intent
+        intent.putStringArrayListExtra("memberIdList", memberIdList);
 
+        startActivity(intent);
+    }
+    private void removeMember(){
+        Intent intent = new Intent(ChatGroupActivity.this, RemoveMemberGroupChat.class);
+        intent.putExtra("groupChatId", groupId);
+        intent.putExtra("groupChatName", Infor_GroupChat.getGroupName());
+        // Tạo một danh sách chứa id của các thành viên
+        ArrayList<String> memberIdList = new ArrayList<>();
+        for (UserResponse member : Infor_GroupChat.getMembers()) {
+            memberIdList.add(member.getId());
+        }
 
+        // Truyền danh sách id qua Intent
+        intent.putStringArrayListExtra("memberIdList", memberIdList);
 
-
-
-
-
+        startActivity(intent);
+    }
 }

@@ -77,7 +77,6 @@ public class SeachPrivateChatAdapter extends RecyclerView.Adapter<SeachPrivateCh
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtName,txtUsername;
         CircleImageView img_avatar;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtName = itemView.findViewById(R.id.name_text);

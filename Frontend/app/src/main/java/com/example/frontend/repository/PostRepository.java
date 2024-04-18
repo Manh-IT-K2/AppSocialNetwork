@@ -1,5 +1,7 @@
 package com.example.frontend.repository;
 
+import static android.content.ContentValues.TAG;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -10,6 +12,8 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponseCreatePost;
+import com.example.frontend.response.Post.ResponsePostById;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.PostService;
 import com.example.frontend.utils.CallApi;
@@ -29,30 +33,32 @@ public class PostRepository {
     }
 
     // create post
-    public void createPost(RequestCreatePost request, String userId) {
-        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
-        postService.createPost(request, userId).enqueue(new Callback<ApiResponse<String>>() {
+    public MutableLiveData<ApiResponse<ResponseCreatePost>> createPost(RequestCreatePost request, String userId) {
+        MutableLiveData<ApiResponse<ResponseCreatePost>> mutableLiveData = new MutableLiveData<>();
+        postService.createPost(request, userId).enqueue(new Callback<ApiResponse<ResponseCreatePost>>() {
             @Override
-            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+            public void onResponse(Call<ApiResponse<ResponseCreatePost>> call, Response<ApiResponse<ResponseCreatePost>> response) {
                 if (response.isSuccessful()) {
-                    ApiResponse<String> apiResponse = response.body();
+                    ApiResponse<ResponseCreatePost> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
-                    Log.d("create","success");
+                    Log.e("create post","success: "+ new Gson().toJson(apiResponse.getData()));
                 } else {
                     int errorCode = response.code();
-                    Log.d("create",String.valueOf(errorCode));
+                    Log.e("create post",String.valueOf(errorCode));
                     String errorMessage = "Error occurred with code: " + errorCode;
-                    ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                    ApiResponse<ResponseCreatePost> errorResponse = new ApiResponse<>(false,errorMessage, null);
                     mutableLiveData.setValue(errorResponse);
                 }
             }
             @Override
-            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<ResponseCreatePost>> call, Throwable t) {
                 String errorMessage = "Failed to create post: " + t.getMessage();
-                ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                Log.e("create post", errorMessage);
+                ApiResponse<ResponseCreatePost> errorResponse = new ApiResponse<>(false, errorMessage, null);
                 mutableLiveData.setValue(errorResponse);
             }
         });
+        return mutableLiveData;
     }
 
     // get list post
@@ -102,4 +108,71 @@ public class PostRepository {
         return mutableLiveData;
     }
 
+    // get posts by search query
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostsBySearchQuery(String userId, String searchQuery) {
+        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
+        postService.getListPostsBySearchQuery(userId, searchQuery).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        ApiResponse<List<RequestPostByUserId>> listApiResponse = response.body();
+                        mutableLiveData.setValue(listApiResponse);
+                        Log.d("posts by search query", mutableLiveData.getValue().getData().toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+                Log.i(TAG, "Unable to get data posts by search query");
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public MutableLiveData<ApiResponse<ResponsePostById>> getPostById(String id) {
+        MutableLiveData<ApiResponse<ResponsePostById>> mutableLiveData = new MutableLiveData<>();
+        postService.getPostById(id).enqueue(new Callback<ApiResponse<ResponsePostById>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<ResponsePostById>> call, Response<ApiResponse<ResponsePostById>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<ResponsePostById> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                    Gson gson = new Gson();
+                    String data = gson.toJson(apiResponse);
+                    Log.d("add",data);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<>(false,"Failed add like", null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<ResponsePostById>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<ResponsePostById>(false, "Error add like: " + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostUserLiked(String id) {
+        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
+        postService.getListPostUserLiked(id).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<>(false,"Failed get list posts", null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error get list posts:" + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
 }

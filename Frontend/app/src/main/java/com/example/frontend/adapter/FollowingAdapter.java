@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.example.frontend.request.Follows.RequestUpdateFollows;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Follows.GetQuantityResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.response.User.UserTrackingStatus;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
@@ -39,12 +41,12 @@ import java.util.List;
 public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.ViewHolder> {
 
     public static Context mContext;
-    public List<UserResponse> userResponseList;
+    public List<UserTrackingStatus> userResponseList;
     public static FollowsViewModel followsViewModel;
     private LifecycleOwner lifecycleOwner;
     public static UserViewModel userViewModel;
 
-    public FollowingAdapter(Context mContext, List<UserResponse> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner,
+    public FollowingAdapter(Context mContext, List<UserTrackingStatus> userResponseList,FollowsViewModel followsViewModel,LifecycleOwner lifecycleOwner,
                               UserViewModel userViewModel) {
         this.mContext = mContext;
         this.userResponseList = userResponseList;
@@ -61,7 +63,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull FollowingAdapter.ViewHolder holder, int position) {
-        UserResponse userResponse = userResponseList.get(position);
+        UserTrackingStatus userResponse = userResponseList.get(position);
         // Set thông tin bài đăng vào các view
         holder.idNameUser.setText(userResponse.getUsername());
         holder.nameUser.setText(userResponse.getName());
@@ -72,6 +74,35 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
                 .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
                 .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                 .into(holder.img_avtUser);
+        switch (userResponse.getStatus()) {
+            case "0":
+                holder.btnFollow.setVisibility(View.INVISIBLE);
+                break;
+            case "1":
+                setTextBtn(holder.btnFollow, "Following");
+                break;
+            case "2":
+                setTextBtn(holder.btnFollow, "Follow");
+                break;
+        }
+    }
+
+    public void setTextBtn(Button btnFollow, String text){
+        btnFollow.setText(text);
+        // Get the reference to the Drawable you want to assign
+        Drawable drawable;
+        if (text.equals("Following"))
+            drawable = mContext.getResources().getDrawable(R.drawable.custom_buttom_selected_follows);
+        else
+            drawable = mContext.getResources().getDrawable(R.drawable.custom_button_background);
+        // Assign Drawable to Button
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            // For Android versions below API 16
+            btnFollow.setBackgroundDrawable(drawable);
+        } else {
+            // For Android versions from API 16 and above
+            btnFollow.setBackground(drawable);
+        }
     }
 
     @Override
@@ -83,7 +114,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
         private ImageView img_avtUser;
         private TextView idNameUser, nameUser;
         private Button btnFollow;
-        private UserResponse userResponse;
+        private UserTrackingStatus userResponse;
         private LifecycleOwner lifecycleOwner;
         final Dialog dialog = new Dialog(mContext);
         public ViewHolder(@NonNull View itemView, LifecycleOwner lifecycleOwner) {
@@ -202,11 +233,30 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
                     if(response.getMessage().equals("Delete Success!") && response.getStatus()){
                         handleUpdateQuantityFollows(idFollower,"following");
                         handleUpdateQuantityFollows(idFollowing,"follower");
-                        btnFollow.setText("Follow");
+                        //btnFollow.setText("Follow");
+                        setTextBtn(btnFollow, "Follow");
                         dialog.dismiss();
                     }
                 }
             });;
+        }
+
+        public void setTextBtn(Button btnFollow, String text){
+            btnFollow.setText(text);
+            // Get the reference to the Drawable you want to assign
+            Drawable drawable;
+            if (text.equals("Following"))
+                drawable = mContext.getResources().getDrawable(R.drawable.custom_buttom_selected_follows);
+            else
+                drawable = mContext.getResources().getDrawable(R.drawable.custom_button_background);
+            // Assign Drawable to Button
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                // For Android versions below API 16
+                btnFollow.setBackgroundDrawable(drawable);
+            } else {
+                // For Android versions from API 16 and above
+                btnFollow.setBackground(drawable);
+            }
         }
 
         private void createFollow (RequestCreateFollows requestCreateFollows,String userId,String userIdOther){
@@ -214,7 +264,8 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
                 @Override
                 public void onChanged(ApiResponse<String> response) {
                     if(response.getStatus() && response.getMessage().equals("Success")){
-                        btnFollow.setText("Followed");
+                        //btnFollow.setText("Followed");
+                        setTextBtn(btnFollow, "Following");
                         handleGetQuantityFollows(userId,"following");
                         handleGetQuantityFollows(userIdOther,"follower");
                     }

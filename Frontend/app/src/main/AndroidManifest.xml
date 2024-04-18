@@ -15,6 +15,9 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
         android:name=".utils.GlobalApplication"
@@ -50,6 +53,17 @@
                     android:scheme="echobond" />
             </intent-filter>
         </activity>
+            android:name=".activities.PostIDActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.RemoveMemberGroupChat"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddMemberGroupChat"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ViewMembers"
+            android:exported="false" />
         <activity
             android:name=".activities.Function_chatgroup_activity"
             android:exported="false" />
@@ -104,6 +118,19 @@
         <activity
             android:name=".activities.FragmentReplacerActivity"
             android:exported="false" />
+
+        <service
+            android:name=".service.PusherNotificationService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.NotificationService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

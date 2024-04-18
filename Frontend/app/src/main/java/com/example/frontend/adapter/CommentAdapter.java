@@ -29,9 +29,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.request.Comment.RequestDeleteComment;
+import com.example.frontend.request.Comment.RequestLikeComment;
+import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -86,6 +90,25 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         Glide.with(mContext)
                 .load(comment.getUser().getAvatarImg())
                 .into(holder.img_userComment);
+
+        // set text for txt_countLike and set icon for btn_like
+        if (comment.getLike() != null) {
+            holder.txt_countLikeComment.setText(comment.getLike().size() + "");
+
+            for (UserResponse user : comment.getLike()) {
+                if (user.getId().contains("65e8a525714ccc3a3caa7f77")) {
+                    comment.setLike(true);
+                    break;
+                }
+            }
+
+            if ( comment.isLike()) {
+                holder.btn_likeComment.setImageResource(R.drawable.icon_liked);
+            } else {
+                holder.btn_likeComment.setImageResource(R.drawable.icon_favorite); // Thay bằng icon khác nếu không được like
+            }
+            holder.txt_countLikeComment.setText(comment.getLike().size()+"");
+        }else holder.txt_countLikeComment.setText("0");
 
         int positionReply = holder.getAdapterPosition();
 
@@ -167,7 +190,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 // Show btn_deleteComment
-                holder.btn_deleteComment.setVisibility(View.VISIBLE);
+                Log.e("iddd", comment.getUser().getId());
+                Log.e("iddd", "me: "+ SharedPreferenceLocal.read(mContext, "userId"));
+                if(comment.getUser().getId().equals(SharedPreferenceLocal.read(mContext, "userId")) ){
+                    holder.btn_deleteComment.setVisibility(View.VISIBLE);
+                }
 
                 // Hide btn_deleteComment after a delay (for example, 2 seconds)
                 holder.itemView.postDelayed(new Runnable() {
@@ -237,6 +264,37 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
             });
 
+            btn_likeComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        CommentResponse comment = listComment.get(position);
+
+                        int countLike =  Integer.parseInt(txt_countLikeComment.getText().toString());
+
+                        if (!comment.isLike()) {
+                            btn_likeComment.setImageResource(R.drawable.icon_liked);
+                            comment.setLike(true);
+                            countLike++;
+                        } else {
+                            btn_likeComment.setImageResource(R.drawable.icon_favorite);
+                            comment.setLike(false);
+                            countLike--;
+                        }
+
+                        txt_countLikeComment.setText(countLike + "");
+
+                        RequestLikeComment likeComment = new RequestLikeComment();
+                        likeComment.setIdComment(comment.getId());
+                        likeComment.setIdUser("65e8a525714ccc3a3caa7f77");
+                        likeComment.setReplyComment(false);
+
+                        commentViewModel.likeComment(likeComment);
+                    }
+                }
+            });
+
         }
 
         //
@@ -253,18 +311,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 // Nếu tìm thấy biểu tượng trong chuỗi
                 while (index != -1) {
                     // Loại bỏ tên biểu tượng khỏi chuỗi
-                    content = content.substring(0, index) + content.substring(index + iconName.length());
+                    //content = content.substring(0, index) + content.substring(index + iconName.length());
 
                     // Thêm biểu tượng vào chuỗi với ImageSpan
                     Drawable iconDrawable = ContextCompat.getDrawable(itemView.getContext(), iconResId);
                     if (iconDrawable != null) {
                         iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
                         ImageSpan imageSpan = new ImageSpan(iconDrawable, ImageSpan.ALIGN_BOTTOM);
-                        builder.setSpan(imageSpan, index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        builder.setSpan(imageSpan, index, index+iconName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
 
                     // Tìm vị trí của biểu tượng tiếp theo
-                    index = content.indexOf(iconName);
+                    index = content.indexOf(iconName, index + 1);
                 }
             }
 

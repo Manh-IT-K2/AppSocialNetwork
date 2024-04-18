@@ -15,7 +15,19 @@ public class UserResponse {
     private String gender;
     private String name;
     private boolean status;
+    private boolean isSelected;
+    private String tokenFCM;
 
+    public UserResponse() {
+
+    }
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
     public boolean isStatus() {
         return status;
     }
@@ -51,6 +63,14 @@ public class UserResponse {
         this.bio = bio;
         this.gender = gender;
         this.name = name;
+    }
+
+    public String getTokenFCM() {
+        return tokenFCM;
+    }
+
+    public void setTokenFCM(String tokenFCM) {
+        this.tokenFCM = tokenFCM;
     }
 
     public String getId() {

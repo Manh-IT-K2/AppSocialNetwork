@@ -15,13 +15,20 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
     private Context mContext;
     private TextView textViewName,textViewSup;
     private List<UserResponse> mMembers;
-
     public ViewMemberAdapter(Context context, List<UserResponse> members) {
         super(context, 0, members);
         mContext = context;
         mMembers = members;
     }
-
+    public void add(UserResponse user) {
+        mMembers.add(user);
+        notifyDataSetChanged(); // Cập nhật giao diện
+    }
+    public void setMembers(List<UserResponse> members) {
+        mMembers.clear(); // Xóa dữ liệu hiện tại
+        mMembers.addAll(members); // Thêm dữ liệu mới
+        notifyDataSetChanged(); // Cập nhật giao diện
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItem = convertView;
@@ -32,19 +39,16 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
         UserResponse currentMember = mMembers.get(position);
 
         textViewName = listItem.findViewById(R.id.textFriendName);
-        textViewName.setText(currentMember.getName());
-        Log.d("name", currentMember.getName());
-
         textViewSup = listItem.findViewById(R.id.subInformation);
-        textViewSup.setText(currentMember.getUsername());
-        Log.d("nickname", currentMember.getUsername());
+
+        textViewName.setText(currentMember.getUsername());
+
+        textViewSup.setText("ID: "+currentMember.getId());
+        Log.d("nickname", currentMember.getId());
         // Cập nhật các trường thông tin khác nếu cần
 
         return listItem;
     }
 
-    public void add(UserResponse member) {
-        mMembers.add(member);
-        notifyDataSetChanged();
-    }
+
 }

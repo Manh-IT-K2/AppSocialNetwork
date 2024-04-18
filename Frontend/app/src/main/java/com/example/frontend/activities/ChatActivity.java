@@ -1,5 +1,7 @@
 package com.example.frontend.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,7 +37,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity     {
     private TextView username_recipient;
     private ImageButton btn_back_main_chat;
     private CircleImageView imgAvatar;
@@ -49,12 +52,15 @@ public class ChatActivity extends AppCompatActivity {
     private String recipientId;
     private String userId;
 
+    private Context context;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-
+        context = this;
         recipientUserId = getIntent().getStringExtra("recipientUserId");
         recipientAvatar = getIntent().getStringExtra("recipientAvater");
         recipientId = getIntent().getStringExtra("recipientID");
@@ -88,14 +94,28 @@ public class ChatActivity extends AppCompatActivity {
         btn_back_main_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent i = new Intent(ChatActivity.this,MainChatActivity.class);
+                startActivity(i);
+                //finish();
             }
         });
-
+        imgAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Tạo Bundle để chứa ID của người nhận
+                Intent intent = new Intent(getApplicationContext(), FragmentReplacerActivity.class);
+                // Thêm dữ liệu cho Intent để FragmentReplacerActivity biết cần thay thế fragment nào
+                intent.putExtra("fragment_to_load", "Profile_recipetn");
+                intent.putExtra("userId", recipientId);
+                // Bắt đầu activity với Intent đã tạo
+                startActivity(intent);
+            }
+        });
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 sendMessage();
             }
         });
@@ -112,6 +132,7 @@ public class ChatActivity extends AppCompatActivity {
                     List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
                     if (messages != null && !messages.isEmpty()) {
                         adapter.setListMessage(messages);
+                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                     }
                 } else {
                     String errorMessage = "Failed to load initial messages";
@@ -123,47 +144,55 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-    private void sendMessage() {
-        String message = inputMessage.getText().toString();
-        RequestPrivateChat requestPrivateChat = new RequestPrivateChat(userId, recipientId, message);
-        messageViewModel.sendMessage(requestPrivateChat).observe(this, new Observer<ApiResponse<PrivateChatWithMessagesResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<PrivateChatWithMessagesResponse> response) {
-                if (response != null && response.isSuccess()) {
-                    inputMessage.setText(null);
-                    pusher = PusherClient.init();
-                    pusher.connect();
-                    pusher.subscribe("newmess")
-                            .bind("send", (channelName, eventName, data) -> {
-                                try {
-                                    Gson gson = new GsonBuilder()
-                                            .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-                                            .create();
-                                    String jsonData = data.toString();
-                                    PrivateChatWithMessagesResponse privateChatResponse = gson.fromJson(jsonData, PrivateChatWithMessagesResponse.class);
-                                    List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
-                                    if (messages != null && !messages.isEmpty()) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.setListMessage(messages);
-                                            }
-                                        });
-                                    }
-                                } catch (Exception e) {
-                                    Log.d("trycatch", new Gson().toJson(e));
+private void sendMessage() {
+    String message = inputMessage.getText().toString();
+    RequestPrivateChat requestPrivateChat = new RequestPrivateChat(userId, recipientId, message);
+    messageViewModel.sendMessage(requestPrivateChat).observe(this, new Observer<ApiResponse<PrivateChatWithMessagesResponse>>() {
+        @Override
+        public void onChanged(ApiResponse<PrivateChatWithMessagesResponse> response) {
+            if (response != null && response.isSuccess()) {
+                inputMessage.setText(null);
+                pusher = PusherClient.init();
+                pusher.connect();
+                pusher.subscribe("newmess")
+                        .bind("send", (channelName, eventName, data) -> {
+                            try {
+                                Gson gson = new GsonBuilder()
+                                        .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+                                        .create();
+                                String jsonData = data.toString();
+                                PrivateChatWithMessagesResponse privateChatResponse = gson.fromJson(jsonData, PrivateChatWithMessagesResponse.class);
+                                List<MessageWithSenderInfo> messages = privateChatResponse.getMessages();
+                                if (messages != null && !messages.isEmpty()) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            adapter.setListMessage(messages);
+                                            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                                            // Gửi Broadcast Intent với dữ liệu tin nhắn mới
+                                            Intent intent = new Intent("NEW_MESSAGE_ACTION");
+                                            Gson gson = new Gson();
+                                            String messagesJson = gson.toJson(messages); // Chuyển đổi danh sách tin nhắn thành chuỗi JSON
+                                            intent.putExtra("new_message", messagesJson); // Đặt chuỗi JSON vào Intent
+                                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                                        }
+                                    });
                                 }
-                            });
-                } else {
-                    // Xử lý khi gửi tin nhắn không thành công
-                    String errorMessage = "Request failed";
-                    if (response != null && response.getMessage() != null) {
-                        errorMessage += ": " + response.getMessage();
-                    }
-                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+                                Log.d("trycatch", new Gson().toJson(e));
+                            }
+                        });
+            } else {
+                // Xử lý khi gửi tin nhắn không thành công
+                String errorMessage = "Request failed";
+                if (response != null && response.getMessage() != null) {
+                    errorMessage += ": " + response.getMessage();
                 }
+                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
-        });
-    }
+        }
+    });
+}
+
 
 }

@@ -6,6 +6,7 @@ import static com.example.frontend.activities.PostActivity.chooseMoreClickCount;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Dialog;
@@ -28,12 +29,18 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.frontend.R;
+import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Post.RequestCreatePost;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Post.ResponseCreatePost;
+import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.service.NotificationService;
 import com.example.frontend.utils.CameraX;
 import com.example.frontend.utils.CustomSlideModel;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
+import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -59,9 +66,11 @@ public class CreatePostActivity extends AppCompatActivity {
     private EditText edt_description;
     private ImageView btn_backCreatePost;
     private PostViewModel postViewModel;
+    private UserViewModel userViewModel;
     private List<String> selectedFileChoseMore;
     private LinearLayout linear_layout_drag_createPost;
     private ImageSlider image_sliderCreatePost;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +83,7 @@ public class CreatePostActivity extends AppCompatActivity {
         edt_description = findViewById(R.id.edt_description);
         //linear_layout_drag_createPost = findViewById(R.id.linear_layout_drag_createPost);
 
-        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+        userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         selectedFileChoseMore = new ArrayList<>();
 
         if (checkDataIntent == 0) {
@@ -216,6 +225,27 @@ public class CreatePostActivity extends AppCompatActivity {
         RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, userId, description, "", isoDateString);
 
         postViewModel.createPost(requestCreatePost, userId);
+        postViewModel.createPost(requestCreatePost, userId).observe(this, new Observer<ApiResponse<ResponseCreatePost>>() {
+            @Override
+            public void onChanged(ApiResponse<ResponseCreatePost> responseCreatePostApiResponse) {
+                ResponseCreatePost responseCreatePost = responseCreatePostApiResponse.getData();
+                userViewModel = new UserViewModel();
+                //Tạo thông báo
+                Notification notification = new Notification();
+                notification.setPostId(responseCreatePost.getPostId());
+                notification.setUserId(SharedPreferenceLocal.read(getApplicationContext(), "userId"));
+                String userName = SharedPreferenceLocal.read(getApplicationContext(), "userName");
+                notification.setText(userName+" vừa đăng một bài viết");
+
+                for(UserResponse user : responseCreatePost.getListFollowers()){
+                    if(user.getTokenFCM() != null){
+                        notification.setIdRecipient(user.getId());
+                        NotificationService.sendNotification(getApplicationContext(), notification.getText(), user.getTokenFCM());
+                        userViewModel.addNotification(notification);
+                    }
+                }
+            }
+        });
 
         DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("posts");
         String postId = postsRef.push().getKey();

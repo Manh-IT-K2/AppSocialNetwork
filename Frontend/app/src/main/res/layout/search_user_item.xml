@@ -3,34 +3,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginTop="10dp"
-    android:padding="3dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="30dp">
+    app:cardElevation="30dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black">
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgAvatar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_margin="5dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/baseline_account_circle_24" />
+            android:src="@drawable/logo"
+            app:civ_border_width="1dp"/>
 
-        <TextView
-            android:id="@+id/txt_UserName"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_toRightOf="@+id/imgAvatar"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/white"
-            android:textSize="15dp"/>
+            android:layout_marginVertical="5dp"
+            android:layout_toRightOf="@+id/imgAvatar">
+
+            <TextView
+                android:id="@+id/txt_UserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_UserName"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textStyle="normal" />
+        </RelativeLayout>
     </RelativeLayout>
+
 
 </androidx.cardview.widget.CardView>

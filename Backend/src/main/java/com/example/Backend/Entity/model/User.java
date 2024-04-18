@@ -1,5 +1,6 @@
 package com.example.Backend.Entity.model;
 
+import com.example.Backend.Entity.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -43,4 +45,5 @@ public class User {
 
     @Min(0)
     private int following;
+    private String tokenFCM;
 }

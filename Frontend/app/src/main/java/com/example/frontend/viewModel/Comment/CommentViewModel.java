@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.frontend.repository.CommentRepository;
 import com.example.frontend.request.Comment.RequestCreateComment;
 import com.example.frontend.request.Comment.RequestDeleteComment;
+import com.example.frontend.request.Comment.RequestLikeComment;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 
@@ -32,7 +33,12 @@ public class CommentViewModel extends ViewModel {
     }
 
     // get list comment by id post
-    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id){
-        return commentRepository.getListCommentByIdPost(id);
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> getListCommentByIdPost(String id, String idComment){
+        return commentRepository.getListCommentByIdPost(id, idComment);
+    }
+
+    // get list comment by id post
+    public MutableLiveData<ApiResponse<List<CommentResponse>>> likeComment(RequestLikeComment likeComment){
+        return commentRepository.likeComment(likeComment);
     }
 }

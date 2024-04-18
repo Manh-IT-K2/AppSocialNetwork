@@ -4,10 +4,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.frontend.repository.UserRepository;
+import com.example.frontend.request.Notification.Notification;
+import com.example.frontend.response.User.NotificationResponse;
 import com.example.frontend.request.User.RequestChangePW;
 import com.example.frontend.request.User.RequestChangePass;
 import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
+import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.request.User.RequestUpdateUser;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
@@ -63,5 +66,20 @@ public class UserViewModel extends ViewModel {
     }
     public MutableLiveData<ApiResponse<List<UserResponse>>>findUser_privatechat(String keyword) {
         return userRepository.findUser_privatechat(keyword);
+    }
+    public void updateTokenFCM(RequestUpdateTokenFCM request){
+        userRepository.updateTokenFCM(request);
+    }
+
+    public MutableLiveData<ApiResponse<String>> getTokenFCM(String id){
+        return userRepository.getTokenFCM(id);
+    }
+
+    public void addNotification(Notification notification){
+        userRepository.addNotification(notification);
+    }
+
+    public MutableLiveData<ApiResponse<List<NotificationResponse>>> getNotification(String id){
+        return userRepository.getNotification(id);
     }
 }

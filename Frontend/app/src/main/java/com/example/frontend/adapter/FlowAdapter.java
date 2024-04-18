@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.Function_chatgroup_activity;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         this.onItemCheckedListener = listener;
     }
 
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -47,11 +50,16 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         }
 
         GetAllUserByFollowsResponse user = userList.get(position);
-        holder.textFriendName.setText(user.getName());
-        // holder.subInformation.setText(user.getSubInformation());
+        holder.textFriendName.setText(user.getUsername());
 
-        // Set trạng thái của checkbox dựa trên trường boolean trong mỗi mục
-        holder.checkbox.setChecked(user.isSelected());
+
+
+        // Ép kiểu context sang Function_chatgroup_activity để gọi phương thức isEditTextFocused()
+        Function_chatgroup_activity activity = (Function_chatgroup_activity) context;
+        if (!activity.isEditTextFocused()) {
+            holder.checkbox.setChecked(user.isSelected());
+        }
+
         holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -64,6 +72,7 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
 
         return convertView;
     }
+
 
     // ViewHolder pattern để tối ưu hóa hiệu suất
     private static class ViewHolder {

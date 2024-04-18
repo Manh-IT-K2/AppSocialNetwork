@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ProfileFragment"
+    android:id="@+id/profileFragment"
     android:orientation="vertical">
    <LinearLayout
        android:orientation="vertical"
@@ -17,6 +17,7 @@
             android:elevation="2dp"
             app:contentInsetStart="0dp"
             app:contentInsetEnd="0dp"
+            app:navigationIcon="@drawable/ic_back"
             android:id="@+id/toolbar" >
             <LinearLayout
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
                     android:textStyle="bold"
                     android:layout_marginLeft="10dp"/>
                 <LinearLayout
+                    android:id="@+id/menu_downLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -55,6 +57,7 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/menuLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -239,8 +242,7 @@
            android:gravity="center"
            android:layout_marginTop="10dp"
            android:layout_marginLeft="10dp"
-           android:layout_marginRight="10dp"
-           >
+           android:layout_marginRight="10dp">
                 <Button
                     android:id="@+id/edit_profileBtn"
                     android:layout_width="100dp"
@@ -275,6 +277,49 @@
                     android:layout_weight="1"
                     android:textSize="10sp"
                     android:text="Log out"/>
+       </LinearLayout>
+       <LinearLayout
+           android:id="@+id/follow_QRCode_message_Layout"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_marginTop="10dp"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp">
+           <Button
+               android:id="@+id/followBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_background"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:textSize="10sp"
+               android:layout_weight="1"
+               android:text="Follow" />
+           <Button
+               android:id="@+id/QRCodeBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_profile"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:text="QR code"
+               android:textSize="10sp"
+               android:layout_weight="1"
+               android:layout_marginLeft="10dp"/>
+
+           <Button
+               android:id="@+id/messageBtn"
+               android:layout_width="100dp"
+               android:layout_height="35dp"
+               android:background="@drawable/custom_button_profile"
+               app:backgroundTint="@null"
+               android:textColor="#FFFFFF"
+               android:layout_marginLeft="10dp"
+               android:layout_weight="1"
+               android:textSize="10sp"
+               android:text="Message"/>
        </LinearLayout>
    </LinearLayout>
     <LinearLayout
@@ -339,27 +384,37 @@
         </LinearLayout>
     </LinearLayout>
     <!-- MEDIA -->
-    <LinearLayout
-        android:id="@+id/coordinatorLayout"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
+        app:tabMode="fixed"
+        app:tabIndicatorFullWidth="true"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="1.5dp"
+        app:backgroundTint="@null"
+        android:background="@null">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:menu="@menu/media_menu"
-            app:itemIconSize="25dp"
-            app:labelVisibilityMode="unlabeled"
-            android:background="@color/zxing_transparent">
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
-    </LinearLayout>
-    <View
-        android:id="@+id/view3"
+            android:icon="@drawable/icon_grid"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/icon_reels"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/icons_square"/>
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#575656" />
+        android:layout_height="match_parent"/>
     <FrameLayout
         android:id="@+id/fragment_layout_main"
         android:layout_width="match_parent"
