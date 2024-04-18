@@ -1,24 +1,22 @@
-package com.example.Backend.Entity;
+package com.example.Backend.Response.ApiResponse.Message;
 
 import com.example.Backend.Entity.model.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Document(collection = "messages")
-public class Message {
-    @Id
+@AllArgsConstructor
+public class MessageResponse {
     private String id;
     private String content;
     private Date createdAt;
-    private String senderId;
+    private User sender;
     private String privateChatId;
     private String groupChatId;
     private String urlFile;

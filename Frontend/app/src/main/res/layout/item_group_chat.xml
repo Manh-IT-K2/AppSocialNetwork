@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp">
 
     <LinearLayout
@@ -16,11 +18,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:text="Hello"
             android:id="@+id/time_msg"/>
     </LinearLayout>
     <!-- TextView để hiển thị tên người gửi tin nhắn -->
+    <LinearLayout
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_time"
+        android:padding="8dp"
+        android:layout_marginEnd="80dp"
+        android:id="@+id/left_chat_layout"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_time"
+        android:id="@+id/lnl"
+        android:orientation="horizontal">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_user"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/circleImageview"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_below="@+id/layout_time"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/user_name_left"
                 android:layout_width="wrap_content"
@@ -28,54 +61,78 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
-    <LinearLayout
+                android:text="name"/>
 
-        android:layout_width="wrap_content"
+            <TextView
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="5dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/border_chat_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="Hello jhadfsdfsdjfsdjfksdakdfkdn"
+                android:id="@+id/left_chat_textview"/>
+
+            <ImageView
+                android:id="@+id/left_stickerImageView"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="2dp"
+                app:layout_constraintBottom_toBottomOf="@+id/img_createStory"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/img_createStory"
+                app:layout_constraintTop_toTopOf="@+id/img_createStory"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    </LinearLayout>
+    <!-- TextView để hiển thị tên người gửi tin nhắn -->
+
+    <LinearLayout
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_editext_comment"
-        android:backgroundTint="@color/chat_color_sender"
         android:layout_below="@+id/layout_time"
-        android:padding="8dp"
-        android:layout_marginEnd="80dp"
-        android:id="@+id/left_chat_layout"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/right_chat_layout"
+        android:layout_marginRight="2dp"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/user_name_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:text="Hello"
-            android:id="@+id/left_chat_textview"/>
-    </LinearLayout>
-    <!-- TextView để hiển thị tên người gửi tin nhắn -->
-    <TextView
-        android:id="@+id/user_name_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:layout_alignParentEnd="true"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_time"
-        android:background="@drawable/background_editext_comment"
-        android:backgroundTint="@color/chat_color_receiver"
-        android:layout_alignParentEnd="true"
-        android:padding="8dp"
-        android:layout_marginStart="80dp"
-        android:id="@+id/right_chat_layout">
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="name"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="5dp"
+            android:layout_gravity="end"
+            android:background="@drawable/border_chat_right"
+            android:text="djfksjdfksdjfkksdjfkdsfjjsdkdsjfjsdk"
             android:id="@+id/right_chat_textview"/>
+
+        <ImageView
+            android:layout_gravity="end"
+            android:id="@+id/right_stickerImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_createStory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/img_createStory"
+            app:layout_constraintTop_toTopOf="@+id/img_createStory"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -8,6 +8,7 @@ import com.example.Backend.Request.GroupChat.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
+import com.example.Backend.Response.ApiResponse.Message.MessageResponse;
 import com.example.Backend.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -85,21 +86,36 @@ public class GroupChatServiceImpl implements GroupChatService {
         }
     }
     @Override
-    public GroupChatWithMessagesResponse sendMessage(RequestChatGroup requestChatGroup) throws Exception {
+    public MessageResponse sendMessage(RequestChatGroup requestChatGroup) throws Exception {
+        Query query = new Query(Criteria.where("_id").is(requestChatGroup.getSenderId()));
+        User user = mongoTemplate.findOne(query, User.class, "users");
         GroupChat groupChat = mongoTemplate.findById(requestChatGroup.getGroupId(), GroupChat.class);
         Message newMessage = new Message();
         newMessage.setSenderId(requestChatGroup.getSenderId());
         newMessage.setContent(requestChatGroup.getContent());
         newMessage.setCreatedAt(new Date());
         newMessage.setGroupChatId(groupChat.getId());
-        mongoTemplate.save(newMessage);
-        List<MessageWithSenderInfo> messages = getMessageList(groupChat);
-        GroupChatWithMessagesResponse response = new GroupChatWithMessagesResponse();
-        response.setId(groupChat.getId());
-        response.setGroupName(groupChat.getGroupName());
-        response.setMembers(userService.findUsersByIds(groupChat.getMemberIds()));
-        response.setMessages(messages);
-        return response;
+        newMessage.setUrlFile(requestChatGroup.getUrlFile());
+        newMessage.setUrlSticker(requestChatGroup.getUrlSticker());
+
+        newMessage = mongoTemplate.save(newMessage);
+
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setId(newMessage.getId());
+        messageResponse.setGroupChatId(newMessage.getGroupChatId());
+        messageResponse.setContent(newMessage.getContent());
+        messageResponse.setCreatedAt(newMessage.getCreatedAt());
+        messageResponse.setUrlFile(newMessage.getUrlFile());
+        messageResponse.setUrlSticker(newMessage.getUrlSticker());
+        messageResponse.setSender(user);
+        return messageResponse;
+//        List<MessageWithSenderInfo> messages = getMessageList(groupChat);
+//        GroupChatWithMessagesResponse response = new GroupChatWithMessagesResponse();
+//        response.setId(groupChat.getId());
+//        response.setGroupName(groupChat.getGroupName());
+//        response.setMembers(userService.findUsersByIds(groupChat.getMemberIds()));
+//        response.setMessages(messages);
+//        return response;
     }
 
     private List<MessageWithSenderInfo> getMessageList(GroupChat groupChat) {
@@ -113,6 +129,8 @@ public class GroupChatServiceImpl implements GroupChatService {
             messageWithSenderInfo.setGroupChatId(message.getGroupChatId());
             messageWithSenderInfo.setCreatedAt(message.getCreatedAt());
             messageWithSenderInfo.setSender(userService.findUserById(message.getSenderId()));
+            messageWithSenderInfo.setUrlFile(message.getUrlFile());
+            messageWithSenderInfo.setUrlSticker(message.getUrlSticker());
             messageWithSenderInfos.add(messageWithSenderInfo);
         }
         return messageWithSenderInfos;

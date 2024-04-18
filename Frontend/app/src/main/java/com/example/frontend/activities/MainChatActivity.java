@@ -164,7 +164,7 @@ public class MainChatActivity extends AppCompatActivity {
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),MainChatActivity.class);
+                Intent i = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(i);
                 //finish();
             }
@@ -318,7 +318,7 @@ public class MainChatActivity extends AppCompatActivity {
                             groupChatList.remove(i);
                             Log.d("GroupChatPosition", "Group chat position: " + i);
                             groupChatList.add(0, groupChat);
-                            Log.d("ds", groupChatList.get(0).getLastMessage());
+                            //Log.d("ds", groupChatList.get(0).getLastMessage());
                             isExisting = true;
                             break;
                         }

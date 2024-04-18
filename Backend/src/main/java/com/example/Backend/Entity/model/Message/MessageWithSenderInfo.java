@@ -20,4 +20,5 @@ public class MessageWithSenderInfo {
     private String privateChatId;
     private String groupChatId;
     private String urlFile;
+    private String urlSticker;
 }

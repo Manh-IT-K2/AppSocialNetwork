@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.frontend.R;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.pusher.client.channel.User;
 
@@ -57,7 +58,7 @@ public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     MessageWithSenderInfo message = messages.get(position); // Lấy tin nhắn tại vị trí 'position'
 
     // Lấy đối tượng người gửi từ tin nhắn
-    User sender = message.getSender();
+    UserResponse sender = message.getSender();
     if (sender != null) {
         // Lấy ID của người gửi
         String senderId = sender.getId();

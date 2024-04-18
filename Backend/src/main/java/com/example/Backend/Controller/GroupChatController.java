@@ -1,11 +1,14 @@
 package com.example.Backend.Controller;
 
 import com.example.Backend.Config.PusherConfig;
+import com.example.Backend.Entity.Message;
 import com.example.Backend.Request.GroupChat.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatResponse;
 import com.example.Backend.Response.ApiResponse.GroupChatResponse.GroupChatWithMessagesResponse;
+import com.example.Backend.Response.ApiResponse.Message.MessageResponse;
 import com.example.Backend.Service.GroupChat.GroupChatService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,17 +38,17 @@ public class GroupChatController {
     public ApiResponse<GroupChatWithMessagesResponse> getMessagesByGroupChatId(@PathVariable String groupChatId) throws Exception {
         GroupChatWithMessagesResponse response = groupChatService.getMessagesByGroupChatId(groupChatId);
         // Gửi sự kiện lên Pusher
-        pusherConfig.triggerEvent("GroupChat_lastmess", "get_message", response.getMessages());
+        pusherConfig.triggerEvent(groupChatId, "get_message", response.getMessages());
         return new ApiResponse<>(true, "", response);
     }
 
     @PostMapping("/{groupChatId}/send_message")
-    public ApiResponse<GroupChatWithMessagesResponse> sendMessage(@PathVariable String groupChatId, @RequestBody RequestChatGroup request) throws Exception {
+    public ApiResponse<MessageResponse> sendMessage(@PathVariable String groupChatId, @RequestBody RequestChatGroup request) throws Exception {
         request.setGroupId(groupChatId);
-        GroupChatWithMessagesResponse response = groupChatService.sendMessage(request);
+        MessageResponse message = groupChatService.sendMessage(request);
         // Gửi sự kiện lên Pusher
-        pusherConfig.triggerEvent("GroupChat", "send_chatgroup", response.getMessages());
-        return new ApiResponse<>(true, "Message sent successfully", response);
+        pusherConfig.triggerEvent(groupChatId, "send_chatgroup", message);
+        return new ApiResponse<MessageResponse>(true, "Message sent successfully", message);
     }
     @PostMapping("/{groupChatId}/add_member")
     public ResponseEntity<ApiResponse<String>> addMemberToGroupChat(@PathVariable String groupChatId, @RequestBody RequestAddMemberToGroupChat request) throws Exception {

@@ -13,6 +13,7 @@ import com.example.frontend.request.GroupChat.RequestRenameGroupChat;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.Message;
 import com.example.frontend.service.GroupChatService;
 import com.example.frontend.utils.CallApi;
 
@@ -98,12 +99,12 @@ public class GroupChatRepository {
         return mutableLiveData;
     }
 
-    public LiveData<ApiResponse<GroupChatWithMessagesResponse>> sendMessage(String groupChatId, RequestChatGroup request) {
-        MutableLiveData<ApiResponse<GroupChatWithMessagesResponse>> mutableLiveData = new MutableLiveData<>();
+    public LiveData<ApiResponse<Message>> sendMessage(String groupChatId, RequestChatGroup request) {
+        MutableLiveData<ApiResponse<Message>> mutableLiveData = new MutableLiveData<>();
 
-        groupChatService.sendMessage(groupChatId, request).enqueue(new Callback<ApiResponse<GroupChatWithMessagesResponse>>() {
+        groupChatService.sendMessage(groupChatId, request).enqueue(new Callback<ApiResponse<Message>>() {
             @Override
-            public void onResponse(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Response<ApiResponse<GroupChatWithMessagesResponse>> response) {
+            public void onResponse(Call<ApiResponse<Message>> call, Response<ApiResponse<Message>> response) {
                 if (response.isSuccessful()) {
                     mutableLiveData.setValue(response.body());
                 } else {
@@ -112,7 +113,7 @@ public class GroupChatRepository {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<GroupChatWithMessagesResponse>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<Message>> call, Throwable t) {
                 Log.e("GroupChatRepository", "Failed to send message to group chat: " + t.getMessage(), t);
             }
         });

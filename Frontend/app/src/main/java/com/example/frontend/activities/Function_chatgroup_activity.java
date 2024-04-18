@@ -195,18 +195,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     private void sendMessMacDinh(ApiResponse<GroupChatResponse> response, String groupName){
         // Tạo tin nhắn mặc định khi tạo nhóm chat thành công
         String message ="Chào mừng bạn đã tham gia nhóm chat: " + groupName;
-        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message);
-        groupChatRepository.sendMessage(response.getData().getId(), request).observe(Function_chatgroup_activity.this,  new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-                if (response != null && response.getStatus()) {
-                    Log.d("Function_chatgroup", "Default message sent successfully.");
-
-                } else {
-                    Log.e("Function_chatgroup", "Failed to send default message.");
-                }
-            }
-        });
-
+        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message, "","");
+        groupChatRepository.sendMessage(response.getData().getId(), request);
     }
 }
