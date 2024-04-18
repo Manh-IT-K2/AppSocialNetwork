@@ -19,7 +19,8 @@
             android:layout_height="36dp"
             android:layout_marginStart="18dp"
             android:layout_gravity="center"
-           app:shapeAppearanceOverlay="@style/circle_image"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/circle_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -58,29 +59,14 @@
             app:srcCompat="@drawable/icon_more" />
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
+    <com.denzcoskun.imageslider.ImageSlider
+        android:id="@+id/image_sliderPost"
+        android:layout_width="wrap_content"
         android:layout_height="375dp"
-        android:scrollbarStyle="insideInset"
-        android:fillViewport="true"
-        android:scrollbarThumbHorizontal="@drawable/custom_scrollbar">
-
-        <LinearLayout
-            android:id="@+id/linear_layout_drag_Post"
-            android:layout_width="match_parent"
-            android:layout_height="375dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_post"
-                android:layout_width="match_parent"
-                android:layout_height="375dp"
-                android:scaleType="fitXY"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
+        app:iss_auto_cycle="false"
+        app:iss_period="1000"
+        app:iss_delay="1000"
+        app:iss_text_align="CENTER"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"

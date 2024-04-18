@@ -69,11 +69,8 @@ public class StoryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Quyền đã được cấp, tiến hành load ảnh
                 loadImages();
             } else {
-                //loadImages();
-                // Quyền bị từ chối, thông báo cho người dùng hoặc xử lý một cách phù hợp
                 Log.d("PermissionDenied", "Quyền truy cập bộ nhớ bị từ chối");
             }
         }

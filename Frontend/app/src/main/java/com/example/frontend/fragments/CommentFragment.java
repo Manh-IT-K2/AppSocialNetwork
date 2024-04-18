@@ -31,6 +31,7 @@ import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -76,6 +77,8 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getWindow().setAttributes(params);
+
+        String userId = SharedPreferenceLocal.read(getContext(),"userId");
 
         // init view
         btn_drag = findViewById(R.id.btn_drag);
@@ -158,7 +161,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                 }
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
-                        "65e8a525714ccc3a3caa7f77",
+                        userId,
                         contentComment,
                         isReplyComment,
                         idComment,
@@ -200,7 +203,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         });
 
         //
-        userViewModel.getDetailUserById("65e8a525714ccc3a3caa7f77").observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
+        userViewModel.getDetailUserById(userId).observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
