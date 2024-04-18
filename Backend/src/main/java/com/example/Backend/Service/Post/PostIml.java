@@ -2,6 +2,7 @@ package com.example.Backend.Service.Post;
 
 import com.example.Backend.Entity.Follows;
 import com.example.Backend.Entity.Post;
+import com.example.Backend.Entity.Story;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Post.RequestCreatePost;
 import com.example.Backend.Request.Post.RequestPostByUserId;
@@ -53,38 +54,81 @@ public class PostIml implements PostService{
         return mongoTemplate.insert(post, "post").getId();
     }
 
-
-    // select post by userId
     @Override
     public ApiResponse<List<RequestPostByUserId>> getListPostsByUserId(String userId) {
         ObjectId objectId = new ObjectId(userId);
-        LookupOperation lookupOperation = LookupOperation.newLookup()
-                .from("post")
-                .localField("_id")
-                .foreignField("userId")
-                .as("posts");
 
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("_id").is(objectId));
-        AggregationOperation unwindOperation = Aggregation.unwind("posts");
+        // Tìm tất cả các theo dõi của userId truyền vào
+        Query followsQuery = new Query(Criteria.where("idFollower").is(objectId));
+        List<Follows> followsList = mongoTemplate.find(followsQuery, Follows.class, "follows");
+        List<ObjectId> followingIds = new ArrayList<>();
+        boolean isUserIdIncluded = false; // Biến để theo dõi xem userId đã được thêm vào danh sách hay không
+        for (Follows follows : followsList) {
+            ObjectId idFollowing = follows.getIdFollowing();
+            followingIds.add(idFollowing);
+            if (idFollowing.equals(objectId)) {
+                isUserIdIncluded = true; // Đánh dấu userId đã được thêm vào danh sách
+            }
+        }
+
+        Query q = new Query();
+        List<Post> allPosts = mongoTemplate.find(q, Post.class, "post");
+
+        // Tiến hành xác định trạng thái của việc theo dõi
+        Query query;
+        System.err.println("hihi " + followingIds);
+        if (followingIds.isEmpty()) {
+            // Nếu không follow ai, load tất cả bài post, bao gồm cả bài post của userId
+            for (Post p : allPosts){
+                followingIds.add(p.getUserId());
+            }
+            query = new Query(Criteria.where("userId").in(followingIds));
+        } else {
+            // Nếu đang follow ai, load bài post của userId và của những người userId đang follow
+            if (!isUserIdIncluded) {
+                followingIds.add(objectId); // Thêm userId vào danh sách nếu chưa được thêm
+            }
+            query = new Query(Criteria.where("userId").in(followingIds));
+        }
+
+        List<Post> userPosts = mongoTemplate.find(query, Post.class, "post");
+
+        // Tiến hành Aggregation để định dạng lại dữ liệu
+        LookupOperation lookupOperation = LookupOperation.newLookup()
+                .from("users")
+                .localField("userId")
+                .foreignField("_id")
+                .as("user");
+
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("userId").in(userPosts.stream().map(Post::getUserId).collect(Collectors.toList())));
+
+        AggregationOperation unwindUserOperation = Aggregation.unwind("user");
+
+        AggregationOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, "createAt"); // Sắp xếp theo thứ tự giảm dần của createAt
+
         AggregationOperation projectOperation = Aggregation.project()
                 .andExpression("_id").as("userId")
-                .andExpression("username").as("userName")
-                .andExpression("tokenFCM").as("tokenFCM")
-                .andExpression("avatarImg").as("avtImage")
-                .andExpression("posts._id").as("idPost")
-                .andExpression("posts.imagePost").as("imagePost")
-                .andExpression("posts.description").as("description")
-                .andExpression("posts.location").as("location")
-                .andExpression("posts.createAt").as("createAt")
-                .andExpression("posts.like").as("like");
+                .andExpression("user.username").as("userName")
+                .andExpression("user.avatarImg").as("avtImage")
+                .andExpression("_id").as("idPost")
+                .andExpression("imagePost").as("imagePost")
+                .andExpression("description").as("description")
+                .andExpression("location").as("location")
+                .andExpression("createAt").as("createAt")
+                .andExpression("like").as("like");
 
-        SortOperation sortOperation = Aggregation.sort(Sort .by(Sort.Direction.DESC, "createAt"));
+        Aggregation aggregation = Aggregation.newAggregation(
+                lookupOperation,
+                matchOperation,
+                unwindUserOperation,
+                sortOperation,
+                projectOperation
+        );
 
-        Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation, sortOperation);
-
-        List<RequestPostByUserId> list = mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
-        return new ApiResponse<List<RequestPostByUserId>>(true, "", list);
+        List<RequestPostByUserId> list = mongoTemplate.aggregate(aggregation, "post", RequestPostByUserId.class).getMappedResults();
+        return new ApiResponse<>(true, "", list);
     }
+
 
     @Override
     // add user like post

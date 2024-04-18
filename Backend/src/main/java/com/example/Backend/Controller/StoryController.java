@@ -1,6 +1,6 @@
 package com.example.Backend.Controller;
 
-import com.example.Backend.Request.Story.RequestStory;
+import com.example.Backend.Request.Story.RequestCreateStory;
 import com.example.Backend.Request.Story.RequestStoryByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 import com.example.Backend.Service.Story.StoryService;
@@ -20,7 +20,7 @@ public class StoryController {
 
     // createPost
     @PostMapping("/createStory")
-    public ResponseEntity<ApiResponse<String>> createStory(@RequestBody RequestStory requestStory, @RequestParam String userId) {
+    public ResponseEntity<ApiResponse<String>> createStory(@RequestBody RequestCreateStory requestStory, @RequestParam String userId) {
         storyService.createStory(requestStory,userId);
         ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Tải lên tin thành công !","");
         return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);

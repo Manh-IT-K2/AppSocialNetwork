@@ -25,6 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.frontend.R;
 import com.example.frontend.request.Notification.Notification;
 import com.example.frontend.request.Post.RequestCreatePost;
@@ -33,6 +36,7 @@ import com.example.frontend.response.Post.ResponseCreatePost;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.NotificationService;
 import com.example.frontend.utils.CameraX;
+import com.example.frontend.utils.CustomSlideModel;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
@@ -65,6 +69,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private UserViewModel userViewModel;
     private List<String> selectedFileChoseMore;
     private LinearLayout linear_layout_drag_createPost;
+    private ImageSlider image_sliderCreatePost;
     String userId;
 
     @Override
@@ -72,11 +77,11 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        img_createPost = findViewById(R.id.img_createPost);
+        image_sliderCreatePost = findViewById(R.id.image_sliderCreatePost);
         btn_sharePost = findViewById(R.id.btn_sharePost);
         btn_backCreatePost = findViewById(R.id.btn_backCreatePost);
         edt_description = findViewById(R.id.edt_description);
-        linear_layout_drag_createPost = findViewById(R.id.linear_layout_drag_createPost);
+        //linear_layout_drag_createPost = findViewById(R.id.linear_layout_drag_createPost);
 
         userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         selectedFileChoseMore = new ArrayList<>();
@@ -88,19 +93,34 @@ public class CreatePostActivity extends AppCompatActivity {
                 String imagePath = extras.getString("imagePath");
                 if (imagePath != null) {
                     selectedFileChoseMore.add(imagePath);
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                    if (bitmap != null) {
-                        img_createPost.setImageBitmap(bitmap);
-                    } else {
-                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
-                    }
+                    File file = new File(imagePath);
+                    Uri uri = Uri.fromFile(file);
+                    String imgUrl = uri.toString();
+                    ArrayList<SlideModel> slideModels = new ArrayList<>();
+                    slideModels.add(new SlideModel(imgUrl, ScaleTypes.CENTER_CROP));
+                    image_sliderCreatePost.setImageList(slideModels);
+                } else {
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
                 }
+
             }
         } else if (checkDataIntent == 1) {
             //
             selectedFileChoseMore = getIntent().getStringArrayListExtra("selectedImages");
             if (selectedFileChoseMore != null && !selectedFileChoseMore.isEmpty()) {
-                loadImageSelectedCreatePost();
+                //loadImageSelectedCreatePost();
+                File file;
+                Uri uri;
+                String imageUrl;
+                ArrayList<SlideModel> slideModels = new ArrayList<>();
+                for (int i = 0; i <= selectedFileChoseMore.size() - 1; i++) {
+                    file = new File(selectedFileChoseMore.get(i));
+                    uri = Uri.fromFile(file);
+                    imageUrl = uri.toString();
+                    slideModels.add(new SlideModel(imageUrl, ScaleTypes.CENTER_CROP));
+                    Log.e("selectedFile", String.valueOf(selectedFileChoseMore.get(i)));
+                }
+                image_sliderCreatePost.setImageList(slideModels);
             } else {
                 Toast.makeText(this, "No images selected", Toast.LENGTH_SHORT).show();
             }
@@ -111,35 +131,11 @@ public class CreatePostActivity extends AppCompatActivity {
                 selectedFileChoseMore.add(imagePath);
                 // Check if the file exists
                 File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
-                    // Load image from file in a background thread
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Decode the file into a bitmap
-                            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                            if (bitmap != null) {
-                                // Update the ImageView on the UI thread
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        img_createPost.setImageBitmap(bitmap);
-                                    }
-                                });
-                            } else {
-                                // Show an error toast if failed to load the image
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(CreatePostActivity.this, "Failed to load image", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    }).start();
-                } else {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
-                }
+                Uri uri = Uri.fromFile(imageFile);
+                String imgUrl = uri.toString();
+                ArrayList<SlideModel> slideModels = new ArrayList<>();
+                slideModels.add(new SlideModel(imgUrl, ScaleTypes.CENTER_CROP));
+                image_sliderCreatePost.setImageList(slideModels);
             } else {
                 Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
             }
@@ -223,9 +219,12 @@ public class CreatePostActivity extends AppCompatActivity {
         SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         String isoDateString = isoFormat.format(createAt);
 
+        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
+
         // Sử dụng danh sách các URL trong việc tạo yêu cầu đăng bài viết
         RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, userId, description, "", isoDateString);
 
+        postViewModel.createPost(requestCreatePost, userId);
         postViewModel.createPost(requestCreatePost, userId).observe(this, new Observer<ApiResponse<ResponseCreatePost>>() {
             @Override
             public void onChanged(ApiResponse<ResponseCreatePost> responseCreatePostApiResponse) {

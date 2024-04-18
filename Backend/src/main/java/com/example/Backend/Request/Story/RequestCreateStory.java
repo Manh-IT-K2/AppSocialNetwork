@@ -1,24 +1,23 @@
 package com.example.Backend.Request.Story;
 
+import com.example.Backend.Entity.Story;
 import lombok.*;
 import org.bson.types.ObjectId;
 
 import java.util.Date;
 import java.util.List;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestStoryByUserId {
-    private String idStory;
-    private String userId;
-    private String avtUser;
-    private String userName;
+public class RequestCreateStory {
+    private ObjectId userId;
     private Date createdAt;
     private String image;
-    private List<RequestCreateStory.ContentMedia> contentMedia;
-    private List<RequestCreateStory.Stickers> stickers;
+    private List<ContentMedia> contentMedia;
+    private List<Stickers> stickers;
 
     @Data
     @NoArgsConstructor

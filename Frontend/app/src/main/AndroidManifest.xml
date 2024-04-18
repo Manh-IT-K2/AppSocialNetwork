@@ -10,15 +10,19 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
+        android:name=".utils.GlobalApplication"
         android:allowBackup="true"
+        tools:overrideLibrary="gr.makris.androidstories"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,8 +32,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend"
+        tools:node="merge"
+        tools:replace="android:theme"
         tools:targetApi="34">
         <activity
+            android:name=".activities.DetailStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CreateStoryActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Định nghĩa URI scheme và phần path cho Redirect URI -->
+                <data
+                    android:host="auth"
+                    android:path="/callback"
+                    android:scheme="echobond" />
+            </intent-filter>
+        </activity>
             android:name=".activities.PostIDActivity"
             android:exported="false" />
         <activity
@@ -52,7 +75,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.CreatePostActivity"
-            android:exported="false" />
+            android:exported="false"></activity>
         <activity
             android:name=".utils.CameraX"
             android:exported="false" />

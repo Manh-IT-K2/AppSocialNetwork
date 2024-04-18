@@ -1,0 +1,116 @@
+{
+	"api_key": "9df560dd7e4344d0fa6c3b55781a4f72",
+	"Theme": {
+		"backgroundColor" : {
+			"light" : "#FFFFFF",
+			"dark" : "#171B1C"
+		},
+		"groupedContentBackgroundColor" : {
+			"light" : "#F7F8F9",
+			"dark" : "#2E363A"
+		},
+		"mainColor" : {
+			"light" : "#F08D54",
+			"dark" : "#F08D54"
+		},
+		"iconColor" : {
+			"normalColor": {
+				"light": "#414141",
+				"dark": "#646F7C"
+			},
+			"tintColor": {
+				"light": "#F08D54",
+				"dark": "#F08D54"
+			}
+		},
+		"font" : {
+			"family": "system",
+			"weight": 400,
+			"character": 0
+		}
+	},
+	"StickerIcon": "ic_sticker_border_3",
+	"Search": {
+		"searchbarIcon": "icon_search",
+		"searchbarDeleteIcon": "ic_erase_border_3",
+		"searchbarRadius": 10,
+		"searchTags": {
+			"hidden": false
+		},
+		"numOfColumns": 3
+	},
+	"LiteStore": {
+		"trending" : {
+			"useBackgroundColor" : true,
+			"backgroundColor" : "#eeeeee",
+			"opacity": 0.7
+		},
+		"listType": "singular",
+		"downloadIcon": "ic_download_border_3",
+		"completeIcon": "ic_downloaded_border_3",
+		"bottomOfSearch": "popularStickers"
+	},
+	"MySticker": {
+		"orderIcon": "ic_move_border_3",
+		"hideIcon": "ic_hide_border_3"
+	},
+	"Keyboard": {
+		"liteStoreIcon": "ic_store",
+		"numOfColumns": 4
+	},
+	"Sticker": {
+		"backIcon": "ic_back_border_3",
+		"closeIcon": "ic_close_border_3",
+		"numOfColumns": 3
+	},
+	"Send": {
+		"preview": false,
+		"previewPadding": 0,
+		"favoritesOnIcon": {
+			"light" : "ic_favorites_on",
+			"dark" : "ic_favorites_on"
+		},
+		"favoritesOffIcon": {
+			"light" : "ic_favorites_off",
+			"dark" : "ic_favorites_off"
+		},
+		"closeIcon": {
+			"light" : "ic_cancel",
+			"dark" : "ic_cancel"
+		}
+	},
+	"Function": {
+		"Sticker": {
+			"doubleTap": false
+		}
+	},
+	"Icon": {
+		"SPPickerView": {
+			"Search": {
+				"isActive": true
+			},
+			"Setting": {
+				"isActive": false
+			},
+			"Store": {
+				"isActive": true
+			}
+		}
+	},
+	"View": {
+		"SPPickerView": {
+			"type": "PopupWindow"
+		}
+	},
+	"Layout": {
+		"SPPickerView": {
+			"onKeyboard": true
+		}
+	},
+	"Mode": {
+		"PackPurchase": false
+	},
+	"SAuth": {
+		"isActive": false
+	}
+}

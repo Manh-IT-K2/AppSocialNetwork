@@ -89,6 +89,8 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getWindow().setAttributes(params);
 
+        String userId = SharedPreferenceLocal.read(getContext(),"userId");
+
         // init view
         btn_drag = findViewById(R.id.btn_drag);
         linearLayout = findViewById(R.id.linearLayout);
@@ -204,7 +206,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
 
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
-                        "65e8a525714ccc3a3caa7f77",
+                        userId,
                         contentComment,
                         isReplyComment,
                         idComment,
@@ -248,7 +250,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         });
 
         //
-        userViewModel.getDetailUserById("65e8a525714ccc3a3caa7f77").observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
+        userViewModel.getDetailUserById(userId).observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
