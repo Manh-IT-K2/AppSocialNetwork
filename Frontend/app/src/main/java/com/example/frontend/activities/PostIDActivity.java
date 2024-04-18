@@ -15,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.frontend.R;
 import com.example.frontend.fragments.CommentFragment;
 import com.example.frontend.fragments.LikeFragment;
@@ -33,6 +36,7 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -44,9 +48,9 @@ public class PostIDActivity extends AppCompatActivity {
     private TextView txt_liked;
     private PostViewModel postViewModel = new PostViewModel();
     private UserViewModel userViewModel = new UserViewModel();
-    private ImageView img_user, img_userLiked, img_post, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
+    private ImageView img_user, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
     private TextView txt_userName, txt_address, txt_contentPost, txt_timeCreatePost;
-    LinearLayout linear_layout_drag_Post;
+    private ImageSlider image_sliderPost;
 
     public PostIDActivity() {
     }
@@ -57,8 +61,6 @@ public class PostIDActivity extends AppCompatActivity {
         setContentView(R.layout.post_item);
 
         img_user = findViewById(R.id.img_user);
-        //img_userLiked = itemView.findViewById(R.id.img_userLiked);
-        img_post = findViewById(R.id.img_post);
         btn_like = findViewById(R.id.btn_like);
         btn_comment = findViewById(R.id.btn_comment);
         btn_save = findViewById(R.id.btn_save);
@@ -68,8 +70,8 @@ public class PostIDActivity extends AppCompatActivity {
         txt_contentPost = findViewById(R.id.txt_contentPost);
         txt_address = findViewById(R.id.txt_address);
         txt_timeCreatePost = findViewById(R.id.txt_timeCreatePost);
-        linear_layout_drag_Post = findViewById(R.id.linear_layout_drag_Post);
         txt_liked = findViewById(R.id.txt_liked);
+        image_sliderPost = findViewById(R.id.image_sliderPost);
 
         ResponsePostById post = new ResponsePostById();
 
@@ -126,41 +128,11 @@ public class PostIDActivity extends AppCompatActivity {
                             .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                             .into(img_user);
 
-                    // display more image in imageView
-                    if(post.getPost().getImagePost().size() > 1){
-                        // Thêm hình ảnh vào LinearLayout
-                        LinearLayout linearLayout = findViewById(R.id.linear_layout_drag_Post);
-                        linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
-
-                        // Lấy kích thước màn hình
-//           DisplayMetrics displayMetrics = new DisplayMetrics();
-//           ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//           int screenWidth = displayMetrics.widthPixels;
-
-                        for (String imageUrl : post.getPost().getImagePost()) { // Giả sử getImageUrls() trả về danh sách URL hình ảnh
-                            ImageView imageView = new ImageView(getApplicationContext());
-
-                            // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
-                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT,
-                                    350 // Set chiều cao mong muốn ở đây (350px)
-                            );
-                            layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
-                            imageView.setLayoutParams(layoutParams);
-
-                            Glide.with(getApplicationContext())
-                                    .load(imageUrl)
-                                    .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
-                                    .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
-                                    .into(imageView);
-
-                            linearLayout.addView(imageView);
-                        }
-                    }else{
-                        Glide.with(getApplicationContext())
-                                .load(post.getPost().getImagePost().get(0))
-                                .into(img_post);
+                    ArrayList<SlideModel> slideModels = new ArrayList<>();
+                    for (int i = 0; i<= post.getPost().getImagePost().size() -1; i++){
+                        slideModels.add(new SlideModel(post.getPost().getImagePost().get(i), ScaleTypes.FIT));
                     }
+                    image_sliderPost.setImageList(slideModels);
                 }
             });
         }

@@ -134,7 +134,9 @@ public class ProfileFragment extends Fragment {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
                     userResponse = response.getData();
                     username.setText(userResponse.getUsername());
-                    Picasso.get().load(userResponse.getAvatarImg()).into(profileImage);
+                    Glide.with(getContext())
+                            .load(userResponse.getAvatarImg() != null ? userResponse.getAvatarImg() : R.drawable.logo)
+                            .centerCrop().into(profileImage);
                     nameTV.setText(userResponse.getName());
                     followerCount.setText(String.valueOf(userResponse.getFollowers()));
                     followingCount.setText(String.valueOf(userResponse.getFollowing()));

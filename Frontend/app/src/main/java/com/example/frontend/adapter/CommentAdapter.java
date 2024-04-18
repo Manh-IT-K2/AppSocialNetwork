@@ -88,15 +88,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.txt_timeComment.setText(timeAgo);
 
         Glide.with(mContext)
-                .load(comment.getUser().getAvatarImg())
-                .into(holder.img_userComment);
+                .load(comment.getUser().getAvatarImg() != null ? comment.getUser().getAvatarImg() : R.drawable.logo)
+                .centerCrop().into(holder.img_userComment);
 
         // set text for txt_countLike and set icon for btn_like
         if (comment.getLike() != null) {
             holder.txt_countLikeComment.setText(comment.getLike().size() + "");
 
             for (UserResponse user : comment.getLike()) {
-                if (user.getId().contains("65e8a525714ccc3a3caa7f77")) {
+                if (user.getId().contains(SharedPreferenceLocal.read(mContext, "userId"))) {
                     comment.setLike(true);
                     break;
                 }

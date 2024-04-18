@@ -53,6 +53,7 @@
                     android:scheme="echobond" />
             </intent-filter>
         </activity>
+        <activity
             android:name=".activities.PostIDActivity"
             android:exported="false" />
         <activity

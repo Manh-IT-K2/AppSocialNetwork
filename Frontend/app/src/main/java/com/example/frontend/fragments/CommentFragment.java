@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.adapter.CommentAdapter;
 import com.example.frontend.adapter.IconAdapter;
@@ -255,7 +256,9 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
                     UserResponse userResponse = response.getData();
-                    Picasso.get().load(userResponse.getAvatarImg()).into(img_user);
+                    Glide.with(getContext())
+                            .load(userResponse.getAvatarImg() != null ? userResponse.getAvatarImg() : R.drawable.logo)
+                            .centerCrop().into(img_user);
                 }
             }
         });
