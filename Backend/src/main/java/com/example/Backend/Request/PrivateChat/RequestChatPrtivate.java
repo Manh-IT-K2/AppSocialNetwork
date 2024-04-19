@@ -15,4 +15,6 @@ public class RequestChatPrtivate {
     String recipientId;
     Date createdAt;
     String lastMessageSent;
+    String urlFile;
+    String urlSticker;
 }

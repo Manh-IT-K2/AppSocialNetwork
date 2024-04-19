@@ -85,6 +85,10 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 // Xử lý logic tạo nhóm chat ở đây
                 if (selectedUsers.size() >= 3) {
                     String groupName = edtGroupName.getText().toString();
+                    if(groupName.isEmpty()){
+                        edtGroupName.setError("Vui lòng nhậ tên group");
+                        return;
+                    }
                     createGroupChat(groupName);
                     // Quay lại MainActivityChat mới
                     Intent intent = new Intent(Function_chatgroup_activity.this, MainChatActivity.class);
@@ -131,6 +135,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 if (response != null && response.getStatus()) {
                     // Nếu phản hồi thành công, cập nhật danh sách người dùng trong adapter
                     List<GetAllUserByFollowsResponse> userList = response.getData();
+                    Log.e("checkImg", new Gson().toJson(userList));
                     adapter.clear();
                     adapter.addAll(userList);
                 } else {

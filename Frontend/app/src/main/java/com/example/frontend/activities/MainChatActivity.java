@@ -341,7 +341,7 @@ public class MainChatActivity extends AppCompatActivity {
     private void updateUIWithNewMessage(String newMessageData) {
         Gson gson = new Gson();
         Type messageType = new TypeToken<List<MessageWithSenderInfo>>() {}.getType();
-        List<MessageWithSenderInfo> messages = gson.fromJson(newMessageData, messageType);
+//        List<MessageWithSenderInfo> messages = gson.fromJson(newMessageData, messageType);
         String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
         messageViewModel.getListChat(userId).observe(this, chatList -> {
             adapter.setChatList(chatList);

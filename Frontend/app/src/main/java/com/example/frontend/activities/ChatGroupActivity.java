@@ -2,6 +2,7 @@ package com.example.frontend.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,6 +33,7 @@ import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.Message.Message;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
@@ -39,7 +41,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pusher.client.Pusher;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.stipop.Stipop;
@@ -65,7 +70,6 @@ public class ChatGroupActivity extends AppCompatActivity implements StipopDelega
     private boolean isInforGroupChatLoaded = false;
     private Pusher pusher;
     StipopImageView btn_Sticker;
-    ImageView stickerImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +96,6 @@ public class ChatGroupActivity extends AppCompatActivity implements StipopDelega
         btn_Menu=findViewById(R.id.menu_btn);
         btn_Sticker = findViewById(R.id.btn_Sticker);
         btn_File = findViewById(R.id.btn_File);
-        stickerImageView = findViewById(R.id.stickerImageView);
         btn_openSticker = findViewById(R.id.btn_openSticker);
 
         groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
@@ -190,7 +193,10 @@ public class ChatGroupActivity extends AppCompatActivity implements StipopDelega
         btn_File.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, 1);
             }
         });
     }
@@ -363,5 +369,34 @@ public class ChatGroupActivity extends AppCompatActivity implements StipopDelega
         RequestChatGroup request = new RequestChatGroup(groupId, currentUserId,"", spSticker.getStickerImg(),"");
         groupChatViewModel.sendMessage(groupId, request);
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Uri fileUri = data.getData();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String timestamp = sdf.format(new Date());
+            String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
+            FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
+                @Override
+                public void onUploadComplete(List<String> fileUrls) {
+
+                }
+
+                @Override
+                public void onUploadComplete(String fileUrl) {
+                    RequestChatGroup request = new RequestChatGroup(groupId, currentUserId, "", "",fileUrl);
+
+                    groupChatViewModel.sendMessage(groupId, request);
+                }
+
+                @Override
+                public void onUploadFailed(String errorMessage) {
+                    Toast.makeText(getApplicationContext(), "Upload failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

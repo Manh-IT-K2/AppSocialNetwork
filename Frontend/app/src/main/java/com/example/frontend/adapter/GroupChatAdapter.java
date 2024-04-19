@@ -108,7 +108,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         if (senderId != null && senderId.equals(currentUserId)) {
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
-            holder.user_name_right.setText(sender.getName()); // Hiển thị tên người gửi tin nhắn
+//            holder.user_name_right.setText(""); // Hiển thị tên người gửi tin nhắn
             holder.user_name_left.setText(""); // Ẩn tên người gửi tin nhắn bên trái
             holder.left_stickerImageView.setVisibility(View.GONE);
 
@@ -116,11 +116,11 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
                 if(url.contains(".gif")){
                     Glide.with(context).asGif()
-                            .load(message.getUrlSticker())
+                            .load(url)
                             .centerCrop().into(holder.right_stickerImageView);
                 }else{
                     Glide.with(context)
-                            .load(message.getUrlSticker())
+                            .load(url)
                             .centerCrop().into(holder.right_stickerImageView);
                 }
                 holder.rightChatTextView.setVisibility(View.GONE);
@@ -133,7 +133,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.right_stickerImageView.setVisibility(View.GONE);
             holder.user_name_left.setText(sender.getName()); // Hiển thị tên người gửi tin nhắn bên trái
-            holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
+//            holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
             Glide.with(context)
                     .load(sender.getAvatarImg() != null ? sender.getAvatarImg() : R.drawable.logo)
                     .centerCrop().into(holder.img_user);
@@ -142,14 +142,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
                 if(url.contains(".gif")) {
                     Glide.with(context).asGif()
-                            .load(!message.getUrlFile().isEmpty() || message.getUrlFile() != null ? message.getUrlFile() : message.getUrlSticker())
+                            .load(url)
                             .centerCrop().into(holder.left_stickerImageView);
                 }else{
                     Glide.with(context)
-                            .load(!message.getUrlFile().isEmpty() || message.getUrlFile() != null ? message.getUrlFile() : message.getUrlSticker())
+                            .load(url)
                             .centerCrop().into(holder.left_stickerImageView);
                 }
-                holder.rightChatTextView.setVisibility(View.GONE);
+                holder.leftChatTextView.setVisibility(View.GONE);
             }else {
                 holder.leftChatTextView.setText(message.getContent());
                 holder.left_stickerImageView.setVisibility(View.GONE);
@@ -191,8 +191,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 // Đặt giá trị cho TextView
         holder.timeTextView.setText(formattedDate);
-
-
     }
     // Kiểm tra xem hai thời điểm có cách nhau trong vòng 1 giờ không
     private boolean isWithinOneHour(Date date1, Date date2) {
@@ -213,7 +211,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView timeTextView, leftChatTextView, rightChatTextView,user_name_left, user_name_right;
+        TextView timeTextView, leftChatTextView, rightChatTextView,user_name_left;
         LinearLayout leftChatLayout, rightChatLayout;
         ShapeableImageView img_user;
         ImageView left_stickerImageView, right_stickerImageView;
@@ -226,7 +224,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             user_name_left = itemView.findViewById(R.id.user_name_left);
-            user_name_right = itemView.findViewById(R.id.user_name_right);
             img_user = itemView.findViewById(R.id.img_user);
             left_stickerImageView = itemView.findViewById(R.id.left_stickerImageView);
             right_stickerImageView = itemView.findViewById(R.id.right_stickerImageView);

@@ -1,6 +1,7 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.frontend.R;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
+import com.google.gson.Gson;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddMemberAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
     private List<GetAllUserByFollowsResponse> userList;
@@ -42,6 +49,7 @@ public class AddMemberAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> 
             holder.checkbox = convertView.findViewById(R.id.checkboxFriend);
             holder.textFriendName = convertView.findViewById(R.id.textFriendName);
             holder.subInformation = convertView.findViewById(R.id.subInformation);
+            holder.imgAvatar = convertView.findViewById(R.id.imgAvatar);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -50,6 +58,10 @@ public class AddMemberAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> 
         GetAllUserByFollowsResponse user = userList.get(position);
         holder.textFriendName.setText(user.getUsername());
         holder.subInformation.setText(user.getId());
+
+        Glide.with(context)
+                .load(user.getAvatarImg() != null && !user.getAvatarImg().isEmpty() ? user.getAvatarImg() : R.drawable.logo )
+                .centerCrop().into(holder.imgAvatar);
 
         // Set trạng thái của checkbox dựa trên cờ isSelected của người dùng
         holder.checkbox.setOnCheckedChangeListener(null); // Remove listener to prevent unintended triggering
@@ -74,6 +86,7 @@ public class AddMemberAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> 
         CheckBox checkbox;
         TextView textFriendName;
         TextView subInformation;
+        CircleImageView imgAvatar;
     }
 
     // Giao diện lắng nghe sự kiện khi mục được chọn/loại bỏ chọn
