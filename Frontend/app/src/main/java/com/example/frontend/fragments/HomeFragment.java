@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
                                     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                                     String isoDateString = isoFormat.format(createAt);
                                     UserResponse userResponse = response.getData();
-                                    RequestStoryByUserId defaultStory = new RequestStoryByUserId(userId, userResponse.getAvatarImg(), userResponse.getUsername(), isoDateString, "", null, null);
+                                    RequestStoryByUserId defaultStory = new RequestStoryByUserId("",userId, userResponse.getAvatarImg(), userResponse.getUsername(), isoDateString, "",0, null, null, null);
                                     storyList.add(defaultStory);
                                     storyAdapter = new StoryAdapter(getContext(), storyList);
                                     recyclerViewStory.setAdapter(storyAdapter);

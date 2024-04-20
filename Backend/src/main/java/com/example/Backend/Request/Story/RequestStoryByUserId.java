@@ -1,5 +1,6 @@
 package com.example.Backend.Request.Story;
 
+import com.example.Backend.Entity.model.User;
 import lombok.*;
 import org.bson.types.ObjectId;
 
@@ -17,8 +18,10 @@ public class RequestStoryByUserId {
     private String userName;
     private Date createdAt;
     private String image;
+    private int status;
     private List<RequestCreateStory.ContentMedia> contentMedia;
     private List<RequestCreateStory.Stickers> stickers;
+    private List<User> seen;
 
     @Data
     @NoArgsConstructor

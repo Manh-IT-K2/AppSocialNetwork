@@ -1,5 +1,7 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.Entity.Post;
+import com.example.Backend.Entity.Story;
 import com.example.Backend.Request.Story.RequestCreateStory;
 import com.example.Backend.Request.Story.RequestStoryByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -35,5 +37,15 @@ public class StoryController {
         return new ResponseEntity<ApiResponse<List<RequestStoryByUserId>>>(result, HttpStatus.OK);
     }
 
+    // add viewer
+    @PostMapping("/addViewer")
+    public ResponseEntity<ApiResponse<String>> addViewerStory(@RequestParam String storyId, @RequestParam String userId){
+        if (!storyId.isEmpty() && !userId.isEmpty()) {
+            storyService.addViewedStory(storyId, userId);
+            ApiResponse<String> apiResponse = new ApiResponse<String>(true, "success !","");
+            return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
+        }
+        return null;
+    }
 }
 

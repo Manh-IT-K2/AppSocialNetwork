@@ -4,25 +4,37 @@ import static com.example.frontend.fragments.HomeFragment.recyclerViewStory;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.activities.CreateStoryActivity;
 import com.example.frontend.activities.DetailStoryActivity;
+import com.example.frontend.activities.MainActivity;
 import com.example.frontend.activities.StoryActivity;
+import com.example.frontend.request.Story.RequestCreateStory;
 import com.example.frontend.request.Story.RequestStoryByUserId;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
 
@@ -87,7 +99,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 long hoursSinceCreation = TimeUnit.MILLISECONDS.toHours(timeDifference);
 
                 // Kiểm tra nếu story được tạo trong vòng 24 giờ
-                if (hoursSinceCreation <= 24) {
+                if (hoursSinceCreation <= 24 && story.getStatus() == 0) {
                     // Thêm story vào danh sách của người dùng hiện tại
                     currentUserStories.add(story);
                 }
@@ -136,20 +148,58 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder.getItemViewType() == VIEW_TYPE_HEADER) {
             // Handle header binding here if needed
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-            String userId = SharedPreferenceLocal.read(mContext, "userId");
+            Glide.with(mContext).load(groupedStoryList.get(0).get(0).getAvtUser()).into(((HeaderViewHolder) holder).img_avtUserMain);
+            if (!groupedStoryList.get(0).get(0).getImage().equals("")){
+                headerViewHolder.img_avtUserMain.setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.blue1)));
+                headerViewHolder.img_add.setVisibility(View.GONE);
+            }
 
-               Glide.with(mContext).load(groupedStoryList.get(0).get(0).getAvtUser()).into(((HeaderViewHolder) holder).img_avtUserMain);
-               headerViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-                       Gson gson = new Gson();
-                       String jsonGroupedStoryList = gson.toJson(groupedStoryList.get(0));
-                       Log.e("manhh",jsonGroupedStoryList);
-                       Intent intent = new Intent(v.getContext(), DetailStoryActivity.class);
-                       intent.putExtra("groupedStoryList", jsonGroupedStoryList);
-                       v.getContext().startActivity(intent);
-                   }
-               });
+            //
+            headerViewHolder.img_avtUserMain.setOnTouchListener(new View.OnTouchListener() {
+                private long startClickTime;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            startClickTime = System.currentTimeMillis();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            long clickDuration = System.currentTimeMillis() - startClickTime;
+                            if (clickDuration < ViewConfiguration.getLongPressTimeout()) {
+                                // Người dùng thực hiện một cú chạm ngắn, xử lý sự kiện onClickListener
+                                Gson gson = new Gson();
+                                String jsonGroupedStoryList = gson.toJson(groupedStoryList.get(0));
+                                Log.e("manhh",jsonGroupedStoryList);
+                                Intent intent = new Intent(v.getContext(), DetailStoryActivity.class);
+                                intent.putExtra("groupedStoryList", jsonGroupedStoryList);
+                                v.getContext().startActivity(intent);
+                            } else {
+                                // Người dùng thực hiện một cú chạm dài, xử lý sự kiện onLongClickListener
+                                // init dialog
+                                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(mContext);
+                                bottomSheetDialog.setContentView(R.layout.dialog_bottom_create_story);
+
+                                // init view
+                                TextView txt_createNewStory = bottomSheetDialog.findViewById(R.id.txt_createNewStory);
+
+                                // action
+                                txt_createNewStory.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(mContext, StoryActivity.class);
+                                        mContext.startActivity(intent);
+                                    }
+                                });
+
+                                // show dialog
+                                bottomSheetDialog.show();
+                            }
+                            break;
+                    }
+                    return true;
+                }
+            });
 
             // Bind header data or perform any necessary operations
         } else {
@@ -158,6 +208,16 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             int positons = viewHolder.getAdapterPosition();
             if (positons >= 0 && positons < groupedStoryList.size()) {
                 viewHolder.txt_nameUserStory.setText(groupedStoryList.get(positons).get(0).getUserName());
+                // Đặt lại màu của strokeColor nếu viewHolder.img_avtUser là ShapeableImageView
+                String userId = SharedPreferenceLocal.read(mContext, "userId");
+                if(groupedStoryList.get(positons).get(0).getSeen() != null){
+                    for (int i = 0; i < groupedStoryList.get(positons).get(0).getSeen().size(); i++){
+                        if (groupedStoryList.get(positons).get(0).getSeen().get(i).getId().equals(userId)){
+                            viewHolder.img_avtUser.setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.blackLite)));
+                        }
+                    }
+                }
+                //
                 Glide.with(mContext).load(groupedStoryList.get(positons).get(0).getAvtUser()).placeholder(R.drawable.logo).error(R.drawable.logo).into(viewHolder.img_avtUser);
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -216,7 +276,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView img_avtUser;
+        private ShapeableImageView img_avtUser;
         private TextView txt_nameUserStory;
 
         public ViewHolder(@NonNull View itemView) {

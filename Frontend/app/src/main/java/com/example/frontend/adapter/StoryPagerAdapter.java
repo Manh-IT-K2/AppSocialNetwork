@@ -1,12 +1,14 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,22 +16,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 //import com.example.frontend.activities.CreateStoryActivity;
 import com.example.frontend.activities.DetailStoryActivity;
+import com.example.frontend.activities.MainActivity;
 import com.example.frontend.activities.StoryActivity;
+import com.example.frontend.request.Story.RequestCreateStory;
 import com.example.frontend.request.Story.RequestStoryByUserId;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -37,12 +51,14 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class StoryPagerAdapter extends RecyclerView.Adapter<StoryPagerAdapter.ViewHolder> {
-    private Context mContext;
-    private List<RequestStoryByUserId> imageUrls;
+    private static Context mContext;
+    private static ViewerStoryAdapter viewerStoryAdapter;
+    private static List<RequestStoryByUserId> imageUrls;
 
     public StoryPagerAdapter(Context mContext, List<RequestStoryByUserId> imageUrls) {
         this.mContext = mContext;
         this.imageUrls = imageUrls;
+
     }
 
     @NonNull
@@ -54,10 +70,40 @@ public class StoryPagerAdapter extends RecyclerView.Adapter<StoryPagerAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String userId = SharedPreferenceLocal.read(mContext,"userId");
         holder.btn_addStoryMain.setVisibility(View.GONE);
+        holder.txt_countViewerStory.setVisibility(View.GONE);
+        holder.btn_listViewerStory.setVisibility(View.GONE);
         String imageUrl = imageUrls.get(position).getImage();
         Glide.with(holder.itemView.getContext()).load(imageUrl).into(holder.img_storyUri);
         holder.txt_timeCreateStory.setText(getTimeAgo(imageUrls.get(position).getCreatedAt()));
+        Log.e("kkk",String.valueOf(imageUrls.get(position).getSeen()));
+        if(imageUrls.get(position).getSeen() != null){
+            if (imageUrls.get(position).getUserId().equals(userId)){
+                holder.txt_countViewerStory.setVisibility(View.VISIBLE);
+                holder.btn_listViewerStory.setVisibility(View.VISIBLE);
+                DetailStoryActivity.btn_likeStory.setVisibility(View.GONE);
+                DetailStoryActivity.btn_sendMessageStory.setVisibility(View.GONE);
+                DetailStoryActivity.edt_sendMessageStory.setVisibility(View.GONE);
+                holder.txt_countViewerStory.setText(imageUrls.get(position).getSeen().size() + " người xem ");
+            }
+        } else {
+            if (imageUrls.get(position).getUserId().equals(userId) && !imageUrls.get(position).getImage().equals("")){
+                holder.txt_countViewerStory.setVisibility(View.VISIBLE);
+                holder.btn_listViewerStory.setVisibility(View.VISIBLE);
+                DetailStoryActivity.btn_likeStory.setVisibility(View.GONE);
+                DetailStoryActivity.btn_sendMessageStory.setVisibility(View.GONE);
+                DetailStoryActivity.edt_sendMessageStory.setVisibility(View.GONE);
+                holder.txt_countViewerStory.setText(" Chưa có người xem ");
+            }else if (imageUrls.get(position).getUserId().equals(userId) && imageUrls.get(position).getImage().equals("")){
+                holder.txt_countViewerStory.setVisibility(View.VISIBLE);
+                holder.btn_listViewerStory.setVisibility(View.VISIBLE);
+                DetailStoryActivity.btn_likeStory.setVisibility(View.GONE);
+                DetailStoryActivity.btn_sendMessageStory.setVisibility(View.GONE);
+                DetailStoryActivity.edt_sendMessageStory.setVisibility(View.GONE);
+                holder.txt_countViewerStory.setText("");
+            }
+        }
         if (imageUrls != null && imageUrls.get(position).getStickers() != null) {
             // Lặp qua danh sách sticker của câu chuyện
             for (int i = 0; i < imageUrls.get(position).getStickers().size(); i++) {
@@ -151,7 +197,8 @@ public class StoryPagerAdapter extends RecyclerView.Adapter<StoryPagerAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView img_storyUri;
         Button btn_addStoryMain;
-        TextView txt_timeCreateStory;
+        ImageButton btn_listViewerStory;
+        TextView txt_timeCreateStory,txt_countViewerStory;
         ConstraintLayout layout_constraint_story;
 
         public ViewHolder(@NonNull View itemView) {
@@ -161,6 +208,56 @@ public class StoryPagerAdapter extends RecyclerView.Adapter<StoryPagerAdapter.Vi
             img_storyUri = itemView.findViewById(R.id.img_storyUri);
             txt_timeCreateStory = itemView.findViewById(R.id.txt_timeCreateStory);
             layout_constraint_story = itemView.findViewById(R.id.layout_constraint_story);
+            txt_countViewerStory = itemView.findViewById(R.id.txt_countViewerStory);
+            btn_listViewerStory = itemView.findViewById(R.id.btn_listViewerStory);
+
+            // handle action click
+            btn_listViewerStory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    Log.e("oiiii",String.valueOf(position));
+                    DetailStoryActivity.handler.removeCallbacks(DetailStoryActivity.runnable);
+                    SeekBarAdapter.pauseSeekBar();
+                    showBottomDialog(imageUrls.get(position).getSeen(), position);
+                }
+            });
+        }
+
+        // show dialog viewer story
+        private void showBottomDialog(List<UserResponse> listUser, int position) {
+
+            // init dialog
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(mContext);
+            bottomSheetDialog.setContentView(R.layout.dialog_viewer_story);
+
+            // init view
+            RecyclerView list_viewerStory = bottomSheetDialog.findViewById(R.id.list_viewerStory);
+
+            // init list_viewerStory
+            list_viewerStory.setLayoutManager(new LinearLayoutManager(mContext));
+
+            // set data
+            if (listUser != null){
+                viewerStoryAdapter = new ViewerStoryAdapter(mContext,listUser);
+                list_viewerStory.setAdapter(viewerStoryAdapter);
+            }else {
+                
+            }
+
+            // Set listener để biết khi dialog đã đóng
+            bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    // Khởi tạo Intent để chuyển đến MainActivity
+                    SeekBarAdapter.resumeSeekBar();
+                    DetailStoryActivity.currentPage = 0;
+                    ((DetailStoryActivity) mContext).finish();
+                }
+            });
+
+            // show
+            bottomSheetDialog.show();
         }
     }
 
@@ -197,4 +294,5 @@ public class StoryPagerAdapter extends RecyclerView.Adapter<StoryPagerAdapter.Vi
             return "N/A";
         }
     }
+
 }

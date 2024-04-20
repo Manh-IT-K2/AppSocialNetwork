@@ -87,9 +87,9 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/edt_sendMessageStory"
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/background_send_message_story"
             android:ems="10"
@@ -98,9 +98,9 @@
             android:hint="Gửi tin nhắn"/>
 
         <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/btn_likeStory"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:background="@android:color/transparent"
@@ -108,9 +108,9 @@
             app:srcCompat="@drawable/icon_favorite" />
 
         <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:id="@+id/btn_sendMessageStory"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:background="@android:color/transparent"

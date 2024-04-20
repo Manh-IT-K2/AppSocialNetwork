@@ -44,7 +44,7 @@ public class LikedAdapter extends RecyclerView.Adapter<LikedAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull LikedAdapter.ViewHolder holder, int position) {
         UserResponse user = listUserLiked.get(position);
-
+        holder.btnFollow.setVisibility(View.GONE);
         // set text in view
         holder.nameUser.setText(user.getName());
         holder.idNameUser.setText(user.getUsername());

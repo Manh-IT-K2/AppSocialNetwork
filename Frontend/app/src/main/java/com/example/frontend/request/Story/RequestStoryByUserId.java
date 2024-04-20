@@ -1,16 +1,21 @@
 package com.example.frontend.request.Story;
 
+import com.example.frontend.response.User.UserResponse;
+
 import java.time.LocalTime;
 import java.util.List;
 
 public class RequestStoryByUserId {
+    private String idStory;
     private String userId;
     private String avtUser;
     private String userName;
     private String createdAt;
     private String image;
+    private int status;
     private List<RequestCreateStory.ContentMedia> contentMedia;
     private List<RequestCreateStory.Stickers> stickers;
+    private List<UserResponse> seen;
     public static class ContentMedia {
         private String content;
         private float x;
@@ -90,14 +95,25 @@ public class RequestStoryByUserId {
     public RequestStoryByUserId() {
     }
 
-    public RequestStoryByUserId(String userId, String avtUser, String userName, String createdAt, String image, List<RequestCreateStory.ContentMedia> contentMedia, List<RequestCreateStory.Stickers> stickers) {
+    public RequestStoryByUserId(String idStory, String userId, String avtUser, String userName, String createdAt, String image, int status, List<RequestCreateStory.ContentMedia> contentMedia, List<RequestCreateStory.Stickers> stickers, List<UserResponse> seen) {
+        this.idStory = idStory;
         this.userId = userId;
         this.avtUser = avtUser;
         this.userName = userName;
         this.createdAt = createdAt;
         this.image = image;
+        this.status = status;
         this.contentMedia = contentMedia;
         this.stickers = stickers;
+        this.seen = seen;
+    }
+
+    public String getIdStory() {
+        return idStory;
+    }
+
+    public void setIdStory(String idStory) {
+        this.idStory = idStory;
     }
 
     public String getUserId() {
@@ -140,6 +156,14 @@ public class RequestStoryByUserId {
         this.image = image;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public List<RequestCreateStory.ContentMedia> getContentMedia() {
         return contentMedia;
     }
@@ -154,5 +178,13 @@ public class RequestStoryByUserId {
 
     public void setStickers(List<RequestCreateStory.Stickers> stickers) {
         this.stickers = stickers;
+    }
+
+    public List<UserResponse> getSeen() {
+        return seen;
+    }
+
+    public void setSeen(List<UserResponse> seen) {
+        this.seen = seen;
     }
 }

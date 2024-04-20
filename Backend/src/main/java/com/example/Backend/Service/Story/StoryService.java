@@ -1,5 +1,6 @@
 package com.example.Backend.Service.Story;
 
+import com.example.Backend.Entity.Story;
 import com.example.Backend.Request.Story.RequestCreateStory;
 import com.example.Backend.Request.Story.RequestStoryByUserId;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
@@ -15,4 +16,7 @@ public interface StoryService {
 
     // get list story by userId
     ApiResponse<List<RequestStoryByUserId>> getListStoryByUserId(String userId);
+
+    // add viewer
+    void addViewedStory(String storyId, String userId);
 }

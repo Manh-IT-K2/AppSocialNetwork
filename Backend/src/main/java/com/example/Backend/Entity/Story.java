@@ -1,5 +1,6 @@
 package com.example.Backend.Entity;
 
+import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Story.RequestCreateStory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "story")
+@Document(collection = "stories")
 public class Story {
 
     @Id
@@ -22,8 +23,10 @@ public class Story {
     private ObjectId userId;
     private Date createdAt;
     private String image;
+    private int status;
     private List<ContentMedia> contentMedia;
     private List<Stickers> stickers;
+    private List<User> seen;
 
     @Data
     @NoArgsConstructor
