@@ -69,7 +69,7 @@ public class PostProfileFragment extends Fragment {
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
         String userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
-        postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+        postViewModel.getListPostsProfile(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
                 if (response.getStatus() && !response.getData().isEmpty()) {

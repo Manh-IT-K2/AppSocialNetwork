@@ -37,6 +37,14 @@ public class PostController {
         return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(result, HttpStatus.OK);
     }
 
+    // select post
+    @GetMapping("/getListPostsProfile")
+    public ResponseEntity<ApiResponse<List<RequestPostByUserId>>> getListPostsProfile(@RequestParam String userId) {
+        if (userId.isEmpty()) userId = "";
+        ApiResponse<List<RequestPostByUserId>> result = postService.getListPostsProfile(userId);
+        return new ResponseEntity<ApiResponse<List<RequestPostByUserId>>>(result, HttpStatus.OK);
+    }
+
     // add user like post
     @PostMapping("/addLike")
     public ResponseEntity<ApiResponse<Post>> addLikeToPost(@RequestParam String postId, @RequestParam String userId){

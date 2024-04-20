@@ -283,4 +283,35 @@ public class PostIml implements PostService{
                 new ApiResponse<>(true, "Success", resultList) :
                 new ApiResponse<>(false, "No data", null);
     }
+
+    @Override
+    public ApiResponse<List<RequestPostByUserId>> getListPostsProfile(String userId) {
+        ObjectId objectId = new ObjectId(userId);
+        LookupOperation lookupOperation = LookupOperation.newLookup()
+                .from("post")
+                .localField("_id")
+                .foreignField("userId")
+                .as("posts");
+
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("_id").is(objectId));
+        AggregationOperation unwindOperation = Aggregation.unwind("posts");
+        AggregationOperation projectOperation = Aggregation.project()
+                .andExpression("_id").as("userId")
+                .andExpression("username").as("userName")
+                .andExpression("tokenFCM").as("tokenFCM")
+                .andExpression("avatarImg").as("avtImage")
+                .andExpression("posts._id").as("idPost")
+                .andExpression("posts.imagePost").as("imagePost")
+                .andExpression("posts.description").as("description")
+                .andExpression("posts.location").as("location")
+                .andExpression("posts.createAt").as("createAt")
+                .andExpression("posts.like").as("like");
+
+        SortOperation sortOperation = Aggregation.sort(Sort .by(Sort.Direction.DESC, "createAt"));
+
+        Aggregation aggregation = Aggregation.newAggregation(lookupOperation, matchOperation, unwindOperation, projectOperation, sortOperation);
+
+        List<RequestPostByUserId> list = mongoTemplate.aggregate(aggregation, "users", RequestPostByUserId.class).getMappedResults();
+        return new ApiResponse<List<RequestPostByUserId>>(true, "", list);
+    }
 }
