@@ -60,20 +60,26 @@ import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.NotificationService;
 import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.example.frontend.utils.Story;
 import com.example.frontend.viewModel.Follows.FollowsViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import omari.hamza.storyview.StoryView;
+import omari.hamza.storyview.callback.StoryClickListeners;
+import omari.hamza.storyview.model.MyStory;
 
 public class ProfileFragment extends Fragment {
 
@@ -93,6 +99,7 @@ public class ProfileFragment extends Fragment {
     FrameLayout fragment_layout_main;
     private UserResponse userResponse;
     Toolbar toolbar;
+    ShapeableImageView storiesUser;
 
     TabLayout tabLayout;
     ViewPager2 viewPager2;
@@ -175,6 +182,7 @@ public class ProfileFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager2 = view.findViewById(R.id.viewPager2);
         toolbar = view.findViewById(R.id.toolbar);
+        storiesUser = view.findViewById(R.id.storiesUser);
 
         viewPagerMediaAdapter = new ViewPagerMediaAdapter(getActivity());
         viewPager2.setAdapter(viewPagerMediaAdapter);
@@ -246,6 +254,54 @@ public class ProfileFragment extends Fragment {
     }
 
     public void handleClickListener() {
+        storiesUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                try {
+                    Date date1 = sdf.parse("20-10-2019 10:00:00");
+                    Date date2 = sdf.parse("20-10-2024 10:00:00");
+                    Story story1 = new Story("https://firebasestorage.googleapis.com/v0/b/noteapp-f20f4.appspot.com/o/uploadFiles%2Ftemp_image_20240417_104019_0.jpg?alt=media&token=85352b9f-49e2-4e91-9153-25f7486df489",date1);
+                    //Story story2 = new Story("https://lh3.googleusercontent.com/a/ACg8ocKh7zrGiHElSZiNujuDqA6MS-Bx5rfTufvuNvLsL4I6=s96-c",date2);
+                    ArrayList<Story> data = new ArrayList<>();
+                    data.add(story1);
+                    //data.add(story2);
+                    ArrayList<MyStory> myStories = new ArrayList<>();
+                    Glide.with(getContext())
+                            .load(story1.getImageUrl())
+                            .into(storiesUser);
+                    for(Story story: data){
+                        myStories.add(new MyStory(
+                                story.getImageUrl(),
+                                story.getDate()
+                        ));
+                    }
+
+                    new StoryView.Builder(getActivity().getSupportFragmentManager())
+                            .setStoriesList(myStories) // Required
+                            .setStoryDuration(5000) // Default is 2000 Millis (2 Seconds)
+                            .setTitleText("wuynk_link") // Default is Hidden
+                            .setSubtitleText("Damascus") // Default is Hidden
+                            .setTitleLogoUrl("https://firebasestorage.googleapis.com/v0/b/noteapp-f20f4.appspot.com/o/uploadFiles%2Ffile_20240327_154108_image%3A14.jpg?alt=media&token=ceaaf14e-2a43-4a04-8952-4143a625507d") // Default is Hidden
+                            .setStoryClickListeners(new StoryClickListeners() {
+                                @Override
+                                public void onDescriptionClickListener(int position) {
+                                    //your action
+                                }
+
+                                @Override
+                                public void onTitleIconClickListener(int position) {
+                                    //your action
+                                }
+                            }) // Optional Listeners
+                            .build() // Must be called before calling show method
+                            .show();
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
         editprofileImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

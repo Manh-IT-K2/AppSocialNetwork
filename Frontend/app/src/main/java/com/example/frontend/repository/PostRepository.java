@@ -84,6 +84,28 @@ public class PostRepository {
         return mutableLiveData;
     }
 
+    public MutableLiveData<ApiResponse<List<RequestPostByUserId>>> getListPostsProfile(String userId) {
+        MutableLiveData<ApiResponse<List<RequestPostByUserId>>> mutableLiveData = new MutableLiveData<>();
+        postService.getListPostsProfile(userId).enqueue(new Callback<ApiResponse<List<RequestPostByUserId>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<RequestPostByUserId>>> call, Response<ApiResponse<List<RequestPostByUserId>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<RequestPostByUserId>> apiResponse = response.body();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(apiResponse);
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Failed to get data from server", null));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<List<RequestPostByUserId>>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<List<RequestPostByUserId>>(false, "Error: " + t.getMessage(), null));
+            }
+        });
+        return mutableLiveData;
+    }
+
     // add user like post
     public MutableLiveData<ApiResponse<PostResponse>> addLike(String postId, String userId) {
         MutableLiveData<ApiResponse<PostResponse>> mutableLiveData = new MutableLiveData<>();
