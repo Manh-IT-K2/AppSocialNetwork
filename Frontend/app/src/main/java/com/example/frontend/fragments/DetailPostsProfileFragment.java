@@ -65,7 +65,7 @@ public class DetailPostsProfileFragment extends Fragment {
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         String userId = SharedPreferenceLocal.read(getContext().getApplicationContext(), "userId");
         String location = getArguments().getString("postId");
-        postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
+        postViewModel.getListPostsProfile(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {
                 Gson gson = new Gson();
