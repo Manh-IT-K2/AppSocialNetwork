@@ -1,5 +1,6 @@
 package com.example.Backend;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class BackendApplication {
 	public WebMvcConfigurer configure() {
 		return new WebMvcConfigurer() {
 			@Override
-			public void addCorsMappings(CorsRegistry reg) {
+			public void addCorsMappings(@NotNull CorsRegistry reg) {
 				reg.addMapping("/**").allowedOrigins("*");
 			}
 		};

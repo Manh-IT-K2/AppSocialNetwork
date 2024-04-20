@@ -19,4 +19,7 @@ public interface StoryService {
 
     // add viewer
     void addViewedStory(String storyId, String userId);
+
+    // delete story
+    void deleteStoryById(String idStory) ;
 }

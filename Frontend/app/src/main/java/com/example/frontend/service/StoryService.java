@@ -26,4 +26,8 @@ public interface StoryService {
     // add viewer
     @POST("story/addViewer")
     Call<ApiResponse<String>> addViewerStory(@Query("storyId") String storyId, @Query("userId") String userId);
+
+    // delete story
+    @POST("story/deleteStoryById")
+    Call<ApiResponse<String>> deleteStoryById(@Query("idStory") String idStory);
 }

@@ -32,4 +32,9 @@ public class StoryViewModel extends ViewModel {
     public void addViewerStory(String storyId, String userId){
         storyRepository.addViewerStory(storyId,userId);
     }
+
+    // delete story
+    public void deleteStoryById(String idStory){
+        storyRepository.deleteStoryById(idStory);
+    }
 }

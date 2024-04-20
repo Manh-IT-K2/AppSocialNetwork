@@ -100,4 +100,28 @@ public class StoryRepository {
             }
         });
     }
+
+    // delete Story
+    public void deleteStoryById(String idStory) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+        storyService.deleteStoryById(idStory).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    int errorCode = response.code();
+                    String errorMessage = "Error delete story: " + errorCode;
+                    ApiResponse<String> errorResponse = new ApiResponse<>(false, "", errorMessage);
+                    mutableLiveData.setValue(errorResponse);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<>(false, "Failed delete story: " + t.getMessage(), null));
+            }
+        });
+    }
 }

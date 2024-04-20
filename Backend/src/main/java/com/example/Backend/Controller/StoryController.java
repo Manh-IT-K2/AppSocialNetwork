@@ -42,7 +42,18 @@ public class StoryController {
     public ResponseEntity<ApiResponse<String>> addViewerStory(@RequestParam String storyId, @RequestParam String userId){
         if (!storyId.isEmpty() && !userId.isEmpty()) {
             storyService.addViewedStory(storyId, userId);
-            ApiResponse<String> apiResponse = new ApiResponse<String>(true, "success !","");
+            ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Add viewer success !","");
+            return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
+        }
+        return null;
+    }
+
+    // delete story
+    @PostMapping("/deleteStoryById")
+    public ResponseEntity<ApiResponse<String>> deleteStoryById(@RequestParam String idStory){
+        if (!idStory.isEmpty()) {
+            storyService.deleteStoryById(idStory);
+            ApiResponse<String> apiResponse = new ApiResponse<String>(true, "Delete story success !","");
             return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
         }
         return null;
