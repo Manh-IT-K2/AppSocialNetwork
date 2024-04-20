@@ -1,9 +1,6 @@
 package com.example.Backend.Service.Story;
 
-import com.example.Backend.Entity.Comment;
-import com.example.Backend.Entity.Follows;
-import com.example.Backend.Entity.Post;
-import com.example.Backend.Entity.Story;
+import com.example.Backend.Entity.*;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.Story.RequestCreateStory;
 import com.example.Backend.Request.Story.RequestStoryByUserId;
@@ -136,6 +133,18 @@ public class StoryIml implements StoryService{
         return hoursDifference > 24;
     }
 
+    // delete story
+    @Override
+    public void deleteStoryById(String idStory) {
+        Query query = new Query(Criteria.where("_id").is(idStory));
+        Story story = mongoTemplate.findOne(query, Story.class, "stories");
+        if (story == null) {
+            System.out.println("Không tìm thấy story với ID: " + idStory);
+            return;
+        }
+        mongoTemplate.remove(story, "stories");
+        System.out.println("Story với ID " + idStory + " đã được xóa thành công.");
+    }
 
     // add viewer
     @Override
@@ -174,10 +183,6 @@ public class StoryIml implements StoryService{
             } else {
                 System.out.println("Người dùng với ID " + userId + " đã xem story này trước đó.");
             }
-//
-//            return new ApiResponse<>(true, "success", story);
-//        } else {
-//            return new ApiResponse<>(false, "Story không tồn tại", null);
         }
     }
 

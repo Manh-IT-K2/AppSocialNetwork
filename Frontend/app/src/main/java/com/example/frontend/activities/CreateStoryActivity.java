@@ -36,7 +36,7 @@ import com.example.frontend.request.Story.RequestStoryByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
-import com.example.frontend.utils.SpotifyManager;
+//import com.example.frontend.utils.SpotifyManager;
 import com.example.frontend.viewModel.Story.StoryViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -54,7 +54,7 @@ import io.stipop.model.SPPackage;
 import io.stipop.model.SPSticker;
 
 
-public class CreateStoryActivity extends AppCompatActivity implements StipopDelegate, SpotifyManager.SpotifyConnectionListener {
+public class CreateStoryActivity extends AppCompatActivity implements StipopDelegate{
 
 
     // init variable
@@ -64,7 +64,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
     private ImageView imageViewDelete, stickerImageView;
     private StoryViewModel storyViewModel;
     private UserViewModel userViewModel;
-    private SpotifyManager mSpotifyManager;
+    //private SpotifyManager mSpotifyManager;
     private StipopImageView btn_addStickerStory;
     private FrameLayout frame_layout_create_story;
     private ShapeableImageView img_createStory, img_avtUserCreateStory;
@@ -135,14 +135,14 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         showStickerPickerDialog();
 
         // Khởi tạo SpotifyManager
-        mSpotifyManager = new SpotifyManager();
+        //mSpotifyManager = new SpotifyManager();
 
         // Gắn lắng nghe sự kiện cho nút btn_addMusicStory
         btn_addMusicStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Kết nối với Spotify
-                mSpotifyManager.connect(CreateStoryActivity.this, CreateStoryActivity.this);
+                //mSpotifyManager.connect(CreateStoryActivity.this, CreateStoryActivity.this);
             }
         });
 
@@ -482,16 +482,16 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
     }
 
 
-    @Override
-    public void onConnected() {
-        // Replace "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL" with your actual playlist URI
-        mSpotifyManager.playPlaylist("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
-    }
+//    @Override
+//    public void onConnected() {
+//        // Replace "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL" with your actual playlist URI
+//        mSpotifyManager.playPlaylist("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
+//    }
 
-    @Override
-    public void onFailure(Throwable throwable) {
-        Log.e("CreateStoryActivity", "Failed to connect to Spotify: " + throwable.getMessage(), throwable);
-        // Handle failure, e.g., show a toast message or log the error
-    }
+//    @Override
+//    public void onFailure(Throwable throwable) {
+//        Log.e("CreateStoryActivity", "Failed to connect to Spotify: " + throwable.getMessage(), throwable);
+//        // Handle failure, e.g., show a toast message or log the error
+//    }
 
 }

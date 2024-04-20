@@ -34,6 +34,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/btn_settingDetailStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/img_storyUri"
+        app:srcCompat="@drawable/icon_more_vert" />
+
     <Button
         android:id="@+id/btn_addStoryMain"
         android:layout_width="wrap_content"
@@ -74,4 +86,5 @@
         app:layout_constraintHorizontal_bias="0.02"
         app:layout_constraintStart_toEndOf="@+id/txt_countViewerStory"
         app:srcCompat="@drawable/ic_down_arrow" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
