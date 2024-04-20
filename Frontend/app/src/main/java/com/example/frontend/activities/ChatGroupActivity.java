@@ -2,17 +2,22 @@ package com.example.frontend.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,8 +30,10 @@ import com.example.frontend.request.GroupChat.RequestChatGroup;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
+import com.example.frontend.response.Message.Message;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.FirebaseStorageUploader;
 import com.example.frontend.utils.PusherClient;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Message.GroupChatViewModel;
@@ -34,15 +41,24 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pusher.client.Pusher;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class ChatGroupActivity extends AppCompatActivity {
+import io.stipop.Stipop;
+import io.stipop.StipopDelegate;
+import io.stipop.extend.StipopImageView;
+import io.stipop.model.SPPackage;
+import io.stipop.model.SPSticker;
+
+public class ChatGroupActivity extends AppCompatActivity implements StipopDelegate {
     private boolean initialMessagesLoaded = false;
     private RecyclerView recyclerView;
     private GroupChatAdapter adapter;
     private EditText inputMessage;
-    private ImageButton btnSend,btn_Menu,btn_back;
+    private ImageButton btnSend,btn_Menu,btn_back, btn_File, btn_openSticker;
     private GroupChatViewModel groupChatViewModel;
     private TextView groupNameTextView;
     private RelativeLayout groupAvatarImageView;
@@ -53,6 +69,7 @@ public class ChatGroupActivity extends AppCompatActivity {
     private GroupChatResponse Infor_GroupChat;
     private boolean isInforGroupChatLoaded = false;
     private Pusher pusher;
+    StipopImageView btn_Sticker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +94,9 @@ public class ChatGroupActivity extends AppCompatActivity {
         btnSend = findViewById(R.id.message_send_btn);
         btn_back=findViewById(R.id.back_btn);
         btn_Menu=findViewById(R.id.menu_btn);
+        btn_Sticker = findViewById(R.id.btn_Sticker);
+        btn_File = findViewById(R.id.btn_File);
+        btn_openSticker = findViewById(R.id.btn_openSticker);
 
         groupChatViewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -90,6 +110,32 @@ public class ChatGroupActivity extends AppCompatActivity {
         // Lấy và hiển thị lịch sử tin nhắn khi hoạt động được tạo
         loadChatHistory();
 
+        // Thực hiện bắt sự kiện từ Pusher
+        pusher = PusherClient.init();
+        pusher.connect();
+        pusher.subscribe(groupId)
+
+                .bind("send_chatgroup", (channelName, eventName, data) -> {
+                    try {
+                        Gson gson = new GsonBuilder()
+                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
+                                .create();
+                        String jsonData = data.toString();
+                        MessageWithSenderInfo message = gson.fromJson(jsonData, MessageWithSenderInfo.class);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.addNewMessage(message); // Thêm tin nhắn mới vào RecyclerView
+                                recyclerView.scrollToPosition(adapter.getItemCount() - 1); // Cuộn đến tin nhắn mới nhất
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        Log.d("trycatch", new Gson().toJson(e));
+                    }
+                });
+
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,34 +148,13 @@ public class ChatGroupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("chatgroup_content", groupId+currentUserId+message);
                 message = inputMessage.getText().toString();
-                RequestChatGroup request = new RequestChatGroup(groupId, currentUserId, message);
+                if(!message.isEmpty()){
+                    RequestChatGroup request = new RequestChatGroup(groupId, currentUserId, message, "","");
 
-                groupChatViewModel.sendMessage(groupId, request).observe(ChatGroupActivity.this, new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-                    @Override
-                    public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-                        if (response != null && response.isSuccess()) {
-                            // Xử lý phản hồi khi gửi tin nhắn thành công
-                            GroupChatWithMessagesResponse chatWithMessagesResponse = response.getData();
-
-                            if (chatWithMessagesResponse != null) {
-                                // Thêm tin nhắn mới vào RecyclerView
-                                adapter.addMessage(chatWithMessagesResponse);
-                                // Cuộn đến tin nhắn mới nhất
-                                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-                            }
-                            // Xóa nội dung tin nhắn sau khi gửi
-                            inputMessage.setText("");
-                        } else {
-                            // Xử lý khi gửi tin nhắn không thành công
-                            String errorMessage = "Failed to send message";
-                            if (response != null && response.getMessage() != null) {
-                                errorMessage += ": " + response.getMessage();
-                            }
-                            Toast.makeText(ChatGroupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                });
+                    groupChatViewModel.sendMessage(groupId, request);
+                    inputMessage.setText("");
+                    message = "";
+                }
             }
         });
 
@@ -155,15 +180,27 @@ public class ChatGroupActivity extends AppCompatActivity {
             }
         });
 
-        // Thực hiện bắt sự kiện từ Pusher
-        setupPusherEventListener();
+        Stipop.Companion.connect(this, btn_Sticker, "1234", "en", "US", this);
+        //btn_Sticker.setOnClickListener(v -> Stipop.Companion.showSearch());
+
+        btn_openSticker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Stipop.Companion.showSearch();
+            }
+        });
+
+        btn_File.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, 1);
+            }
+        });
     }
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        // Kết nối và đăng ký sự kiện Pusher khi hoạt động được hiển thị trên màn hình
-//        setupPusherEventListener();
-//    }
+
     private void showPopupMenu(View v) {
         // Kiểm tra xem dữ liệu nhóm chat đã được tải chưa
         if (!isInforGroupChatLoaded) {
@@ -254,35 +291,6 @@ public class ChatGroupActivity extends AppCompatActivity {
         }
     }
 
-    private void setupPusherEventListener() {
-        pusher = PusherClient.init();
-        pusher.connect();
-        pusher.subscribe("GroupChat")
-
-                .bind("send_chatgroup", (channelName, eventName, data) -> {
-                    try {
-                        Gson gson = new GsonBuilder()
-                                .setDateFormat("MMM dd, yyyy, hh:mm:ss a")
-                                .create();
-                        String jsonData = data.toString();
-                        GroupChatWithMessagesResponse groupChatResponse = gson.fromJson(jsonData, GroupChatWithMessagesResponse.class);
-                        List<MessageWithSenderInfo> messages = groupChatResponse.getMessages();
-                        Toast.makeText(ChatGroupActivity.this, messages.get(0).getContent(), Toast.LENGTH_SHORT).show();
-                        if (messages != null && !messages.isEmpty()) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.setMessages(messages); // Thêm tin nhắn mới vào RecyclerView
-                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1); // Cuộn đến tin nhắn mới nhất
-                                }
-                            });
-                        }
-                    } catch (Exception e) {
-                        Log.d("trycatch", new Gson().toJson(e));
-                    }
-                });
-    }
-
     private void handleDisbandGroup() {
         groupChatViewModel.deleteGroupChat(groupId).observe(this, new Observer<ApiResponse<String>>() {
             @Override
@@ -349,5 +357,46 @@ public class ChatGroupActivity extends AppCompatActivity {
         intent.putStringArrayListExtra("memberIdList", memberIdList);
 
         startActivity(intent);
+    }
+
+    @Override
+    public boolean canDownload(@NonNull SPPackage spPackage) {
+        return true;
+    }
+
+    @Override
+    public boolean onStickerSelected(@NonNull SPSticker spSticker) {
+        RequestChatGroup request = new RequestChatGroup(groupId, currentUserId,"", spSticker.getStickerImg(),"");
+        groupChatViewModel.sendMessage(groupId, request);
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Uri fileUri = data.getData();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String timestamp = sdf.format(new Date());
+            String fileName = "file_" + timestamp+ "_"+ new File(fileUri.getPath()).getName() + ".jpg";
+            FirebaseStorageUploader.uploadFileToFirebaseStorage(fileUri, fileName, new FirebaseStorageUploader.OnUploadCompleteListener() {
+                @Override
+                public void onUploadComplete(List<String> fileUrls) {
+
+                }
+
+                @Override
+                public void onUploadComplete(String fileUrl) {
+                    RequestChatGroup request = new RequestChatGroup(groupId, currentUserId, "", "",fileUrl);
+
+                    groupChatViewModel.sendMessage(groupId, request);
+                }
+
+                @Override
+                public void onUploadFailed(String errorMessage) {
+                    Toast.makeText(getApplicationContext(), "Upload failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

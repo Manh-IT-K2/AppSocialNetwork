@@ -1,5 +1,6 @@
 package com.example.frontend.response.Message;
 
+import com.example.frontend.response.User.UserResponse;
 import com.pusher.client.channel.User;
 
 import java.util.Date;
@@ -8,10 +9,11 @@ public class MessageWithSenderInfo {
     private String id;
     private String content;
     private Date createdAt;
-    private User sender;
+    private UserResponse sender;
     private String privateChatId;
     private String groupChatId;
     private String urlFile;
+    private String urlSticker;
 
     public String getId() {
         return id;
@@ -37,11 +39,11 @@ public class MessageWithSenderInfo {
         this.createdAt = createdAt;
     }
 
-    public User getSender() {
+    public UserResponse getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(UserResponse sender) {
         this.sender = sender;
     }
 
@@ -69,7 +71,15 @@ public class MessageWithSenderInfo {
         this.urlFile = urlFile;
     }
 
-    public MessageWithSenderInfo(String id, String content, Date createdAt, User sender, String privateChatId, String groupChatId, String urlFile) {
+    public String getUrlSticker() {
+        return urlSticker;
+    }
+
+    public void setUrlSticker(String urlSticker) {
+        this.urlSticker = urlSticker;
+    }
+
+    public MessageWithSenderInfo(String id, String content, Date createdAt, UserResponse sender, String privateChatId, String groupChatId, String urlFile, String urlSticker) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;
@@ -77,5 +87,6 @@ public class MessageWithSenderInfo {
         this.privateChatId = privateChatId;
         this.groupChatId = groupChatId;
         this.urlFile = urlFile;
+        this.urlSticker = urlSticker;
     }
 }

@@ -3,6 +3,7 @@ import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.GroupChat.GroupChatResponse;
 import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.request.GroupChat.*;
+import com.example.frontend.response.Message.Message;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface GroupChatService {
     Call<ApiResponse<GroupChatWithMessagesResponse>> getMessagesByGroupChatId(@Path("groupChatId") String groupChatId);
 
     @POST("/api/group_chat/{groupChatId}/send_message")
-    Call<ApiResponse<GroupChatWithMessagesResponse>> sendMessage(@Path("groupChatId") String groupChatId, @Body RequestChatGroup request);
+    Call<ApiResponse<Message>> sendMessage(@Path("groupChatId") String groupChatId, @Body RequestChatGroup request);
 
     @POST("/api/group_chat/{groupChatId}/add_member")
     Call<ApiResponse<String>> addMemberToGroupChat(@Path("groupChatId") String groupChatId, @Body RequestAddMemberToGroupChat request);

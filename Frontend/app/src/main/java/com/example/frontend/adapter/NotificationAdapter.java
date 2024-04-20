@@ -55,8 +55,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.text.setText(notification.getText());
         holder.time.setText(getTimeAgo(notification.getCreateAt().toString()));
         Glide.with(mContext)
-                .load(notification.getAvatar())
-                .into(holder.image_profile);
+                .load(notification.getAvatar() != null ? notification.getAvatar() : R.drawable.logo)
+                .centerCrop().into(holder.image_profile);
 
         holder.username.setText(notification.getUserName());
 

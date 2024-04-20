@@ -13,11 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.frontend.R;
 import com.example.frontend.activities.Function_chatgroup_activity;
 import com.example.frontend.response.User.GetAllUserByFollowsResponse;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
     private List<GetAllUserByFollowsResponse> userList;
@@ -44,6 +49,7 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
             holder.checkbox = convertView.findViewById(R.id.checkboxFriend);
             holder.textFriendName = convertView.findViewById(R.id.textFriendName);
             holder.subInformation = convertView.findViewById(R.id.subInformation);
+            holder.imgAvatar = convertView.findViewById(R.id.imgAvatar);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -51,7 +57,9 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
 
         GetAllUserByFollowsResponse user = userList.get(position);
         holder.textFriendName.setText(user.getUsername());
-
+        Glide.with(context)
+                .load(user.getAvatarImg() != null && !user.getAvatarImg().isEmpty() ? user.getAvatarImg() : R.drawable.logo )
+                .centerCrop().into(holder.imgAvatar);
 
 
         // Ép kiểu context sang Function_chatgroup_activity để gọi phương thức isEditTextFocused()
@@ -79,6 +87,7 @@ public class FlowAdapter extends ArrayAdapter<GetAllUserByFollowsResponse> {
         CheckBox checkbox;
         TextView textFriendName;
         TextView subInformation;
+        CircleImageView imgAvatar;
     }
 
     // Interface để lắng nghe sự kiện khi item được chọn

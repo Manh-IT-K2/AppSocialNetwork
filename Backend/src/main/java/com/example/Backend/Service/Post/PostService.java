@@ -25,4 +25,6 @@ public interface PostService {
      ApiResponse<List<RequestPostByUserId>> getListPostsBySearchQuery(String id, String searchQuery);
      ApiResponse<ResponsePostById> getPostById(String id);
      ApiResponse<List<RequestPostByUserId>> getListPostUserLiked(String userId);
+     // select post by userId
+     ApiResponse<List<RequestPostByUserId>> getListPostsProfile(String userId);
 }

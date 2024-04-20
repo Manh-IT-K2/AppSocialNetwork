@@ -23,6 +23,8 @@ public interface PostService {
     // get list post by userId
     @GET("post/getListPostByUserId")
     Call<ApiResponse<List<RequestPostByUserId>>> getListPostByUserId(@Query("userId") String userId);
+    @GET("post/getListPostsProfile")
+    Call<ApiResponse<List<RequestPostByUserId>>> getListPostsProfile(@Query("userId") String userId);
 
     // add user like post
     @POST("post/addLike")

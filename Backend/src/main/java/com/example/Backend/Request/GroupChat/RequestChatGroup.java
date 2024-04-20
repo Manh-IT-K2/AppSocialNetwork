@@ -13,4 +13,6 @@ public class RequestChatGroup {
     private String groupId;
     private String senderId;
     private String content;
+    private String urlFile;
+    private String urlSticker;
 }

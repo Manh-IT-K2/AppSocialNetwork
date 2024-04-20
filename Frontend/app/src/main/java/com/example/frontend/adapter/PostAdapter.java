@@ -158,7 +158,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         ArrayList<SlideModel> slideModels = new ArrayList<>();
         for (int i = 0; i<= imageList.size() -1; i++){
-            slideModels.add(new SlideModel(imageList.get(i), ScaleTypes.CENTER_CROP));
+            slideModels.add(new SlideModel(imageList.get(i), ScaleTypes.FIT));
         }
         holder.image_sliderPost.setImageList(slideModels);
     }
