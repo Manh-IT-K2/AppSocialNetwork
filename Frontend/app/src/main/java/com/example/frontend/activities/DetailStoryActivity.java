@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,21 +32,22 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailStoryActivity extends AppCompatActivity{
+public class DetailStoryActivity extends AppCompatActivity {
 
     // init variable
-    private ViewPager2 viewPager_story;
+    private static ViewPager2 viewPager_story;
     private ShapeableImageView img_avtUserStory;
     private UserViewModel userViewModel;
     private TextView txt_nameUserStory;
+    public static EditText edt_sendMessageStory;
+    public static ImageButton btn_likeStory, btn_sendMessageStory;
     private StoryPagerAdapter pagerAdapter;
-    private List<RequestStoryByUserId> imageUrls;
-    private Handler handler = new Handler();
-    private int currentPage = 0;
-
+    private static List<RequestStoryByUserId> imageUrls;
+    public static Handler handler = new Handler();
+    public static int currentPage = 0;
     private RecyclerView recycler_view_seekbar;
     private SeekBarAdapter seekBarAdapter;
-    private List<Object> seekBarList;
+    private List<RequestStoryByUserId> seekBarList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,9 @@ public class DetailStoryActivity extends AppCompatActivity{
         viewPager_story = findViewById(R.id.viewPager_story);
         img_avtUserStory = findViewById(R.id.img_avtUserStory);
         txt_nameUserStory = findViewById(R.id.txt_nameUserStory);
+        btn_likeStory = findViewById(R.id.btn_likeStory);
+        btn_sendMessageStory = findViewById(R.id.btn_sendMessageStory);
+        edt_sendMessageStory = findViewById(R.id.edt_sendMessageStory);
         recycler_view_seekbar = findViewById(R.id.recycler_view_seekbar);
         //
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
@@ -95,11 +101,11 @@ public class DetailStoryActivity extends AppCompatActivity{
                 // Initialize RecyclerView for ProgressBar
                 LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
                 recycler_view_seekbar.setLayoutManager(layoutManager);
-                seekBarList = new ArrayList<>();
+                seekBarList = groupedStoryList;
                 // Add ProgressBar objects to the list based on the number of stories
-                for (int i = 0; i < imageUrls.size(); i++) {
-                    seekBarList.add(new Object()); // Placeholder object for ProgressBar
-                }
+//                for (int i = 0; i < imageUrls.size(); i++) {
+//                    seekBarList.add(new Object()); // Placeholder object for ProgressBar
+//                }
                 seekBarAdapter = new SeekBarAdapter(this, seekBarList);
                 recycler_view_seekbar.setAdapter(seekBarAdapter);
 
@@ -112,21 +118,22 @@ public class DetailStoryActivity extends AppCompatActivity{
     }
 
     //
-    private Runnable runnable = new Runnable() {
+    public static Runnable runnable = new Runnable() {
         @Override
         public void run() {
             if (currentPage >= imageUrls.size() - 1) {
                 currentPage = 0;
                 viewPager_story.setCurrentItem(currentPage, true);
             } else {
-                Log.e("loggg", String.valueOf(imageUrls.size()) + " and " + String.valueOf(currentPage));
                 currentPage++;
                 viewPager_story.setCurrentItem(currentPage, true);
+                Log.e("loggg", String.valueOf(imageUrls.size()) + " and " + String.valueOf(currentPage));
             }
 
             // Nếu currentPage đạt đến giá trị cuối cùng của imageUrls, không gọi lại run() nữa
-            if (currentPage < imageUrls.size() - 1) {
+            if (currentPage < imageUrls.size() -1) {
                 handler.postDelayed(this, 5000);
+                Log.e("loggg", String.valueOf(imageUrls.size()) + " and " + String.valueOf(currentPage));
             }
         }
     };

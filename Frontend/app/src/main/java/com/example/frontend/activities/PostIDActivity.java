@@ -57,8 +57,6 @@ public class PostIDActivity extends AppCompatActivity {
         setContentView(R.layout.post_item);
 
         img_user = findViewById(R.id.img_user);
-        //img_userLiked = itemView.findViewById(R.id.img_userLiked);
-        img_post = findViewById(R.id.img_post);
         btn_like = findViewById(R.id.btn_like);
         btn_comment = findViewById(R.id.btn_comment);
         btn_save = findViewById(R.id.btn_save);
@@ -68,7 +66,6 @@ public class PostIDActivity extends AppCompatActivity {
         txt_contentPost = findViewById(R.id.txt_contentPost);
         txt_address = findViewById(R.id.txt_address);
         txt_timeCreatePost = findViewById(R.id.txt_timeCreatePost);
-        linear_layout_drag_Post = findViewById(R.id.linear_layout_drag_Post);
         txt_liked = findViewById(R.id.txt_liked);
 
         ResponsePostById post = new ResponsePostById();
@@ -129,8 +126,8 @@ public class PostIDActivity extends AppCompatActivity {
                     // display more image in imageView
                     if(post.getPost().getImagePost().size() > 1){
                         // Thêm hình ảnh vào LinearLayout
-                        LinearLayout linearLayout = findViewById(R.id.linear_layout_drag_Post);
-                        linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
+                        //LinearLayout linearLayout = findViewById(R.id.linear_layout_drag_Post);
+                        //linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
 
                         // Lấy kích thước màn hình
 //           DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -154,7 +151,7 @@ public class PostIDActivity extends AppCompatActivity {
                                     .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
                                     .into(imageView);
 
-                            linearLayout.addView(imageView);
+                            //linearLayout.addView(imageView);
                         }
                     }else{
                         Glide.with(getApplicationContext())

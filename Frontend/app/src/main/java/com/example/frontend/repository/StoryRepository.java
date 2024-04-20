@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.frontend.request.Story.RequestCreateStory;
 import com.example.frontend.request.Story.RequestStoryByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Story.StoryResponse;
 import com.example.frontend.service.StoryService;
 import com.example.frontend.utils.CallApi;
 import com.google.gson.Gson;
@@ -72,5 +74,30 @@ public class StoryRepository {
             }
         });
         return mutableLiveData;
+    }
+
+    // add viewer story
+    public void addViewerStory(String storyId, String userId) {
+        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
+
+        storyService.addViewerStory(storyId, userId).enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<String> apiResponse = response.body();
+                    mutableLiveData.setValue(apiResponse);
+                } else {
+                    int errorCode = response.code();
+                    String errorMessage = "Error add viewer story: " + errorCode;
+                    ApiResponse<String> errorResponse = new ApiResponse<>(false, "", errorMessage);
+                    mutableLiveData.setValue(errorResponse);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                mutableLiveData.setValue(new ApiResponse<>(false, "Failed viewer story: " + t.getMessage(), null));
+            }
+        });
     }
 }

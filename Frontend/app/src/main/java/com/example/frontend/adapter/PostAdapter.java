@@ -242,12 +242,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                         postViewModel.addLike(postId,userId).observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override
                             public void onChanged(ApiResponse<PostResponse> response) {
-//                                List<UserResponse> list = post.getLike();
-//                                if(list != null){
+                                if(response.getData() != null){
                                     txt_liked.setText(response.getData().getLike().size() + " lượt thích");
                                     Log.e("loiii",String.valueOf(response.getData().getLike().size()));
-                                    //adapter.updateData();
-                                //}
+                                }
                             }
                         });
                     }

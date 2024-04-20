@@ -218,9 +218,10 @@ public class ProfileFragment extends Fragment {
         if (bundle != null) {
             if (bundle.getString("userId") != null) {
                 userId = bundle.getString("userId", "");
+            }else if(bundle.getString("userIdLiked") != null) {
+                userId = bundle.getString("userIdLiked");
             }
         }
-        Log.e("iddau", userId);
 
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override

@@ -1,6 +1,7 @@
 package com.example.frontend.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.multidex.MultiDex;
 
@@ -29,13 +30,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.adapter.StoryAdapter;
 import com.example.frontend.request.Story.RequestCreateStory;
+import com.example.frontend.request.Story.RequestStoryByUserId;
+import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.utils.SpotifyManager;
 import com.example.frontend.viewModel.Story.StoryViewModel;
+import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,7 +62,8 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
     private List<RequestCreateStory.Stickers> listOfStickers = new ArrayList<>();;
     private FrameLayout deleteLayout;
     private ImageView imageViewDelete, stickerImageView;
-    StoryViewModel storyViewModel;
+    private StoryViewModel storyViewModel;
+    private UserViewModel userViewModel;
     private SpotifyManager mSpotifyManager;
     private StipopImageView btn_addStickerStory;
     private FrameLayout frame_layout_create_story;
@@ -86,6 +92,8 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
 
         //
         storyViewModel = new ViewModelProvider(this).get(StoryViewModel.class);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         //
         initBtnDeleteView();
@@ -145,6 +153,19 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         bottomSheetDialog.setContentView(R.layout.dialog_create_story);
 
         Button btnShareStory = bottomSheetDialog.findViewById(R.id.btn_shareStory);
+        ShapeableImageView img_avtUserCreateStory = bottomSheetDialog.findViewById(R.id.img_avtUserCreateStory);
+        String userId = SharedPreferenceLocal.read(this,"userId");
+        userViewModel.getDetailUserById(userId).observe(this, new Observer<ApiResponse<UserResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<UserResponse> response) {
+                if (response.getMessage().equals("Success") && response.getStatus()){
+                    UserResponse userResponse = response.getData();
+                    Glide.with(getApplicationContext())
+                            .load(userResponse.getAvatarImg())
+                            .into(img_avtUserCreateStory);
+                }
+            }
+        });
 
         List<RequestCreateStory.ContentMedia> contentMediaList = new ArrayList<>();
         List<RequestCreateStory.Stickers> stickersList = new ArrayList<>();
@@ -152,7 +173,6 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         Date createAt = new Date();
         SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         String isoDateString = isoFormat.format(createAt);
-        String userId = SharedPreferenceLocal.read(getApplicationContext(), "userId");
 
         // Lặp qua danh sách các nội dung và thêm vào contentMediaList
         for (int i = 0; i < listOfContents.size(); i++) {
@@ -177,8 +197,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
             public void onClick(View v) {
                 bottomSheetDialog.dismiss();
                 storyViewModel.createStory(story, userId);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(CreateStoryActivity.this, MainActivity.class));
             }
         });
         bottomSheetDialog.show();
