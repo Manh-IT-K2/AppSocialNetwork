@@ -13,7 +13,7 @@ import java.util.List;
 public interface PostService {
 
      // create post
-     void createPost(RequestCreatePost requestPost, String userId) throws Exception;
+     String createPost(RequestCreatePost requestPost, String userId) throws Exception;
 
      // select post by userId
      ApiResponse<List<RequestPostByUserId>> getListPostsByUserId(String userId);

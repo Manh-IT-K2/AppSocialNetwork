@@ -44,7 +44,7 @@ public class NotificationService extends FirebaseMessagingService {
             JSONObject json = new JSONObject();
             json.put("to", recipientToken);
             JSONObject notification = new JSONObject();
-            notification.put("title", "Bạn có một thông báo mới");
+            notification.put("title", "Echobond");
             notification.put("body", text);
             json.put("notification", notification);
 

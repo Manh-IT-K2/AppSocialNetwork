@@ -4,23 +4,45 @@ android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:padding="16dp">
 
-
-    <TextView
-        android:id="@+id/textFriendName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Friend Name"
-        android:textSize="16sp" />
+        android:layout_margin="10dp"
+        android:elevation="2dp">
 
-<!-- Sub information -->
-<TextView
-    android:id="@+id/subInformation"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textFriendName"
-    android:textSize="14sp"
-    android:textColor="@android:color/darker_gray"
-    android:text="Sub Information" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_account_circle_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/textFriendName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friend Name"
+                android:textSize="16sp" />
+
+            <!-- Sub information -->
+            <TextView
+                android:id="@+id/subInformation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textFriendName"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Sub Information" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

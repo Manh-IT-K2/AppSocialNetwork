@@ -4,6 +4,7 @@ import com.example.frontend.request.Post.RequestCreatePost;
 import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponseCreatePost;
 import com.example.frontend.response.Post.ResponsePostById;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface PostService {
 
     // create Post
     @POST("post/createPost")
-    Call<ApiResponse<String>> createPost(@Body RequestCreatePost requestCreatePost, @Query("userId") String userId);
+    Call<ApiResponse<ResponseCreatePost>> createPost(@Body RequestCreatePost requestCreatePost, @Query("userId") String userId);
 
     // get list post by userId
     @GET("post/getListPostByUserId")

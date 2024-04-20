@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.ChatGroupActivity;
 import com.example.frontend.repository.UserRepository;
@@ -22,6 +24,8 @@ import com.example.frontend.response.GroupChat.GroupChatWithMessagesResponse;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.Gson;
 import com.pusher.client.channel.User;
 import com.squareup.picasso.Picasso;
 
@@ -44,10 +48,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         this.currentUserId = currentUserId;
         this.lifecycleOwner = lifecycleOwner;
     }
+
     public void setMessages(List<MessageWithSenderInfo> messages) {
         this.messages = messages;
         notifyDataSetChanged();
     }
+
     // Phương thức thêm tin nhắn mới vào danh sách
     public void addNewMessage(MessageWithSenderInfo message) {
         // Thêm tin nhắn mới vào danh sách tin nhắn của adapter
@@ -94,45 +100,60 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         MessageWithSenderInfo message = messages.get(position);
 
         // Lấy đối tượng người gửi từ tin nhắn
-        User sender = message.getSender();
+        UserResponse sender = message.getSender();
         // Lấy ID của người gửi
         String senderId = sender.getId();
-
-        UserViewModel userViewModel = new ViewModelProvider((ViewModelStoreOwner) lifecycleOwner).get(UserViewModel.class);
-        // Lấy thông tin user từ senderId
-        userViewModel.getDetailUserById(senderId).observe(lifecycleOwner, new Observer<ApiResponse<UserResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<UserResponse> response) {
-                if (response.getMessage().equals("Success") && response.getStatus()) {
-                    UserResponse userResponse = response.getData();
-                    NameOtherUser = userResponse.getUsername();
-                }
-            }
-        });
-        // Lấy thông tin user hiện hành từ id currentUserId
-        userViewModel.getDetailUserById(currentUserId).observe(lifecycleOwner, new Observer<ApiResponse<UserResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<UserResponse> response) {
-                if (response.getMessage().equals("Success") && response.getStatus()) {
-                    UserResponse userResponse = response.getData();
-                    NameCurrentUser = userResponse.getUsername();
-                }
-            }
-        });
 
         // Nếu tin nhắn được gửi bởi người dùng hiện tại
         if (senderId != null && senderId.equals(currentUserId)) {
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
-            holder.rightChatTextView.setText(message.getContent());
-            holder.user_name_right.setText(NameCurrentUser); // Hiển thị tên người gửi tin nhắn
+//            holder.user_name_right.setText(""); // Hiển thị tên người gửi tin nhắn
             holder.user_name_left.setText(""); // Ẩn tên người gửi tin nhắn bên trái
+            holder.left_stickerImageView.setVisibility(View.GONE);
+
+            if(!message.getUrlSticker().isEmpty() || !message.getUrlFile().isEmpty()) {
+                String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
+                if(url.contains(".gif")){
+                    Glide.with(context).asGif()
+                            .load(url)
+                            .centerCrop().into(holder.right_stickerImageView);
+                }else{
+                    Glide.with(context)
+                            .load(url)
+                            .centerCrop().into(holder.right_stickerImageView);
+                }
+                holder.rightChatTextView.setVisibility(View.GONE);
+            }else {
+                holder.rightChatTextView.setText(message.getContent());
+                holder.right_stickerImageView.setVisibility(View.GONE);
+            }
         } else { // Nếu tin nhắn được gửi bởi người dùng khác
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
-            holder.leftChatTextView.setText(message.getContent());
-            holder.user_name_left.setText(NameOtherUser); // Hiển thị tên người gửi tin nhắn bên trái
-            holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
+            holder.right_stickerImageView.setVisibility(View.GONE);
+            holder.user_name_left.setText(sender.getName()); // Hiển thị tên người gửi tin nhắn bên trái
+//            holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
+            Glide.with(context)
+                    .load(sender.getAvatarImg() != null ? sender.getAvatarImg() : R.drawable.logo)
+                    .centerCrop().into(holder.img_user);
+
+            if(!message.getUrlSticker().isEmpty() || !message.getUrlFile().isEmpty()) {
+                String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
+                if(url.contains(".gif")) {
+                    Glide.with(context).asGif()
+                            .load(url)
+                            .centerCrop().into(holder.left_stickerImageView);
+                }else{
+                    Glide.with(context)
+                            .load(url)
+                            .centerCrop().into(holder.left_stickerImageView);
+                }
+                holder.leftChatTextView.setVisibility(View.GONE);
+            }else {
+                holder.leftChatTextView.setText(message.getContent());
+                holder.left_stickerImageView.setVisibility(View.GONE);
+            }
         }
 
         // Lấy thời gian gửi tin nhắn
@@ -170,8 +191,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 // Đặt giá trị cho TextView
         holder.timeTextView.setText(formattedDate);
-
-
     }
     // Kiểm tra xem hai thời điểm có cách nhau trong vòng 1 giờ không
     private boolean isWithinOneHour(Date date1, Date date2) {
@@ -192,8 +211,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView timeTextView, leftChatTextView, rightChatTextView,user_name_left, user_name_right;
+        TextView timeTextView, leftChatTextView, rightChatTextView,user_name_left;
         LinearLayout leftChatLayout, rightChatLayout;
+        ShapeableImageView img_user;
+        ImageView left_stickerImageView, right_stickerImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -203,7 +224,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             user_name_left = itemView.findViewById(R.id.user_name_left);
-            user_name_right = itemView.findViewById(R.id.user_name_right);
+            img_user = itemView.findViewById(R.id.img_user);
+            left_stickerImageView = itemView.findViewById(R.id.left_stickerImageView);
+            right_stickerImageView = itemView.findViewById(R.id.right_stickerImageView);
         }
     }
 

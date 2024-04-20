@@ -85,6 +85,10 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 // Xử lý logic tạo nhóm chat ở đây
                 if (selectedUsers.size() >= 3) {
                     String groupName = edtGroupName.getText().toString();
+                    if(groupName.isEmpty()){
+                        edtGroupName.setError("Vui lòng nhậ tên group");
+                        return;
+                    }
                     createGroupChat(groupName);
                     // Quay lại MainActivityChat mới
                     Intent intent = new Intent(Function_chatgroup_activity.this, MainChatActivity.class);
@@ -131,6 +135,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
                 if (response != null && response.getStatus()) {
                     // Nếu phản hồi thành công, cập nhật danh sách người dùng trong adapter
                     List<GetAllUserByFollowsResponse> userList = response.getData();
+                    Log.e("checkImg", new Gson().toJson(userList));
                     adapter.clear();
                     adapter.addAll(userList);
                 } else {
@@ -195,18 +200,7 @@ public class Function_chatgroup_activity extends AppCompatActivity {
     private void sendMessMacDinh(ApiResponse<GroupChatResponse> response, String groupName){
         // Tạo tin nhắn mặc định khi tạo nhóm chat thành công
         String message ="Chào mừng bạn đã tham gia nhóm chat: " + groupName;
-        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message);
-        groupChatRepository.sendMessage(response.getData().getId(), request).observe(Function_chatgroup_activity.this,  new Observer<ApiResponse<GroupChatWithMessagesResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<GroupChatWithMessagesResponse> response) {
-                if (response != null && response.getStatus()) {
-                    Log.d("Function_chatgroup", "Default message sent successfully.");
-
-                } else {
-                    Log.e("Function_chatgroup", "Failed to send default message.");
-                }
-            }
-        });
-
+        RequestChatGroup request = new RequestChatGroup(response.getData().getId(), currentUserId, message, "","");
+        groupChatRepository.sendMessage(response.getData().getId(), request);
     }
 }

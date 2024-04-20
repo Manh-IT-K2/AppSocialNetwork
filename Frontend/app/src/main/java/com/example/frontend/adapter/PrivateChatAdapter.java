@@ -1,19 +1,25 @@
 package com.example.frontend.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.response.Message.MessageWithSenderInfo;
 import com.example.frontend.response.PrivateChat.PrivateChatWithMessagesResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.Gson;
 import com.pusher.client.channel.User;
 
 import java.text.SimpleDateFormat;
@@ -26,15 +32,21 @@ import java.util.concurrent.TimeUnit;
 public class PrivateChatAdapter extends RecyclerView.Adapter<PrivateChatAdapter.ViewHolder> {
     private List<MessageWithSenderInfo> messages; // Sửa tên biến thành 'messages'
     private Context context;
-
-    public PrivateChatAdapter(List<MessageWithSenderInfo> messages, Context context) {
+    private String userId;
+    public PrivateChatAdapter(List<MessageWithSenderInfo> messages, Context context, String userId) {
         this.messages = messages;
         this.context = context;
+        this.userId = userId;
     }
 
     public void setListMessage(List<MessageWithSenderInfo> messages) {
         this.messages = messages;
         notifyDataSetChanged();
+    }
+
+    public void addNewMessage(MessageWithSenderInfo message) {
+        this.messages.add(message);
+        notifyItemInserted(messages.size() - 1);
     }
 
 
@@ -49,33 +61,70 @@ public class PrivateChatAdapter extends RecyclerView.Adapter<PrivateChatAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.private_chat_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_chat, parent, false);
         return new ViewHolder(view);
     }
-@Override
-public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    MessageWithSenderInfo message = messages.get(position); // Lấy tin nhắn tại vị trí 'position'
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        MessageWithSenderInfo message = messages.get(position); // Lấy tin nhắn tại vị trí 'position'
 
-    // Lấy đối tượng người gửi từ tin nhắn
-    User sender = message.getSender();
-    if (sender != null) {
+        // Lấy đối tượng người gửi từ tin nhắn
+        UserResponse sender = message.getSender();
         // Lấy ID của người gửi
         String senderId = sender.getId();
-
-        // Check if the senderId matches the current user id
-        String userId = SharedPreferenceLocal.read(context.getApplicationContext(), "userId"); // assuming this retrieves current user id
 
         // Logic to show message based on senderId
         if (senderId != null && senderId.equals(userId)) {
             // Current user sent the message
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
-            holder.rightChatTextview.setText(message.getContent());
+//            holder.user_name_right.setText(""); // Hiển thị tên người gửi tin nhắn
+            holder.user_name_left.setText(""); // Ẩn tên người gửi tin nhắn bên trái
+            holder.left_stickerImageView.setVisibility(View.GONE);
+
+            if(!message.getUrlSticker().isEmpty() || !message.getUrlFile().isEmpty()) {
+                String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
+                if(url.contains(".gif")){
+                    Glide.with(context).asGif()
+                            .load(url)
+                            .centerCrop().into(holder.right_stickerImageView);
+                }else{
+                    Glide.with(context)
+                            .load(url)
+                            .centerCrop().into(holder.right_stickerImageView);
+                }
+                holder.rightChatTextView.setVisibility(View.GONE);
+            }else {
+                holder.rightChatTextView.setText(message.getContent());
+                holder.right_stickerImageView.setVisibility(View.GONE);
+            }
         } else {
             // Other user sent the message
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
-            holder.leftChatTextview.setText(message.getContent());
+            holder.right_stickerImageView.setVisibility(View.GONE);
+            holder.user_name_left.setText(sender.getName()); // Hiển thị tên người gửi tin nhắn bên trái
+//            holder.user_name_right.setText(""); // Ẩn tên người gửi tin nhắn bên phải
+            Glide.with(context)
+                    .load(sender.getAvatarImg() != null ? sender.getAvatarImg() : R.drawable.logo)
+                    .centerCrop().into(holder.img_user);
+
+            if(!message.getUrlSticker().isEmpty() || !message.getUrlFile().isEmpty()) {
+                String url = !message.getUrlSticker().isEmpty() ? message.getUrlSticker() : message.getUrlFile();
+                if(url.contains(".gif")) {
+                    Glide.with(context).asGif()
+                            .load(url)
+                            .centerCrop().into(holder.left_stickerImageView);
+                }else{
+                    Glide.with(context)
+                            .load(url)
+                            .centerCrop().into(holder.left_stickerImageView);
+                }
+                holder.leftChatTextView.setVisibility(View.GONE);
+            }else {
+                holder.leftChatTextView.setText(message.getContent());
+                holder.left_stickerImageView.setVisibility(View.GONE);
+            }
         }
 
         // Lấy thời gian gửi tin nhắn
@@ -111,9 +160,9 @@ public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             formattedDate = hourMinuteFormat.format(sentTime);
         }
         // Đặt giá trị cho TextView
-        holder.time_msg.setText(formattedDate);
+        holder.timeTextView.setText(formattedDate);
+
     }
-}
 
     // Kiểm tra xem hai thời điểm có cách nhau trong vòng 1 giờ không
     private boolean isWithinOneHour(Date date1, Date date2) {
@@ -135,17 +184,22 @@ public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout leftChatLayout,rightChatLayout,layout_time;
-        TextView leftChatTextview,rightChatTextview,time_msg;
+        TextView timeTextView, leftChatTextView, rightChatTextView,user_name_left;
+        LinearLayout leftChatLayout, rightChatLayout;
+        ShapeableImageView img_user;
+        ImageView left_stickerImageView, right_stickerImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            timeTextView = itemView.findViewById(R.id.time_msg);
+            leftChatTextView = itemView.findViewById(R.id.left_chat_textview);
+            rightChatTextView = itemView.findViewById(R.id.right_chat_textview);
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
-            leftChatTextview = itemView.findViewById(R.id.left_chat_textview);
-            rightChatTextview = itemView.findViewById(R.id.right_chat_textview);
-            layout_time = itemView.findViewById(R.id.layout_time);
-            time_msg =  itemView.findViewById(R.id.time_msg);
+            user_name_left = itemView.findViewById(R.id.user_name_left);
+            img_user = itemView.findViewById(R.id.img_user);
+            left_stickerImageView = itemView.findViewById(R.id.left_stickerImageView);
+            right_stickerImageView = itemView.findViewById(R.id.right_stickerImageView);
         }
     }
 }

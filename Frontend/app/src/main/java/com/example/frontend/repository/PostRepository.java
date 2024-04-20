@@ -12,6 +12,7 @@ import com.example.frontend.request.User.RequestCreateAccount;
 import com.example.frontend.request.User.RequestLogin;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Post.PostResponse;
+import com.example.frontend.response.Post.ResponseCreatePost;
 import com.example.frontend.response.Post.ResponsePostById;
 import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.service.PostService;
@@ -32,30 +33,32 @@ public class PostRepository {
     }
 
     // create post
-    public void createPost(RequestCreatePost request, String userId) {
-        MutableLiveData<ApiResponse<String>> mutableLiveData = new MutableLiveData<>();
-        postService.createPost(request, userId).enqueue(new Callback<ApiResponse<String>>() {
+    public MutableLiveData<ApiResponse<ResponseCreatePost>> createPost(RequestCreatePost request, String userId) {
+        MutableLiveData<ApiResponse<ResponseCreatePost>> mutableLiveData = new MutableLiveData<>();
+        postService.createPost(request, userId).enqueue(new Callback<ApiResponse<ResponseCreatePost>>() {
             @Override
-            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+            public void onResponse(Call<ApiResponse<ResponseCreatePost>> call, Response<ApiResponse<ResponseCreatePost>> response) {
                 if (response.isSuccessful()) {
-                    ApiResponse<String> apiResponse = response.body();
+                    ApiResponse<ResponseCreatePost> apiResponse = response.body();
                     mutableLiveData.setValue(apiResponse);
-                    Log.d("create","success");
+                    Log.e("create post","success: "+ new Gson().toJson(apiResponse.getData()));
                 } else {
                     int errorCode = response.code();
-                    Log.d("create",String.valueOf(errorCode));
+                    Log.e("create post",String.valueOf(errorCode));
                     String errorMessage = "Error occurred with code: " + errorCode;
-                    ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                    ApiResponse<ResponseCreatePost> errorResponse = new ApiResponse<>(false,errorMessage, null);
                     mutableLiveData.setValue(errorResponse);
                 }
             }
             @Override
-            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<ResponseCreatePost>> call, Throwable t) {
                 String errorMessage = "Failed to create post: " + t.getMessage();
-                ApiResponse<String> errorResponse = new ApiResponse<>(false,"", errorMessage);
+                Log.e("create post", errorMessage);
+                ApiResponse<ResponseCreatePost> errorResponse = new ApiResponse<>(false, errorMessage, null);
                 mutableLiveData.setValue(errorResponse);
             }
         });
+        return mutableLiveData;
     }
 
     // get list post

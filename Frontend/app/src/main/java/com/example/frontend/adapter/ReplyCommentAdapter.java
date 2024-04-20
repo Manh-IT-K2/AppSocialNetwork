@@ -30,6 +30,7 @@ import com.example.frontend.request.Comment.RequestLikeComment;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.Comment.CommentResponse;
 import com.example.frontend.response.User.UserResponse;
+import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
@@ -82,7 +83,7 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
             holder.txt_countLikeComment.setText(comment.getLike().size() + "");
 
             for (UserResponse user : comment.getLike()) {
-                if (user.getId().contains("65e8a525714ccc3a3caa7f77")) {
+                if (user.getId().contains(SharedPreferenceLocal.read(mContext, "userId"))) {
                     comment.setLike(true);
                     break;
                 }
@@ -102,8 +103,8 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
         holder.txt_timeComment.setText(timeAgo);
 
         Glide.with(mContext)
-                .load(comment.getUser().getAvatarImg())
-                .into(holder.img_userComment);
+                .load(comment.getUser().getAvatarImg() != null ? comment.getUser().getAvatarImg() : R.drawable.echobond)
+                .centerCrop().into(holder.img_userComment);
 
         //
         holder.btn_replyComment.setOnClickListener(new View.OnClickListener() {

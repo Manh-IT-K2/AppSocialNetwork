@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.adapter.CommentAdapter;
 import com.example.frontend.adapter.IconAdapter;
@@ -88,6 +89,8 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getWindow().setAttributes(params);
+
+        String userId = SharedPreferenceLocal.read(getContext(),"userId");
 
         // init view
         btn_drag = findViewById(R.id.btn_drag);
@@ -197,15 +200,14 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
                     notification.setIdRecipient(userId);
                 }
 
-                NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
+                if(!notification.getIdRecipient().equals(notification.getUserId())){
+                    NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
+                    userViewModel.addNotification(notification);
+                }
 
-                userViewModel.addNotification(notification);
-
-                Log.e("checkNotificaiton","idPost "+ idPost);
-                Log.e("checkNotificaiton","idComment "+ idComment);
                 RequestCreateComment createComment = new RequestCreateComment(
                         idPost,
-                        "65e8a525714ccc3a3caa7f77",
+                        userId,
                         contentComment,
                         isReplyComment,
                         idComment,
@@ -249,12 +251,14 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         });
 
         //
-        userViewModel.getDetailUserById("65e8a525714ccc3a3caa7f77").observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
+        userViewModel.getDetailUserById(userId).observe((FragmentActivity) context, new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
                 if (response.getMessage().equals("Success") && response.getStatus()) {
                     UserResponse userResponse = response.getData();
-                    Picasso.get().load(userResponse.getAvatarImg()).into(img_user);
+                    Glide.with(getContext())
+                            .load(userResponse.getAvatarImg() != null ? userResponse.getAvatarImg() : R.drawable.logo)
+                            .centerCrop().into(img_user);
                 }
             }
         });

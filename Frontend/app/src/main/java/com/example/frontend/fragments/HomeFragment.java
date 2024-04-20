@@ -33,6 +33,7 @@ import com.example.frontend.request.Post.RequestPostByUserId;
 import com.example.frontend.request.Story.RequestStoryByUserId;
 import com.example.frontend.request.User.RequestUpdateTokenFCM;
 import com.example.frontend.response.ApiResponse.ApiResponse;
+import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Post.PostViewModel;
 import com.example.frontend.viewModel.Story.StoryViewModel;
@@ -40,13 +41,15 @@ import com.example.frontend.viewModel.User.UserViewModel;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 1;
     private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
 
-    private RecyclerView recyclerViewPost, recyclerViewStory;
+    public static RecyclerView recyclerViewPost, recyclerViewStory;
     private PostAdapter postAdapter;
     private StoryAdapter storyAdapter;
     private List<RequestPostByUserId> postList;
@@ -78,6 +81,9 @@ public class HomeFragment extends Fragment {
         // init call api story
         storyViewModel = new ViewModelProvider(this).get(StoryViewModel.class);
 
+        // init call api user
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
         //View Chat
         imgMessage = view.findViewById(R.id.img_message);
         // init userId
@@ -92,16 +98,44 @@ public class HomeFragment extends Fragment {
                 Log.d("check1", json);
                 if (response.getData() != null) {
                     storyList = response.getData();
-                    storyAdapter = new StoryAdapter(getContext(), storyList);
-                    recyclerViewStory.setAdapter(storyAdapter);
+                    boolean foundUserStory = false; // Biến để kiểm tra xem đã tìm thấy story của user hay chưa
+                    for (RequestStoryByUserId story : storyList) {
+                        if (story.getUserId().equals(userId)) {
+                            // Nếu tìm thấy story của user, đặt foundUserStory thành true và thoát khỏi vòng lặp
+                            foundUserStory = true;
+                            break;
+                        }
+                    }
+                    if (foundUserStory) {
+                        // Nếu tìm thấy story của user, hiển thị danh sách story
+                        storyAdapter = new StoryAdapter(getContext(), storyList);
+                        recyclerViewStory.setAdapter(storyAdapter);
+                    } else {
+                        // Nếu không tìm thấy story của user, thêm một story mặc định
+                        userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
+                            @Override
+                            public void onChanged(ApiResponse<UserResponse> response) {
+                                if (response.getMessage().equals("Success") && response.getStatus()){
+                                    Date createAt = new Date();
+                                    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                                    String isoDateString = isoFormat.format(createAt);
+                                    UserResponse userResponse = response.getData();
+                                    RequestStoryByUserId defaultStory = new RequestStoryByUserId(userId, userResponse.getAvatarImg(), userResponse.getUsername(), isoDateString, "", null, null);
+                                    storyList.add(defaultStory);
+                                    storyAdapter = new StoryAdapter(getContext(), storyList);
+                                    recyclerViewStory.setAdapter(storyAdapter);
+                                }
+                            }
+                        });
+                    }
                 } else {
                     // Xử lý khi không có dữ liệu hoặc có lỗi
                 }
             }
         });
 
-        // call api display list post in home
 
+        // call api display list post in home
         postViewModel.getListPostByUserId(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<List<RequestPostByUserId>>>() {
             @Override
             public void onChanged(ApiResponse<List<RequestPostByUserId>> response) {

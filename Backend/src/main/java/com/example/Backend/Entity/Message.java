@@ -22,4 +22,5 @@ public class Message {
     private String privateChatId;
     private String groupChatId;
     private String urlFile;
+    private String urlSticker;
 }

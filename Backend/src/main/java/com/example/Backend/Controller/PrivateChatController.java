@@ -4,9 +4,11 @@ import com.example.Backend.Config.PusherConfig;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
+import com.example.Backend.Response.ApiResponse.Message.MessageResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.PrivateChat.PrivateChatService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +36,11 @@ public class PrivateChatController {
         return new ApiResponse<PrivateChatWithMessagesResponse>(true, "", privateChatService.getMessagesByPrivateChatId(id));
     }
     @PostMapping("/send_mess")
-    public ApiResponse<PrivateChatWithMessagesResponse> sendMessage(@RequestBody RequestChatPrtivate request) throws Exception {
-        PrivateChatWithMessagesResponse response = privateChatService.SendMessage(request);
-        pusherConfig.triggerEvent("newmess", "send", response);
-        return new ApiResponse<>(true, "OK", response);
+    public ApiResponse<MessageResponse> sendMessage(@RequestBody RequestChatPrtivate request) throws Exception {
+        MessageResponse response = privateChatService.SendMessage(request);
+        pusherConfig.triggerEvent(request.getCreatorId(), "send", response);
+        pusherConfig.triggerEvent(request.getRecipientId(), "send", response);
+        return new ApiResponse<MessageResponse>(true, "OK", response);
     }
     @GetMapping("/get_list_mess")
     public ApiResponse<List<PrivateChatWithMessagesResponse>> getListChat(@RequestParam String id) {

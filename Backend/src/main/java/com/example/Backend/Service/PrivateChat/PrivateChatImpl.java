@@ -6,6 +6,7 @@ import com.example.Backend.Entity.model.Message.MessageWithSenderInfo;
 import com.example.Backend.Entity.model.User;
 import com.example.Backend.Request.PrivateChat.RequestChatPrtivate;
 import com.example.Backend.Request.PrivateChat.RequestCreatePrivateChat;
+import com.example.Backend.Response.ApiResponse.Message.MessageResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatResponse;
 import com.example.Backend.Response.ApiResponse.PrivateChatResponse.PrivateChatWithMessagesResponse;
 import com.example.Backend.Service.User.UserService;
@@ -162,6 +163,7 @@ public class PrivateChatImpl implements PrivateChatService {
             messageWithSenderInfo.setCreatedAt(message.getCreatedAt());
             messageWithSenderInfo.setUrlFile(message.getUrlFile());
             messageWithSenderInfo.setGroupChatId(message.getGroupChatId());
+            messageWithSenderInfo.setUrlSticker(message.getUrlSticker());
             messageWithSenderInfo.setSender(userService.findUserById(message.getSenderId()));
             messageWithSenderInfos.add(messageWithSenderInfo);
         }
@@ -170,7 +172,7 @@ public class PrivateChatImpl implements PrivateChatService {
 
 
     @Override
-    public PrivateChatWithMessagesResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception {
+    public MessageResponse SendMessage(RequestChatPrtivate requestChatPrtivate) throws Exception {
         String creatorId = requestChatPrtivate.getCreatorId();
         String recipientId = requestChatPrtivate.getRecipientId();
         Criteria criteria = new Criteria().orOperator(
@@ -179,6 +181,9 @@ public class PrivateChatImpl implements PrivateChatService {
         );
         Query query = new Query(criteria);
         PrivateChat privateChat = mongoTemplate.findOne(query, PrivateChat.class);
+
+        query = new Query(Criteria.where("_id").is(creatorId));
+        User user = mongoTemplate.findOne(query, User.class, "users");
 
         if (privateChat == null) {
             PrivateChat newPrivateChat = new PrivateChat();
@@ -194,13 +199,20 @@ public class PrivateChatImpl implements PrivateChatService {
         Date createdAt = Date.from(Instant.now());
         newMessage.setCreatedAt(createdAt);
         newMessage.setPrivateChatId(privateChat.getId());
-        mongoTemplate.save(newMessage);
-        privateChat.setLastMessageSent(requestChatPrtivate.getLastMessageSent());
-        mongoTemplate.save(privateChat);
-        List<MessageWithSenderInfo> messages = getMessageList(privateChat);
-        PrivateChatWithMessagesResponse response = new PrivateChatWithMessagesResponse();
-        response.setMessages(messages);
-        return response;
+        newMessage.setUrlSticker(requestChatPrtivate.getUrlSticker());
+        newMessage.setUrlFile((requestChatPrtivate.getUrlFile()));
+
+        newMessage = mongoTemplate.save(newMessage);
+
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setId(newMessage.getId());
+        messageResponse.setGroupChatId(newMessage.getGroupChatId());
+        messageResponse.setContent(newMessage.getContent());
+        messageResponse.setCreatedAt(newMessage.getCreatedAt());
+        messageResponse.setUrlFile(newMessage.getUrlFile());
+        messageResponse.setUrlSticker(newMessage.getUrlSticker());
+        messageResponse.setSender(user);
+        return messageResponse;
     }
 
 }

@@ -26,8 +26,8 @@ public class GroupChatViewModel extends ViewModel {
         return groupChatRepository.getMessagesByGroupChatId(groupChatId);
     }
 
-    public LiveData<ApiResponse<GroupChatWithMessagesResponse>> sendMessage(String groupChatId, RequestChatGroup request) {
-        return groupChatRepository.sendMessage(groupChatId, request);
+    public void sendMessage(String groupChatId, RequestChatGroup request) {
+        groupChatRepository.sendMessage(groupChatId, request);
     }
 
     public LiveData<ApiResponse<String>> addMemberToGroupChat(String groupChatId, RequestAddMemberToGroupChat request) {

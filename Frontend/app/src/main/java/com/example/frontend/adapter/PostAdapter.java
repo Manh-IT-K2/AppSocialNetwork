@@ -21,6 +21,9 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.frontend.R;
 import com.example.frontend.fragments.CommentFragment;
 import com.example.frontend.fragments.LikeFragment;
@@ -38,6 +41,7 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +72,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RequestPostByUserId post = listPost.get(position);
+
+        String userId = SharedPreferenceLocal.read(mContext,"userId");
         List<UserResponse> list = post.getLike();
+        List<String> imageList = post.getImagePost();
         Gson gson = new Gson();
         String t = gson.toJson(post);
         Log.e("loi",t);
@@ -82,7 +89,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             holder.txt_liked.setText(list.size() + " lượt thích");
 
             for (UserResponse user : list) {
-                if (user.getId().contains("65e8a525714ccc3a3caa7f77")) {
+                if (user.getId().contains(userId)) {
                     post.setLiked(true);
                     break;
                 }
@@ -114,40 +121,46 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 .into(holder.img_user);
 
         // display more image in imageView
-       if(post.getImagePost().size() > 1){
-           // Thêm hình ảnh vào LinearLayout
-           LinearLayout linearLayout = holder.itemView.findViewById(R.id.linear_layout_drag_Post);
-           linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
+//       if(post.getImagePost().size() > 1){
+//           // Thêm hình ảnh vào LinearLayout
+//           LinearLayout linearLayout = holder.itemView.findViewById(R.id.linear_layout_drag_Post);
+//           linearLayout.removeAllViews(); // Xóa hết các ImageView cũ trước khi thêm mới
+//
+//           // Lấy kích thước màn hình
+////           DisplayMetrics displayMetrics = new DisplayMetrics();
+////           ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+////           int screenWidth = displayMetrics.widthPixels;
+//
+//           for (String imageUrl : post.getImagePost()) { // Giả sử getImageUrls() trả về danh sách URL hình ảnh
+//               ImageView imageView = new ImageView(mContext);
+//
+//               // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
+//               LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+//                       ViewGroup.LayoutParams.MATCH_PARENT,
+//                       1200 // Set chiều cao mong muốn ở đây (350px)
+//               );
+//               layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
+//               imageView.setLayoutParams(layoutParams);
+//
+//               Glide.with(mContext)
+//                       .load(imageUrl)
+//                       .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
+//                       .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
+//                       .into(imageView);
+//
+//               linearLayout.addView(imageView);
+//           }
+//       }else{
+//           Glide.with(mContext)
+//                   .load(post.getImagePost().get(0))
+//                   .into(holder.image_sliderPost);
+      // }
 
-           // Lấy kích thước màn hình
-//           DisplayMetrics displayMetrics = new DisplayMetrics();
-//           ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//           int screenWidth = displayMetrics.widthPixels;
-
-           for (String imageUrl : post.getImagePost()) { // Giả sử getImageUrls() trả về danh sách URL hình ảnh
-               ImageView imageView = new ImageView(mContext);
-
-               // Tạo LayoutParams với chiều rộng bằng chiều rộng của màn hình và chiều cao mong muốn
-               LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                       ViewGroup.LayoutParams.MATCH_PARENT,
-                       350 // Set chiều cao mong muốn ở đây (350px)
-               );
-               layoutParams.setMargins(0, 0, 16, 0); // Cài đặt khoảng cách giữa các ImageView
-               imageView.setLayoutParams(layoutParams);
-
-               Glide.with(mContext)
-                       .load(imageUrl)
-                       .placeholder(R.drawable.logo) // Ảnh thay thế khi đang load
-                       .error(R.drawable.logo) // Ảnh thay thế khi có lỗi
-                       .into(imageView);
-
-               linearLayout.addView(imageView);
-           }
-       }else{
-           Glide.with(mContext)
-                   .load(post.getImagePost().get(0))
-                   .into(holder.img_post);
-       }
+        ArrayList<SlideModel> slideModels = new ArrayList<>();
+        for (int i = 0; i<= imageList.size() -1; i++){
+            slideModels.add(new SlideModel(imageList.get(i), ScaleTypes.FIT));
+        }
+        holder.image_sliderPost.setImageList(slideModels);
     }
 
     @Override
@@ -165,6 +178,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         private ImageView img_user, img_userLiked, img_post, btn_like, btn_comment, btn_sentPostMessenger, btn_save;
         private TextView txt_userName, txt_address, txt_contentPost, txt_timeCreatePost;
         LinearLayout linear_layout_drag_Post;
+        private ImageSlider image_sliderPost;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -172,7 +186,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
             img_user = itemView.findViewById(R.id.img_user);
             //img_userLiked = itemView.findViewById(R.id.img_userLiked);
-            img_post = itemView.findViewById(R.id.img_post);
+            image_sliderPost = itemView.findViewById(R.id.image_sliderPost);
             btn_like = itemView.findViewById(R.id.btn_like);
             btn_comment = itemView.findViewById(R.id.btn_comment);
             btn_save = itemView.findViewById(R.id.btn_save);
@@ -182,7 +196,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             txt_contentPost = itemView.findViewById(R.id.txt_contentPost);
             txt_address = itemView.findViewById(R.id.txt_address);
             txt_timeCreatePost = itemView.findViewById(R.id.txt_timeCreatePost);
-            linear_layout_drag_Post = itemView.findViewById(R.id.linear_layout_drag_Post);
+            //linear_layout_drag_Post = itemView.findViewById(R.id.linear_layout_drag_Post);
             txt_liked = itemView.findViewById(R.id.txt_liked);
 
             // action click btn_comment display screen comment
@@ -202,6 +216,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
+                    String userId = SharedPreferenceLocal.read(mContext,"userId");
                     if (position != RecyclerView.NO_POSITION) {
                         RequestPostByUserId post = listPost.get(position);
                         String postId = post.getIdPost();
@@ -216,15 +231,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                             btn_like.setImageResource(R.drawable.icon_liked);
                             post.setLiked(true);
                             notification.setText(userName+" vừa like bài viết của bạn");
-                            userViewModel.addNotification(notification);
-                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
+                            if(!notification.getIdRecipient().equals(notification.getUserId())){
+                                NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
+                                userViewModel.addNotification(notification);
+                            }
                         } else {
                             btn_like.setImageResource(R.drawable.icon_favorite);
                             post.setLiked(false);
-//                            notification.setText("Vừa bỏ like bài viết của bạn");
-//                            NotificationService.sendNotification(mContext, notification.getText(), post.getTokenFCM());
                         }
-                        postViewModel.addLike(postId,SharedPreferenceLocal.read(itemView.getContext(), "userId")).observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
+                        postViewModel.addLike(postId,userId).observe(lifecycleOwner, new Observer<ApiResponse<PostResponse>>() {
                             @Override
                             public void onChanged(ApiResponse<PostResponse> response) {
 //                                List<UserResponse> list = post.getLike();

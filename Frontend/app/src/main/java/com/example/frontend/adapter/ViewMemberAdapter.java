@@ -6,14 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.response.User.UserResponse;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
 
     private Context mContext;
     private TextView textViewName,textViewSup;
+    CircleImageView imgAvatar;
     private List<UserResponse> mMembers;
     public ViewMemberAdapter(Context context, List<UserResponse> members) {
         super(context, 0, members);
@@ -40,10 +45,16 @@ public class ViewMemberAdapter extends ArrayAdapter<UserResponse> {
 
         textViewName = listItem.findViewById(R.id.textFriendName);
         textViewSup = listItem.findViewById(R.id.subInformation);
+        imgAvatar = listItem.findViewById(R.id.imgAvatar);
+
+        Glide.with(mContext)
+                .load(currentMember.getAvatarImg() != null ? currentMember.getAvatarImg() : R.drawable.logo)
+                .centerCrop().into(imgAvatar);
 
         textViewName.setText(currentMember.getUsername());
 
         textViewSup.setText("ID: "+currentMember.getId());
+
         Log.d("nickname", currentMember.getId());
         // Cập nhật các trường thông tin khác nếu cần
 
