@@ -5,18 +5,21 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.multidex.MultiDex;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -39,13 +42,21 @@ import com.example.frontend.utils.SharedPreferenceLocal;
 //import com.example.frontend.utils.SpotifyManager;
 import com.example.frontend.viewModel.Story.StoryViewModel;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import io.stipop.Stipop;
 import io.stipop.StipopDelegate;
@@ -190,15 +201,56 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
             stickersList.add(new RequestCreateStory.Stickers(uriSticker, x, y));
         }
 
-        RequestCreateStory story = new RequestCreateStory(userId, isoDateString, imageStory, contentMediaList, stickersList);
 
         btnShareStory.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 bottomSheetDialog.dismiss();
-                storyViewModel.createStory(story, userId);
-                startActivity(new Intent(CreateStoryActivity.this, MainActivity.class));
+
+                final Dialog dialog = new Dialog(CreateStoryActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_progress_bar);
+                dialog.setCancelable(false);
+                dialog.show();
+
+                // Tạo một tham chiếu tới nơi lưu trữ trên Firebase Storage
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("story_images/").child(UUID.randomUUID().toString());
+
+                // Chuyển đổi Uri của hình ảnh sang định dạng InputStream
+                try {
+                    InputStream stream = getContentResolver().openInputStream(Uri.parse(imageStory));
+
+                    // Upload hình ảnh lên Firebase Storage
+                    UploadTask uploadTask = storageRef.putStream(stream);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Lấy URL của hình ảnh đã tải lên
+                            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    RequestCreateStory story = new RequestCreateStory(userId, isoDateString, uri.toString(), contentMediaList, stickersList);
+                                    // Lưu URL vào đối tượng story và sau đó tạo câu chuyện
+                                    storyViewModel.createStory(story, userId);
+                                    startActivity(new Intent(CreateStoryActivity.this, MainActivity.class));
+                                }
+                            });
+                            dialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Xử lý khi upload thất bại
+                            dialog.dismiss();
+                        }
+                    });
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    dialog.dismiss();
+                }
             }
+
         });
         bottomSheetDialog.show();
     }
@@ -289,23 +341,28 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
                         floatingEditText.setVisibility(View.VISIBLE);
                         floatingEditText.setTextSize(20);
                         String text = floatingEditText.getText().toString().trim();
+                        // Trong phần xử lý sự kiện khi EditText nổi đã nhập văn bản và bị nhấn lại
                         if (!text.isEmpty()) {
-                            floatingEditText.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    int[] location = new int[2];
-                                    floatingEditText.getLocationOnScreen(location);
-                                    float marginTop = location[1];
-                                    float marginLeft = location[0];
-                                    listOfContents.add(new RequestCreateStory.ContentMedia(text,marginTop,marginLeft));
-                                }
-                            });
+                            //if (!isTextAlreadyAdded(text)) {
+                                // Nếu văn bản mới không trùng với bất kỳ văn bản nào trong listOfContents, thêm vào danh sách
+                                floatingEditText.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int[] location = new int[2];
+                                        floatingEditText.getLocationOnScreen(location);
+                                        float marginTop = location[1];
+                                        float marginLeft = location[0];
+                                        listOfContents.add(new RequestCreateStory.ContentMedia(text, marginTop, marginLeft));
+                                    }
+                                });
+                            //}
                         }
                         break;
                 }
                 return true;
             }
         });
+
 
 
         // Xử lý sự kiện khi EditText nổi đã nhập văn bản và bị nhấn lại
@@ -321,6 +378,17 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
 
     }
 
+    // Phương thức để kiểm tra xem văn bản mới có trùng với các văn bản có sẵn không
+    private boolean isTextAlreadyAdded(String newText) {
+        for (RequestCreateStory.ContentMedia content : listOfContents) {
+            if (content.getContent().equals(newText)) {
+                // Trả về true nếu văn bản mới trùng với một văn bản đã có trong listOfContents
+                return true;
+            }
+        }
+        // Trả về false nếu không có văn bản nào giống với văn bản mới
+        return false;
+    }
     private void initBtnDeleteView(){
         // Tạo một FrameLayout mới để chứa ImageView
         deleteLayout = new FrameLayout(this);

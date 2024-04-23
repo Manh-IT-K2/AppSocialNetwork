@@ -1,6 +1,7 @@
 package com.example.frontend.fragments;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,10 +23,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.frontend.R;
+import com.example.frontend.activities.CreatePostActivity;
 import com.example.frontend.activities.MainChatActivity;
 import com.example.frontend.adapter.PostAdapter;
 import com.example.frontend.adapter.StoryAdapter;
@@ -150,6 +153,7 @@ public class HomeFragment extends Fragment {
                     // Xử lý khi không có dữ liệu hoặc có lỗi
                 }
             }
+
         });
 
        imgMessage.setOnClickListener(new View.OnClickListener() {
