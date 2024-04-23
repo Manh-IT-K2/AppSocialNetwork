@@ -1,5 +1,7 @@
 package com.example.frontend.adapter;
 
+import static com.example.frontend.utils.CameraX.flag;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.activities.CreateStoryActivity;
+import com.example.frontend.activities.PostActivity;
+import com.example.frontend.utils.CameraX;
 //import com.example.frontend.activities.CreateStoryActivity;
 
 import java.util.List;
@@ -95,7 +99,14 @@ public class ImageStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             btn_cameraStory = itemView.findViewById(R.id.btn_cameraStory);
 
             // Set OnClickListener to the button
-
+            btn_cameraStory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    flag = 2;
+                    Intent intent = new Intent(mContext, CameraX.class);
+                    mContext.startActivity(intent);
+                }
+            });
         }
     }
 

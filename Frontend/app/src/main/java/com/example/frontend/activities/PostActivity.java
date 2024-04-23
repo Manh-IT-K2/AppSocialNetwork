@@ -1,5 +1,7 @@
 package com.example.frontend.activities;
 
+import static com.example.frontend.utils.CameraX.flag;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -98,6 +100,7 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 checkDataIntent = 0;
                 checkScreen = 0;
+                flag = 1;
                 Intent intent = new Intent(PostActivity.this, CameraX.class);
                 startActivity(intent);
             }

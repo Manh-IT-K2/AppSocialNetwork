@@ -3,6 +3,7 @@ package com.example.frontend.utils;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.frontend.R;
@@ -29,12 +30,14 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.frontend.activities.CreatePostActivity;
+import com.example.frontend.activities.CreateStoryActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 public class CameraX extends AppCompatActivity {
+    public static int flag = 0;
     ImageButton capture, toggleFlash, flipCamera, btn_backCamera;
     private PreviewView previewView;
     private File file; // Đối tượng file ở mức độ lớp
@@ -141,9 +144,15 @@ public class CameraX extends AppCompatActivity {
                     public void run() {
                         //Toast.makeText(CameraX.this, "Image saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
                         // Sau khi ảnh được lưu, chuyển sang CreatePostFragment
-                        Intent intent = new Intent(CameraX.this, CreatePostActivity.class);
-                        intent.putExtra("imagePath", file.getPath());
-                        startActivity(intent);
+                       if (flag == 1){
+                           Intent intent = new Intent(CameraX.this, CreatePostActivity.class);
+                           intent.putExtra("imagePath", file.getPath());
+                           startActivity(intent);
+                       }else {
+                           Intent intent = new Intent(CameraX.this, CreateStoryActivity.class);
+                           intent.putExtra("imagePathStory",file.getPath());
+                           startActivity(intent);
+                       }
                         finish(); // Kết thúc CameraX Activity sau khi chụp ảnh
                     }
                 });
