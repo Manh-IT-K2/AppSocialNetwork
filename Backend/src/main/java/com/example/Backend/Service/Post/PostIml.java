@@ -107,7 +107,7 @@ public class PostIml implements PostService{
         AggregationOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, "createAt"); // Sắp xếp theo thứ tự giảm dần của createAt
 
         AggregationOperation projectOperation = Aggregation.project()
-                .andExpression("_id").as("userId")
+                .andExpression("user._id").as("userId")
                 .andExpression("user.username").as("userName")
                 .andExpression("user.avatarImg").as("avtImage")
                 .andExpression("_id").as("idPost")
