@@ -230,9 +230,10 @@ public class ProfileFragment extends Fragment {
                 userId = bundle.getString("userId", "");
             }else if(bundle.getString("userIdLiked") != null) {
                 userId = bundle.getString("userIdLiked");
+            }else if(bundle.getString("userIdViewer") != null) {
+                userId = bundle.getString("userIdViewer");
             }
         }
-
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {

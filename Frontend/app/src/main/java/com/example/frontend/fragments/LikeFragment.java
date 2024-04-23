@@ -55,11 +55,13 @@ public class LikeFragment extends Fragment {
         // Retrieve data passed from previous fragment/activity
         String likesJson = getArguments().getString("likes");
         originalLikes = new Gson().fromJson(likesJson, new TypeToken<List<UserResponse>>(){}.getType());
-        filteredLikes = new ArrayList<>(originalLikes); // Khởi tạo danh sách đã lọc bằng danh sách gốc ban đầu
-        likedAdapter = new LikedAdapter(getContext(), filteredLikes);
-        Log.e("nooooooo", new Gson().toJson(originalLikes));
-        // Set the adapter with the data
-        listUserLiked.setAdapter(likedAdapter);
+        if (originalLikes != null){
+            filteredLikes = new ArrayList<>(originalLikes); // Khởi tạo danh sách đã lọc bằng danh sách gốc ban đầu
+            likedAdapter = new LikedAdapter(getContext(), filteredLikes);
+            Log.e("nooooooo", new Gson().toJson(originalLikes));
+            // Set the adapter with the data
+            listUserLiked.setAdapter(likedAdapter);
+        }
 
         // hidden btn_cleanTextSearchLiked when edt_searchUserLiked is empty
         btn_cleanTextSearchLiked.setVisibility(View.INVISIBLE);

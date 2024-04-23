@@ -130,7 +130,7 @@ public class StoryIml implements StoryService{
         // Chuyển đổi thời gian từ milliseconds sang giờ
         long hoursDifference = TimeUnit.MILLISECONDS.toHours(timeDifferenceInMillis);
         // Kiểm tra nếu thời gian chênh lệch lớn hơn 24 giờ
-        return hoursDifference > 24;
+        return hoursDifference >= 24;
     }
 
     // delete story
