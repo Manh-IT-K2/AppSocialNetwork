@@ -18,7 +18,9 @@ import com.example.frontend.response.User.NotificationResponse;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -33,12 +35,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     Context mContext;
     List<NotificationResponse> mNotification;
-    private FragmentManager fragmentManager;
+    private FragmentActivity fragmentActivity;
 
-    public NotificationAdapter(Context mContext, List<NotificationResponse> mNotification, FragmentManager fragmentManager) {
+    public NotificationAdapter(Context mContext, List<NotificationResponse> mNotification, FragmentActivity fragmentActivity) {
         this.mContext = mContext;
         this.mNotification = mNotification;
-        this.fragmentManager = fragmentManager;
+        this.fragmentActivity = fragmentActivity;
     }
 
     @NonNull
@@ -86,8 +88,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
                     profileFragment.setArguments(bundle);
 
-                    // Thay thế SenderFragment bằng ReceiverFragment
-                    fragmentManager.beginTransaction()
+                    fragmentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_layout_main, profileFragment)
                             .addToBackStack(null)
                             .commit();

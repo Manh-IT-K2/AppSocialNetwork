@@ -46,7 +46,7 @@ public class NotificationFragment extends Fragment {
             @Override
             public void onChanged(ApiResponse<List<NotificationResponse>> listApiResponse) {
                 notificationResponseList = listApiResponse.getData();
-                notificationAdapter = new NotificationAdapter(getContext(), notificationResponseList,getChildFragmentManager());
+                notificationAdapter = new NotificationAdapter(getContext(), notificationResponseList,getActivity());
                 recyclerView.setAdapter(notificationAdapter);
             }
         });

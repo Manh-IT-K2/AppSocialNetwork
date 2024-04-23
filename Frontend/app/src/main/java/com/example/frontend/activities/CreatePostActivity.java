@@ -48,6 +48,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -223,20 +224,20 @@ public class CreatePostActivity extends AppCompatActivity {
 
         // Sử dụng danh sách các URL trong việc tạo yêu cầu đăng bài viết
         RequestCreatePost requestCreatePost = new RequestCreatePost(fileUrls, userId, description, "", isoDateString);
-
-        postViewModel.createPost(requestCreatePost, userId);
         postViewModel.createPost(requestCreatePost, userId).observe(this, new Observer<ApiResponse<ResponseCreatePost>>() {
             @Override
             public void onChanged(ApiResponse<ResponseCreatePost> responseCreatePostApiResponse) {
                 ResponseCreatePost responseCreatePost = responseCreatePostApiResponse.getData();
                 userViewModel = new UserViewModel();
+                Log.e("abc", new Gson().toJson(responseCreatePost));
+                Log.e("abc", new Gson().toJson(responseCreatePost.getPostId()));
                 //Tạo thông báo
                 Notification notification = new Notification();
                 notification.setPostId(responseCreatePost.getPostId());
                 notification.setUserId(SharedPreferenceLocal.read(getApplicationContext(), "userId"));
                 String userName = SharedPreferenceLocal.read(getApplicationContext(), "userName");
                 notification.setText(userName+" vừa đăng một bài viết");
-
+                Log.e("abc", new Gson().toJson(notification.getPostId()));
                 for(UserResponse user : responseCreatePost.getListFollowers()){
                     if(user.getTokenFCM() != null){
                         notification.setIdRecipient(user.getId());

@@ -5,17 +5,7 @@
       <config />
     </shared>
     <layouts>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_comment.xml">
-        <config>
-          <theme>@style/Theme.Frontend</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_profile.xml">
-        <config>
-          <theme>@style/Theme.Frontend</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/post_item.xml">
         <config>
           <theme>@style/Theme.Frontend</theme>
         </config>
@@ -26,11 +16,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aaca3708-a81a-4f07-a14f-26d3cd2d4735" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/frontend/fragments/DetailPostsProfileFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/frontend/fragments/DetailPostsProfileFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/frontend/utils/CallApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/frontend/utils/CallApi.java" afterDir="false" />
-    </list>
+    <list default="true" id="bc9df664-3363-4137-8190-34a7b416e51b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,69 +25,34 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[localhost:5555]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[localhost:53754]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="resourceFile" />
-        <option value="Class" />
-        <option value="layoutResourceFile" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectId" id="2ejxyF7yqA5BBgVSGPAYSqmE4pk" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2fSAhHxyf4Z7p7Ht7KdAzc5lOJr" />
   <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "android-custom-view/Users/Quanmanh/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
-    "android-custom-view/Users/Quanmanh/.gradle/caches/modules-2/files-2.1/androidx.viewpager2/viewpager2/1.1.0-beta02/e6b214fdb6728bde9ce154c610dfb1388658cad7/viewpager2-1.1.0-beta02-sources.jar!/androidx/viewpager2/widget/ViewPager2.java_SELECTED": "ViewPager2",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "quynhlinh-dev",
-    "last_opened_file_path": "/Users/Quanmanh/AppSocialNetwork/Frontend",
-    "project.structure.last.edited": "Dependencies",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.customizations",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
-  <component name="PsdUISettings">
-    <option name="MODULE_TAB" value="Properties" />
-    <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
-  </component>
-  <component name="RecentsManager">
-    <key name="android.template.-421892954">
-      <recent name="com.example.frontend.activities" />
-    </key>
-  </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="Frontend.app.main" />
@@ -174,26 +125,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="aaca3708-a81a-4f07-a14f-26d3cd2d4735" name="Changes" comment="" />
-      <created>1712432040509</created>
+      <changelist id="bc9df664-3363-4137-8190-34a7b416e51b" name="Changes" comment="" />
+      <created>1713784227717</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1712432040509</updated>
+      <updated>1713784227717</updated>
     </task>
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

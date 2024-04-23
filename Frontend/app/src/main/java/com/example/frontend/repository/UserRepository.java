@@ -313,7 +313,7 @@ public class UserRepository {
                 if(response.isSuccessful()) {
                     ApiResponse<UserResponse> user = response.body();
                     mutableLiveData.setValue(user);
-                    Log.d("Detail User:",mutableLiveData.getValue().getData().toString());
+                    Log.d("Detail User:", new Gson().toJson(response.body()));
                 } else {
                     // Xử lý khi phản hồi không thành công
                 }

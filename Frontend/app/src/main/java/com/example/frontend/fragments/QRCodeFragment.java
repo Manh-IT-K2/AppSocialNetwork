@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.frontend.R;
 import com.example.frontend.response.ApiResponse.ApiResponse;
 import com.example.frontend.response.User.UserResponse;
@@ -41,6 +42,7 @@ import com.example.frontend.utils.CaptureAct;
 import com.example.frontend.utils.QRCode;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.User.UserViewModel;
+import com.google.gson.Gson;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -99,8 +101,17 @@ public class QRCodeFragment extends Fragment {
         userViewModel.getDetailUserById(userId).observe(getViewLifecycleOwner(), new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> userResponseApiResponse) {
-                nameTv.setText(userResponseApiResponse.getData().getUsername());
-                Picasso.get().load(userResponseApiResponse.getData().getAvatarImg()).into(avatar);
+                UserResponse user = userResponseApiResponse.getData();
+                nameTv.setText(user.getUsername());
+                if (user.getAvatarImg() != null) {
+                    Glide.with(getContext())
+                            .load(Uri.parse(user.getAvatarImg()))
+                            .into(avatar);
+                }else {
+                    Glide.with(getContext())
+                            .load(R.drawable.baseline_account_circle_24)
+                            .into(avatar);
+                }
             }
         });
         return view;
@@ -143,38 +154,31 @@ public class QRCodeFragment extends Fragment {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userId = QRCode.readQRCodeFromImageView(imageIv);
-                if(userId != null){
-                    // Lấy drawable từ ImageView
-                    Drawable drawable = imageIv.getDrawable();
-                    Bitmap bitmap = null;
+                // Lấy drawable từ ImageView
+                Drawable drawable = imageIv.getDrawable();
+                Bitmap bitmap = null;
 
-                    if (drawable instanceof BitmapDrawable) {
-                        bitmap = ((BitmapDrawable) drawable).getBitmap();
-                    } else {
-                        // Chuyển đổi drawable thành bitmap nếu drawable không phải là BitmapDrawable
-                        bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(bitmap);
-                        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                        drawable.draw(canvas);
-                    }
-
-                    // Lưu bitmap vào bộ nhớ tạm
-                    String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Image Description", null);
-
-                    // Tạo Uri từ đường dẫn lưu
-                    Uri imageUri = Uri.parse(path);
-
-                    // Tạo Intent để chia sẻ qua Zalo
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("image/*");
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-//                    shareIntent.setPackage("com.zing.zalo"); // Gói ứng dụng Zalo
-
-                    startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua:"));
-                }else{
-                    Toast.makeText(getContext(), "Cannot share this QR Code", Toast.LENGTH_SHORT).show();
+                if (drawable instanceof BitmapDrawable) {
+                    bitmap = ((BitmapDrawable) drawable).getBitmap();
+                } else {
+                    // Chuyển đổi drawable thành bitmap nếu drawable không phải là BitmapDrawable
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                    drawable.draw(canvas);
                 }
+
+                // Lưu bitmap vào bộ nhớ tạm
+                String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Image Description", null);
+
+                // Tạo Uri từ đường dẫn lưu
+                Uri imageUri = Uri.parse(path);
+                // Tạo Intent để chia sẻ qua Zalo
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("image/*");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+
+                startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua:"));
             }
         });
 

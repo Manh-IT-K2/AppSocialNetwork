@@ -33,7 +33,7 @@ public class PostController {
         List<User> listFollowers = followsService.getUserFollowerById(userId).getData();
 
         ResponseCreatePost responseCreatePost = new ResponseCreatePost(idPost, listFollowers);
-        System.out.println(new Gson().toJson(responseCreatePost));
+        System.out.println("idPost "+new Gson().toJson(idPost));
 
         ApiResponse<ResponseCreatePost> apiResponse = new ApiResponse<ResponseCreatePost>(true, "Đăng bài thành công !",responseCreatePost);
         return new ResponseEntity<ApiResponse<ResponseCreatePost>>(apiResponse, HttpStatus.OK);

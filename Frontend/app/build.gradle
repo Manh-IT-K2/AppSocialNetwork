@@ -119,7 +119,7 @@ dependencies {
 
     // This library handles music playback
     //implementation (':spotify-app-remote-release-0.8.0')
-    implementation files('/Users/Quanmanh/spotify-app-remote-release-0.8.0.aar')
+//    implementation files('/Users/Quanmanh/spotify-app-remote-release-0.8.0.aar')
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
 
     // story

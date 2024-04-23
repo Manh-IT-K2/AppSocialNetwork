@@ -38,6 +38,7 @@ import com.example.frontend.response.User.UserResponse;
 import com.example.frontend.utils.SharedPreferenceLocal;
 import com.example.frontend.viewModel.Comment.CommentViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -90,7 +91,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         Glide.with(mContext)
                 .load(comment.getUser().getAvatarImg() != null ? comment.getUser().getAvatarImg() : R.drawable.logo)
                 .centerCrop().into(holder.img_userComment);
-
+        Log.e("checkLike", new Gson().toJson(comment.getLike()));
         // set text for txt_countLike and set icon for btn_like
         if (comment.getLike() != null) {
             holder.txt_countLikeComment.setText(comment.getLike().size() + "");
@@ -287,7 +288,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
                         RequestLikeComment likeComment = new RequestLikeComment();
                         likeComment.setIdComment(comment.getId());
-                        likeComment.setIdUser("65e8a525714ccc3a3caa7f77");
+                        likeComment.setIdUser(SharedPreferenceLocal.read(adapter.mContext, "userId"));
                         likeComment.setReplyComment(false);
 
                         commentViewModel.likeComment(likeComment);

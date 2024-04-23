@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.frontend.R;
+import com.example.frontend.activities.CreateStoryActivity;
 //import com.example.frontend.activities.CreateStoryActivity;
 
 import java.util.List;
@@ -63,9 +64,9 @@ public class ImageStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 @Override
                 public void onClick(View v) {
                     Uri imageUri = listImage.get(holder.getAdapterPosition() - 1);
-//                    Intent intent = new Intent(context, CreateStoryActivity.class);
-//                    intent.putExtra("imageUri", imageUri.toString());
-//                    context.startActivity(intent);
+                    Intent intent = new Intent(context, CreateStoryActivity.class);
+                    intent.putExtra("imageUri", imageUri.toString());
+                    context.startActivity(intent);
                 }
             });
 

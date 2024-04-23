@@ -9,6 +9,7 @@ import com.example.Backend.Request.GroupChat.RequestCreateGroupChat;
 import com.example.Backend.Request.User.*;
 import com.example.Backend.Response.ApiResponse.ApiResponse;
 
+import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -342,7 +343,7 @@ public class UserImpl implements UserService {
     public void addNotification(RequestNotification notification) {
         Query query = new Query(Criteria.where("userId").is(notification.getIdRecipient()));
         Notification notify = mongoTemplate.findOne(query, Notification.class, "notification");
-
+        System.out.println(new Gson().toJson(notification));
         query = new Query(Criteria.where("_id").is(notification.getUserId()));
         User user = mongoTemplate.findOne(query, User.class, "users");
 
@@ -361,7 +362,9 @@ public class UserImpl implements UserService {
                 notificationOfUser.setCreateAt(new Date());
 
                 if(notification.getText().contains("vừa like")
-                || notification.getText().contains("vừa bình luận bài viết")) {
+                || notification.getText().contains("vừa bình luận bài viết")
+                        || notification.getText().contains("vừa đăng một bài viết")
+                ) {
                     notificationOfUser.setIdPost(notification.getPostId());
                 }
 
@@ -370,7 +373,7 @@ public class UserImpl implements UserService {
                     notificationOfUser.setIdPost(notification.getPostId());
                     notificationOfUser.setIdComment(notification.getIdComment());
                 }
-
+                System.out.println("notificationOfUser "+new Gson().toJson(notificationOfUser));
                 list.add(notificationOfUser);
                 notify.setNotificationList(list);
                 mongoTemplate.save(notify);
@@ -382,16 +385,16 @@ public class UserImpl implements UserService {
                 notificationOfUser.setAvatar(user.getAvatarImg());
                 notificationOfUser.setCreateAt(new Date());
 
-                if(notification.getText().contains("vừa like")) {
+                if(notification.getText().contains("vừa like")
+                        || notification.getText().contains("vừa bình luận bài viết") || notification.getText().contains("vừa đăng một bài viết")) {
                     notificationOfUser.setIdPost(notification.getPostId());
                 }
 
-                if(notification.getText().contains("vừa bình luận bài viết")
-                        || notification.getText().contains("vừa phản hồi bình luận")){
+                if(notification.getText().contains("vừa phản hồi bình luận")){
                     notificationOfUser.setIdPost(notification.getPostId());
                     notificationOfUser.setIdComment(notification.getIdComment());
                 }
-
+                System.out.println("notificationOfUser "+new Gson().toJson(notificationOfUser));
                 notify.getNotificationList().add(notificationOfUser);
                 mongoTemplate.save(notify);
             }

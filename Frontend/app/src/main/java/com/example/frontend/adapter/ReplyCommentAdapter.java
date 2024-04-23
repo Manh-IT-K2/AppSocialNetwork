@@ -227,7 +227,7 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
 
                         RequestLikeComment likeComment = new RequestLikeComment();
                         likeComment.setIdComment(idCommentParent);
-                        likeComment.setIdUser("65e8a525714ccc3a3caa7f77");
+                        likeComment.setIdUser(SharedPreferenceLocal.read(adapter.mContext, "userId"));
                         likeComment.setReplyComment(true);
                         likeComment.setIdReplyComment(comment.getId());
 

@@ -67,7 +67,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
     public static int positionReplyCommentParent = -1;
     private ImageView btn_createComment, btn_sendGifComment;
     private static List<String> listIconsChoosed = new ArrayList<>();
-    private String userId;
+    private String ownerId;
     private String tokenFCM;
 
     public CommentFragment(Context context, String idPost, String idComment, String userId, String tokenFCM) {
@@ -75,7 +75,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
         this.context = context;
         this.idPost = idPost;
         this.idComment = idComment;
-        this.userId = userId;
+        this.ownerId = userId;
         this.tokenFCM = tokenFCM;
     }
 
@@ -171,7 +171,7 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
 
                 Notification notification = new Notification();
                 notification.setPostId(idPost);
-                notification.setUserId(SharedPreferenceLocal.read(getContext(), "userId"));
+                notification.setUserId(userId);
                 String userName = SharedPreferenceLocal.read(getContext(), "userName");
 
                 if (positionComment != -1 ){
@@ -197,9 +197,10 @@ public class CommentFragment extends Dialog implements IconAdapter.IconClickList
 
                 }else{
                     notification.setText(userName+" vừa bình luận bài viết của bạn");
-                    notification.setIdRecipient(userId);
+                    notification.setIdRecipient(ownerId);
                 }
-
+                Log.e("testtb", notification.getIdRecipient());
+                Log.e("testtb", notification.getUserId());
                 if(!notification.getIdRecipient().equals(notification.getUserId())){
                     NotificationService.sendNotification(getContext(), notification.getText(), tokenFCM);
                     userViewModel.addNotification(notification);
