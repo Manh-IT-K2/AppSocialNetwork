@@ -19,7 +19,7 @@
         android:id="@+id/txt_createNewStory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:textColor="@color/red"
         android:textStyle="bold"
         android:layout_marginStart="20dp"

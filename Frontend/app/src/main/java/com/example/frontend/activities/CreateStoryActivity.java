@@ -7,8 +7,10 @@ import androidx.multidex.MultiDex;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -50,6 +52,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -65,12 +69,13 @@ import io.stipop.model.SPPackage;
 import io.stipop.model.SPSticker;
 
 
-public class CreateStoryActivity extends AppCompatActivity implements StipopDelegate{
+public class CreateStoryActivity extends AppCompatActivity implements StipopDelegate {
 
 
     // init variable
     private List<RequestCreateStory.ContentMedia> listOfContents = new ArrayList<>();
-    private List<RequestCreateStory.Stickers> listOfStickers = new ArrayList<>();;
+    private List<RequestCreateStory.Stickers> listOfStickers = new ArrayList<>();
+    ;
     private FrameLayout deleteLayout;
     private ImageView imageViewDelete, stickerImageView;
     private StoryViewModel storyViewModel;
@@ -111,12 +116,17 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
 
         // Get URI address from Intent
         String imageUriString = getIntent().getStringExtra("imageUri");
-        Uri imageUri = Uri.parse(imageUriString);
-
-        // Assign photo img_createStory
-        Glide.with(this)
-                .load(imageUri)
-                .into(img_createStory);
+        String imagePath = getIntent().getStringExtra("imagePathStory");
+        if (imageUriString != null) {
+            Uri imageUri = Uri.parse(imageUriString);
+            // Assign photo img_createStory
+            Glide.with(this).load(imageUri).into(img_createStory);
+        } else if (imagePath != null) {
+            File file = new File(imagePath);
+            Uri uri = Uri.fromFile(file);
+            String imgUrl = uri.toString();
+            Glide.with(this).load(imgUrl).into(img_createStory);
+        }
 
         // handle event click btn_backCreateStory
         btn_backCreateStory.setOnClickListener(new View.OnClickListener() {
@@ -165,22 +175,20 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
 
         Button btnShareStory = bottomSheetDialog.findViewById(R.id.btn_shareStory);
         ShapeableImageView img_avtUserCreateStory = bottomSheetDialog.findViewById(R.id.img_avtUserCreateStory);
-        String userId = SharedPreferenceLocal.read(this,"userId");
+        String userId = SharedPreferenceLocal.read(this, "userId");
         userViewModel.getDetailUserById(userId).observe(this, new Observer<ApiResponse<UserResponse>>() {
             @Override
             public void onChanged(ApiResponse<UserResponse> response) {
-                if (response.getMessage().equals("Success") && response.getStatus()){
+                if (response.getMessage().equals("Success") && response.getStatus()) {
                     UserResponse userResponse = response.getData();
-                    Glide.with(getApplicationContext())
-                            .load(userResponse.getAvatarImg())
-                            .into(img_avtUserCreateStory);
+                    Glide.with(getApplicationContext()).load(userResponse.getAvatarImg()).into(img_avtUserCreateStory);
                 }
             }
         });
 
         List<RequestCreateStory.ContentMedia> contentMediaList = new ArrayList<>();
         List<RequestCreateStory.Stickers> stickersList = new ArrayList<>();
-        String imageStory = getIntent().getStringExtra("imageUri");
+
         Date createAt = new Date();
         SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         String isoDateString = isoFormat.format(createAt);
@@ -201,58 +209,65 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
             stickersList.add(new RequestCreateStory.Stickers(uriSticker, x, y));
         }
 
-
         btnShareStory.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 bottomSheetDialog.dismiss();
-
                 final Dialog dialog = new Dialog(CreateStoryActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_progress_bar);
                 dialog.setCancelable(false);
                 dialog.show();
+                // Tạo một tham chiếu tới Firebase Storage
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
 
-                // Tạo một tham chiếu tới nơi lưu trữ trên Firebase Storage
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("story_images/").child(UUID.randomUUID().toString());
+                // Tạo một tên ngẫu nhiên cho ảnh trước khi tải lên Firebase
+                String imageName = UUID.randomUUID().toString() + ".jpg";
+                StorageReference imageRef = storageRef.child("story_images/" + imageName);
 
-                // Chuyển đổi Uri của hình ảnh sang định dạng InputStream
-                try {
-                    InputStream stream = getContentResolver().openInputStream(Uri.parse(imageStory));
+                // Chuyển đổi ảnh từ ImageView sang InputStream
+                img_createStory.setDrawingCacheEnabled(true);
+                img_createStory.buildDrawingCache();
+                Bitmap bitmap = ((BitmapDrawable) img_createStory.getDrawable()).getBitmap();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
 
-                    // Upload hình ảnh lên Firebase Storage
-                    UploadTask uploadTask = storageRef.putStream(stream);
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Lấy URL của hình ảnh đã tải lên
-                            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    RequestCreateStory story = new RequestCreateStory(userId, isoDateString, uri.toString(), contentMediaList, stickersList);
-                                    // Lưu URL vào đối tượng story và sau đó tạo câu chuyện
-                                    storyViewModel.createStory(story, userId);
-                                    startActivity(new Intent(CreateStoryActivity.this, MainActivity.class));
-                                }
-                            });
-                            dialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Xử lý khi upload thất bại
-                            dialog.dismiss();
-                        }
-                    });
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    dialog.dismiss();
-                }
+                // Tải ảnh lên Firebase Storage
+                UploadTask uploadTask = imageRef.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Nếu tải ảnh lên thành công, lấy URL của ảnh từ Firebase
+                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String imageUrl = uri.toString();
+                                // Tạo story và sử dụng imageUrl cho imageStory
+                                RequestCreateStory story = new RequestCreateStory(userId, isoDateString, imageUrl, contentMediaList, stickersList);
+                                // Sau đó, bạn có thể gọi phương thức để tạo story và lưu vào Firebase
+                                storyViewModel.createStory(story, userId);
+                                startActivity(new Intent(CreateStoryActivity.this, MainActivity.class));
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Xử lý khi tải ảnh lên Firebase thất bại
+                        dialog.dismiss();
+                        Log.e("CreateStoryActivity", "Failed to upload image to Firebase: " + e.getMessage(), e);
+                    }
+                });
+
+
             }
-
         });
         bottomSheetDialog.show();
+
     }
 
 
@@ -266,10 +281,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         floatingEditText.setTypeface(null, Typeface.BOLD); // Đặt kiểu chữ là đậm
         floatingEditText.setBackgroundColor(Color.TRANSPARENT); // Đặt màu nền transparent
         // Thiết lập các thuộc tính layout cho EditText nổi
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER; // Đặt vị trí EditText nổi ở giữa ảnh
         floatingEditText.setLayoutParams(params);
         // Loại bỏ EditText nếu đã có cha
@@ -344,17 +356,17 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
                         // Trong phần xử lý sự kiện khi EditText nổi đã nhập văn bản và bị nhấn lại
                         if (!text.isEmpty()) {
                             //if (!isTextAlreadyAdded(text)) {
-                                // Nếu văn bản mới không trùng với bất kỳ văn bản nào trong listOfContents, thêm vào danh sách
-                                floatingEditText.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int[] location = new int[2];
-                                        floatingEditText.getLocationOnScreen(location);
-                                        float marginTop = location[1];
-                                        float marginLeft = location[0];
-                                        listOfContents.add(new RequestCreateStory.ContentMedia(text, marginTop, marginLeft));
-                                    }
-                                });
+                            // Nếu văn bản mới không trùng với bất kỳ văn bản nào trong listOfContents, thêm vào danh sách
+                            floatingEditText.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int[] location = new int[2];
+                                    floatingEditText.getLocationOnScreen(location);
+                                    float marginTop = location[1];
+                                    float marginLeft = location[0];
+                                    listOfContents.add(new RequestCreateStory.ContentMedia(text, marginTop, marginLeft));
+                                }
+                            });
                             //}
                         }
                         break;
@@ -362,7 +374,6 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
                 return true;
             }
         });
-
 
 
         // Xử lý sự kiện khi EditText nổi đã nhập văn bản và bị nhấn lại
@@ -389,13 +400,11 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         // Trả về false nếu không có văn bản nào giống với văn bản mới
         return false;
     }
-    private void initBtnDeleteView(){
+
+    private void initBtnDeleteView() {
         // Tạo một FrameLayout mới để chứa ImageView
         deleteLayout = new FrameLayout(this);
-        FrameLayout.LayoutParams deleteLayoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        FrameLayout.LayoutParams deleteLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         deleteLayoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
         deleteLayout.setBackgroundResource(R.drawable.background_action_create_story);
         deleteLayout.setLayoutParams(deleteLayoutParams);
@@ -403,10 +412,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         imageViewDelete = new ImageView(this);
         imageViewDelete.setImageResource(R.drawable.icon_delete_red);
 
-        FrameLayout.LayoutParams imageParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        FrameLayout.LayoutParams imageParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         imageParams.gravity = Gravity.CENTER;
         imageViewDelete.setLayoutParams(imageParams);
 
@@ -438,7 +444,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
     @Override
     public boolean onStickerSelected(SPSticker sticker) {
         System.out.print(sticker);
-        Log.e("vcl",String.valueOf(sticker));
+        Log.e("vcl", String.valueOf(sticker));
         addStickerToFrameLayout(sticker.getStickerImg());
         //listOfStickers.add(String.valueOf(sticker.getStickerImg()));
         return false;
@@ -455,9 +461,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
         stickerImageView = new ImageView(this);
         Glide.with(this).load(imageUrl).into(stickerImageView);
         // Thiết lập các thuộc tính layout cho ImageView sticker
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                300,300
-        );
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(300, 300);
         params.gravity = Gravity.CENTER; // Đặt vị trí sticker ở giữa frame_layout_create_story
         stickerImageView.setLayoutParams(params);
         frame_layout_create_story.addView(stickerImageView);
@@ -529,7 +533,7 @@ public class CreateStoryActivity extends AppCompatActivity implements StipopDele
 
                         }
                         stickerImageView.setVisibility(View.VISIBLE);
-                        if (!imageUrl.isEmpty()){
+                        if (!imageUrl.isEmpty()) {
                             stickerImageView.post(new Runnable() {
                                 @Override
                                 public void run() {
