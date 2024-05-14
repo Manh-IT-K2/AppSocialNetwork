@@ -39,5 +39,21 @@ Sign In                   |                   Sign Up
 :---------------------------------:        |      :------------------------------:
 <img src="./Frontend/app/src/assets/login.png" height="200">  | <img src="./Frontend/app/src/assets/signup.png" height="200">
 
+Profile                   |                   Settings Profile
+:---------------------------------:        |      :------------------------------:
+<img src="./Frontend/app/src/assets/Profile.jpg" height="200">  | <img src="./Frontend/app/src/assets/SettingsProfile.jpg" height="200">
+
+Following                   |                   Follower
+:---------------------------------:        |      :------------------------------:
+<img src="./Frontend/app/src/assets/Following.jpg" height="200">  | <img src="./Frontend/app/src/assets/Follower.jpg" height="200">
+
+Suggest                   |                   Edit Profile
+:---------------------------------:        |      :------------------------------:
+<img src="./Frontend/app/src/assets/Suggest.jpg" height="200">  | <img src="./Frontend/app/src/assets/EditProfile.jpg" height="200">
+
+Post Profile                   |                   Edit Profile
+:---------------------------------:        |      :------------------------------:
+<img src="./Frontend/app/src/assets/postProfile.jpg" height="200">  | <img src="./Frontend/app/src/assets/EditProfile.jpg" height="200">
+
 ### Make sure to star the repository if you find it helpful!
 <a href="https://github.com/Qmanh1804/AppSocialNetwork/stargazers"><img src="https://img.shields.io/github/stars/Qmanh1804/AppSocialNetwork?color=yellow" alt="Stars Badge"/></a>
