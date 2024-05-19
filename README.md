@@ -62,7 +62,8 @@ Related functions:
     - See the number of people who have followed you (Following) and who follow you (Follower).
     - Unfollow or follow new users.
 ```
-## [Project Demo Link]([https://www.youtube.com/watch?v=60rsHodIXvY])
+## [Project Demo Link]([https://www.youtube.com/watch?v=60rsHodIXvY](https://www.youtube.com/watch?v=60rsHodIXvY))
+Youtube: https://www.youtube.com/watch?v=60rsHodIXvY
 ## Application interface:
 
 | Sign In | Sign Up | Profile | Settings Profile |
